@@ -1,7 +1,12 @@
-import * as functions from "firebase-functions";
+import { https } from "firebase-functions";
 
-const demo = functions.https.onRequest((request, response) => {
-  response.send("Hello from Firebase!");
-});
+import * as express from "express";
 
-export { demo };
+import apiRouter from "./Api";
+
+const app = express();
+app.use("/api", apiRouter);
+
+const api = https.onRequest(app);
+
+export { api };

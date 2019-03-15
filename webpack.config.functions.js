@@ -11,7 +11,8 @@ module.exports = {
 
   output: {
     filename: "index.js",
-    path: path.resolve(__dirname, "functions")
+    path: path.resolve(__dirname, "functions"),
+    libraryTarget: "this"
   },
 
   devtool: "source-map",
