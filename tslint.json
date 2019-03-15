@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-airbnb",
+    "tslint-react",
+    "tslint-config-prettier"
+  ],
+  "rulesDirectory": [
+    "tslint-plugin-prettier"
+  ],
+  "rules": {
+    "prettier": true,
+    "ordered-imports": false,
+    "import-name": false,
+    "object-literal-sort-keys": false
+  }
+}

@@ -7,7 +7,8 @@
   "scripts": {
     "build": "yarn build:client & yarn build:functions",
     "build:client": "   webpack --progress --color --config webpack.config.client.js",
-    "build:functions": "webpack --progress --color --config webpack.config.functions.js && cp {package.json,yarn.lock} functions && yarn --cwd functions"
+    "build:functions": "webpack --progress --color --config webpack.config.functions.js && cp {package.json,yarn.lock} functions && yarn --cwd functions",
+    "lint": "tslint --format stylish --project tsconfig.json --fix 'src/**/*.ts{,x}'"
   },
   "dependencies": {
     "@loadable/component": "^5.7.0",
@@ -26,7 +27,13 @@
     "@types/react-router-config": "^1.1.2",
     "@types/react-router-dom": "^4.3.1",
     "html-webpack-plugin": "^3.2.0",
+    "prettier": "^1.16.4",
     "ts-loader": "^5.3.3",
+    "tslint": "^5.14.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^3.6.0",
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
