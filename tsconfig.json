@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "lib": [
+      "dom",
       "es2015"
     ],
     "sourceMap": true,

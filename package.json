@@ -4,8 +4,15 @@
   "main": "index.js",
   "author": "TatsuyaYamamoto <yamamoto.tatsuya@fujixerox.co.jp>",
   "license": "MIT",
+  "scripts": {
+    "build": "yarn build:client & yarn build:functions",
+    "build:client": "   webpack --progress --color --config webpack.config.client.js",
+    "build:functions": "webpack --progress --color --config webpack.config.functions.js"
+  },
   "dependencies": {
     "@loadable/component": "^5.7.0",
+    "firebase-admin": "^7.1.0",
+    "firebase-functions": "^2.2.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-router-dom": "^4.3.1"
@@ -21,6 +28,7 @@
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.2.1",
+    "webpack-node-externals": "^1.7.2"
   }
 }
