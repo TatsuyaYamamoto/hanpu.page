@@ -22,7 +22,7 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
   private unsubscribe: Unsubscribe = null;
 
   public componentDidMount(): void {
-    const { history } = this.props;
+    const { history, location } = this.props;
 
     this.unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
@@ -33,7 +33,12 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
 
         // redirect
         // TODO check and push to URL before login page.
-        history.push("/dashboard/activated-list");
+        const currentPath = location.pathname;
+        let nextPath = "/dashboard/activated-list";
+        if (currentPath.startsWith("/dashboard")) {
+          nextPath = currentPath;
+        }
+        history.push(nextPath);
       } else {
         // User is signed out.
         this.setState({
