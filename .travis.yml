@@ -1,29 +1,25 @@
 language: node_js
-
 node_js:
-  - "8"
-
+  - '8'
 cache: yarn
-
 branches:
   only:
     - master
     - develop
-
 script:
   - yarn build
-
 before_deploy:
-  - "echo 'start deploying to firebase.'"
+  - echo 'start deploying to firebase.'
   - npm install -g firebase-tools
-
 deploy:
   - provider: script
     skip_cleanup: true
     script: yarn deploy:dev --project "$FIREBASE_PROJECT_DEV" --token "$FIREBASE_TOKEN"
-    message: "this is deploy task message. I don't know what I should write here."
+    message: this is deploy task message. I don't know what I should write here.
     on:
       branch: develop
-
 after_deploy:
-  - "echo 'success deployment.'"
+  - echo 'success deployment.'
+notifications:
+  slack:
+    secure: ayoLx6zhwNRj+0DAiJHREBOgnu+OdTP4aYr1lky/C5OwMFXVBxvuBVyNx/cfjrDWKZhDpox69g/F3sV5iIbTOl2CSI3N7UBPjY+iIWS9J1H+fZI13AbpwqcBoRvWVzbgO/alxOWfZR4sAcSEUwnv06kpQOPw4nR+RLuTStwVfc5qiaPtiz/iUYr1njs+YgPe5q/z1HvE8eSKDMPpSsyIZDZ6G7dlmsIDlerD/vRqzptwPBz727lFWfCs/oHNZ6whIZ5fqgX4/enCvPdnWWshT2U8YyZK9GMNjNs1XZZSB9TYJtpvPp2OpF6yar9c8+TYhlPrdr1Je7hiBHcwY9uy1As0B5X+d2z12VxbDaAXLc0tBPq9v2JxgcgIN9fBJcEabiKGLPTxX85lYZ3L1wzHbop43K+M6h1P7V/ep3skWTQ/j171QII7k1VIdD59HwIGkAYUvCLG2FHEjqWggfy9ZWfPsHheC75BbTltKADJUDF158VgFcv4L3VNuXlkg1uyJ8Ad0EpIE8hxHxftVmtpic13pITlqX3OR1s/V8QEw1hbh+oMZzAdbfLLENuu8FSdb6WZQH8s3S2Ato9oenjSNXurZ+iikdMzmcpuBMICMpuIqMim764xmB218kIKiPDMwryS0VLCVTmtDyAuDjkR0yzHtE1Lm/wZQx0gseIQSP8=
