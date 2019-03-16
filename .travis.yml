@@ -12,3 +12,18 @@ branches:
 
 script:
   - yarn build
+
+before_deploy:
+  - "echo 'start deploying to firebase.'"
+  - npm install -g firebase-tools
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: yarn deploy:dev --project "$FIREBASE_PROJECT_DEV" --token "$FIREBASE_TOKEN"
+    message: "this is deploy task message. I don't know what I should write here."
+    on:
+      branch: develop
+
+after_deploy:
+  - "echo 'success deployment.'"

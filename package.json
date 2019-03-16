@@ -13,7 +13,8 @@
     "build:client": "   webpack --progress --color --config webpack.config.client.js",
     "build:functions": "webpack --progress --color --config webpack.config.functions.js && cpx -C '*{package.json,yarn.lock}' functions && yarn --cwd functions",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'src/**/*.ts{,x}'",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "deploy:dev": "firebase deploy"
   },
   "config": {
     "commitizen": {
