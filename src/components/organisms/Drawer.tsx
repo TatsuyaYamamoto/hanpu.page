@@ -14,6 +14,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import AddIcon from "@material-ui/icons/Add";
 import ListIcon from "@material-ui/icons/FormatListBulleted";
 import SettingsIcon from "@material-ui/icons/Settings";
+import LoginUserDrawerItem from "../molecules/LoginUserDrawerItem";
 
 const drawerWidth = 240;
 
@@ -125,6 +126,10 @@ const Drawer: React.FunctionComponent = () => {
           );
         })}
       </List>
+
+      <Divider />
+
+      <LoginUserDrawerItem />
     </StyledDrawer>
   );
 };

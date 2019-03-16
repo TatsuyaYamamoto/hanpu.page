@@ -67,3 +67,4 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
 }
 
 export default withRouter(LoginSession);
+export { LoginSessionContext };
