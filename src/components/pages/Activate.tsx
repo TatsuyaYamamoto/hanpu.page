@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import styled from "styled-components";
+import Paper from "@material-ui/core/Paper";
 
 import Drawer from "../organisms/Drawer";
 import ActivationCodeForm from "../organisms/ActivationCodeForm";
@@ -24,12 +25,18 @@ class Activate extends React.Component {
       <Root>
         <StyledDrawer />
         <StyledDashboardContents>
-          Activate
-          <ActivationCodeForm />
+          <Paper>
+            Activate
+            <ActivationCodeForm onSubmit={this.onActivationSubmitted} />
+          </Paper>
         </StyledDashboardContents>
       </Root>
     );
   }
+
+  private onActivationSubmitted = (code: string) => {
+    console.log(`submit: ${code}`);
+  };
 }
 
 export default Activate;
