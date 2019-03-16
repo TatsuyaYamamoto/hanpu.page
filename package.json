@@ -9,7 +9,13 @@
     "build": "yarn build:client & yarn build:functions",
     "build:client": "   webpack --progress --color --config webpack.config.client.js",
     "build:functions": "webpack --progress --color --config webpack.config.functions.js && cp {package.json,yarn.lock} functions && yarn --cwd functions",
-    "lint": "tslint --format stylish --project tsconfig.json --fix 'src/**/*.ts{,x}'"
+    "lint": "tslint --format stylish --project tsconfig.json --fix 'src/**/*.ts{,x}'",
+    "commit": "git-cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "husky": {
     "hooks": {
@@ -46,6 +52,7 @@
     "@types/react-router-config": "^1.1.2",
     "@types/react-router-dom": "^4.3.1",
     "@types/styled-components": "^4.1.12",
+    "commitizen": "^3.0.7",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
