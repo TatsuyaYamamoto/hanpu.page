@@ -14,21 +14,18 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import AddIcon from "@material-ui/icons/Add";
 import ListIcon from "@material-ui/icons/FormatListBulleted";
 import SettingsIcon from "@material-ui/icons/Settings";
+
 import LoginUserDrawerItem from "../molecules/LoginUserDrawerItem";
 
-const drawerWidth = 240;
-
-const Root = styled.div`
-  display: flex;
-`;
+// TODO check actual drawer style. chrome dev tool siad it's 258.27px.
+const drawerWidth = 280;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
 const StyledDrawer = styled(MuiDrawer)`
-  width: ${drawerWidth};
-  flex-shrink: 0;
+  width: ${drawerWidth}px;
 `;
 
 const ToolBar = styled.div`
@@ -69,16 +66,18 @@ const accountMenuItems = [
   }
 ];
 
-const Drawer: React.FunctionComponent = () => {
+interface IDrawerProps {}
+
+const Drawer: React.FunctionComponent<IDrawerProps> = props => {
+  const { ...others } = props;
   return (
     <StyledDrawer
       variant="permanent"
-      classes={
-        {
-          // paper: { width: drawerWidth }
-        }
-      }
+      classes={{
+        paper: `width: ${drawerWidth}`
+      }}
       anchor="left"
+      {...others}
     >
       <ToolBar />
 
