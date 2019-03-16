@@ -3,7 +3,7 @@ import * as React from "react";
 import styled from "styled-components";
 import grey from "@material-ui/core/colors/grey";
 import Avatar from "@material-ui/core/Avatar";
-import { ListItem } from "@material-ui/core";
+import ListItem, { ListItemProps } from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 
@@ -20,9 +20,9 @@ interface IBaseProps {
   url: string;
 }
 const Base: React.FunctionComponent<IBaseProps> = props => {
-  const { name, url } = props;
+  const { name, url, ...others } = props;
   return (
-    <ListItem>
+    <ListItem {...others}>
       <ListItemAvatar>
         <Avatar src={url} />
       </ListItemAvatar>
@@ -31,7 +31,7 @@ const Base: React.FunctionComponent<IBaseProps> = props => {
   );
 };
 
-const LoginUserDrawerItem: React.FunctionComponent = props => {
+const LoginUserDrawerItem: React.FunctionComponent<ListItemProps> = props => {
   const { ...others } = props;
   return (
     <LoginSessionContext.Consumer>

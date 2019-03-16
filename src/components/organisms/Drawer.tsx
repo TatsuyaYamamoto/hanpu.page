@@ -1,5 +1,9 @@
 import * as React from "react";
-import { NavLink as Link } from "react-router-dom";
+import {
+  NavLink as Link,
+  RouteComponentProps,
+  withRouter
+} from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -14,6 +18,10 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import AddIcon from "@material-ui/icons/Add";
 import ListIcon from "@material-ui/icons/FormatListBulleted";
 import SettingsIcon from "@material-ui/icons/Settings";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+
+import { auth } from "firebase/app";
 
 import LoginUserDrawerItem from "../molecules/LoginUserDrawerItem";
 import SettingsFullDialog from "./SettingsFullDialog";
@@ -59,12 +67,11 @@ const providerMenuItems = [
   }
 ];
 
-interface DrawerProps {}
-
-const Drawer: React.FunctionComponent<DrawerProps> = props => {
-  const { ...others } = props;
+const Drawer: React.FunctionComponent<RouteComponentProps> = props => {
+  const { location, history, match, staticContext, ...others } = props;
 
   const [isSettingsOpen, setSettingsOpen] = React.useState(false);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = React.useState(null);
 
   const handleSettingsOpen = () => {
     setSettingsOpen(true);
@@ -72,6 +79,19 @@ const Drawer: React.FunctionComponent<DrawerProps> = props => {
 
   const handleSettingsClose = () => {
     setSettingsOpen(false);
+  };
+
+  const handleUserMenuOpen = (e: React.MouseEvent) => {
+    setUserMenuAnchorEl(e.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    await auth().signOut();
+    history.push(`/`);
   };
 
   return (
@@ -83,6 +103,14 @@ const Drawer: React.FunctionComponent<DrawerProps> = props => {
       anchor="left"
       {...others}
     >
+      <Menu
+        anchorEl={userMenuAnchorEl}
+        open={Boolean(userMenuAnchorEl)}
+        onClose={handleUserMenuClose}
+      >
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
+
       <SettingsFullDialog
         open={isSettingsOpen}
         handleClose={handleSettingsClose}
@@ -128,10 +156,11 @@ const Drawer: React.FunctionComponent<DrawerProps> = props => {
           </ListItemIcon>
           <ListItemText primary={"Settings"} />
         </ListItem>
-        <LoginUserDrawerItem />
+
+        <LoginUserDrawerItem onClick={handleUserMenuOpen} />
       </List>
     </StyledDrawer>
   );
 };
 
-export default Drawer;
+export default withRouter(Drawer);
