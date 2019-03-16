@@ -16,6 +16,7 @@ import ListIcon from "@material-ui/icons/FormatListBulleted";
 import SettingsIcon from "@material-ui/icons/Settings";
 
 import LoginUserDrawerItem from "../molecules/LoginUserDrawerItem";
+import SettingsFullDialog from "./SettingsFullDialog";
 
 // TODO check actual drawer style. chrome dev tool siad it's 258.27px.
 const drawerWidth = 280;
@@ -58,18 +59,21 @@ const providerMenuItems = [
   }
 ];
 
-const accountMenuItems = [
-  {
-    name: "Settings",
-    icon: <SettingsIcon />,
-    path: "/dashboard/settings"
-  }
-];
+interface DrawerProps {}
 
-interface IDrawerProps {}
-
-const Drawer: React.FunctionComponent<IDrawerProps> = props => {
+const Drawer: React.FunctionComponent<DrawerProps> = props => {
   const { ...others } = props;
+
+  const [isSettingsOpen, setSettingsOpen] = React.useState(false);
+
+  const handleSettingsOpen = () => {
+    setSettingsOpen(true);
+  };
+
+  const handleSettingsClose = () => {
+    setSettingsOpen(false);
+  };
+
   return (
     <StyledDrawer
       variant="permanent"
@@ -79,6 +83,10 @@ const Drawer: React.FunctionComponent<IDrawerProps> = props => {
       anchor="left"
       {...others}
     >
+      <SettingsFullDialog
+        open={isSettingsOpen}
+        handleClose={handleSettingsClose}
+      />
       <ToolBar />
 
       <Divider />
@@ -114,21 +122,14 @@ const Drawer: React.FunctionComponent<IDrawerProps> = props => {
       <Divider />
 
       <List subheader={<ListSubheader component="div">Account</ListSubheader>}>
-        {accountMenuItems.map(item => {
-          return (
-            <StyledLink to={item.path} key={item.name}>
-              <ListItem button={true}>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.name} />
-              </ListItem>
-            </StyledLink>
-          );
-        })}
+        <ListItem button={true} onClick={handleSettingsOpen}>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary={"Settings"} />
+        </ListItem>
+        <LoginUserDrawerItem />
       </List>
-
-      <Divider />
-
-      <LoginUserDrawerItem />
     </StyledDrawer>
   );
 };
