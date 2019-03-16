@@ -1,6 +1,9 @@
 {
   "name": "omake.page",
   "version": "1.0.0",
+  "engines": {
+    "node": "8"
+  },
   "main": "index.js",
   "author": "TatsuyaYamamoto <yamamoto.tatsuya@fujixerox.co.jp>",
   "license": "MIT",
