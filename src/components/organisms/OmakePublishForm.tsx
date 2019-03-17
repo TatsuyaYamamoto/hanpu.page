@@ -4,7 +4,6 @@ import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 
 const Root = styled.div``;
@@ -15,56 +14,39 @@ const StyledTextField = styled(TextField)`
   width: 200px;
 `;
 
-export type PublicationState = "publish" | "unpublish";
-export interface IOmakeForm {
+interface OmakeForm {
   name: string;
   description: string;
-  publicationState: PublicationState;
 }
 
-interface IActivationCodeForm {
-  onSubmit: (form: IOmakeForm) => void;
+interface ActivationCodeForm {
+  onSubmit: (form: OmakeForm) => void;
 }
 
-const OmakePublishForm: React.FunctionComponent<
-  IActivationCodeForm
-> = props => {
+const OmakePublishForm: React.FunctionComponent<ActivationCodeForm> = props => {
   const { onSubmit, ...others } = props;
 
   // input value status list
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [publicationState, setPublicationState] = React.useState<
-    PublicationState
-  >("publish");
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setName(e.target.value.trim());
   };
 
   const onChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const onChangePublicationState = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const newValue = e.target.value;
-
-    if (newValue !== "publish" && newValue !== "unpublish") {
-      return;
-    }
-
-    setPublicationState(newValue);
+    setDescription(e.target.value.trim());
   };
 
   const onSubmitClicked = () => {
     onSubmit({
       name,
-      description,
-      publicationState
+      description
     });
   };
+
+  // todo validate
+  const handleButtonDisable = name === "" || description === "";
 
   return (
     <Root {...others}>
@@ -80,28 +62,16 @@ const OmakePublishForm: React.FunctionComponent<
           margin="normal"
           onChange={onChangeDescription}
         />
-        <TextField
-          select={true}
-          label="公開状態"
-          onChange={onChangePublicationState}
-          value={publicationState}
-          SelectProps={{
-            MenuProps: {
-              // className: classes.menu
-            }
-          }}
-          helperText="People can activate this Omake."
-          margin="normal"
-        >
-          <MenuItem value={`publish`}>公開</MenuItem>
-          <MenuItem value={`unpublish`}>非公開</MenuItem>
-        </TextField>
         <Typography>
           Omakeのサムネイル画像、Omakeのファイルは編集ページで！
         </Typography>
       </Grid>
       <Grid container={true}>
-        <Button variant="contained" onClick={onSubmitClicked}>
+        <Button
+          variant="contained"
+          onClick={onSubmitClicked}
+          disabled={handleButtonDisable}
+        >
           送信
         </Button>
       </Grid>
@@ -109,4 +79,5 @@ const OmakePublishForm: React.FunctionComponent<
   );
 };
 
+export { OmakeForm, ActivationCodeForm };
 export default OmakePublishForm;
