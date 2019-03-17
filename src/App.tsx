@@ -6,11 +6,12 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import loadable from "@loadable/component";
 
 import muiTheme from "./muiTheme";
+import LoginSession from "./components/helper/LoginSession";
 
 // firebase
 import { initializeApp } from "firebase/app";
 import "firebase/auth";
-import LoginSession from "./components/helper/LoginSession";
+import "firebase/firestore";
 
 const firebaseConfig = {
   // omake-page-development
@@ -64,6 +65,11 @@ const App = () => (
               component={(props: any) => <Login {...props} />}
             />
             <Switch>
+              <Route
+                path={`/dashboard/activate`}
+                // tslint:disable-next-line:jsx-no-lambda
+                component={(props: any) => <Activate {...props} />}
+              />
               <Route
                 path={`/dashboard/activated-list`}
                 // tslint:disable-next-line:jsx-no-lambda
