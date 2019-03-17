@@ -4,6 +4,8 @@ import DocumentData = firestore.DocumentData;
 
 import * as base32 from "hi-base32";
 
+type ActivationCodeValue = string;
+
 interface ActivationCodeDocument extends DocumentData {
   /**
    * どのOmakeに対するActivationCodeか
@@ -13,7 +15,7 @@ interface ActivationCodeDocument extends DocumentData {
   /**
    * ActivationCodeの文字列
    */
-  code: string;
+  code: ActivationCodeValue;
 
   /**
    * 作成日
@@ -40,21 +42,6 @@ class ActivationCode implements ActivationCodeDocument {
     return await ActivationCode.getColRef().add(newDoc);
   }
 
-  public static async activate(code: string) {
-    const snapshot = await ActivationCode.getColRef()
-      .where("code", "==", code)
-      .get();
-
-    if (snapshot.empty) {
-      throw new Error();
-    }
-
-    const activationCode = snapshot.docs[0].data() as ActivationCodeDocument;
-
-    if (activationCode.isInfinite) {
-    }
-  }
-
   /**
    * ActivationCodeの文字列を生成する
    *
@@ -78,4 +65,4 @@ class ActivationCode implements ActivationCodeDocument {
   ) {}
 }
 
-export { ActivationCode, ActivationCodeDocument };
+export { ActivationCode, ActivationCodeValue, ActivationCodeDocument };

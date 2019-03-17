@@ -9,7 +9,8 @@ import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { LoginSessionContext } from "../helper/LoginSession";
-import { log } from "../../logger";
+import { Activation } from "../../domain/Activation";
+import * as logger from "../../logger";
 
 const Root = styled.div`
   display: flex;
@@ -45,7 +46,11 @@ interface StartActivateProps {
 const StartActivate: React.FC<StartActivateProps> = props => {
   const { code } = props;
   const onCLicked = () => {
-    log("try activating");
+    logger.log("try activating");
+
+    Activation.activate(code).catch(e => {
+      logger.error(e);
+    });
   };
 
   return (
