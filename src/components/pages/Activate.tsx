@@ -6,6 +6,7 @@ import Paper from "@material-ui/core/Paper";
 import Drawer from "../organisms/Drawer";
 import ActivationCodeForm from "../organisms/ActivationCodeForm";
 import DashboardContents from "../helper/DashboardContents";
+import { log } from "../../logger";
 
 const Root = styled.div`
   display: flex;
@@ -35,7 +36,7 @@ class Activate extends React.Component {
   }
 
   private onActivationSubmitted = (code: string) => {
-    console.log(`submit: ${code}`);
+    log(`submit: ${code}`);
   };
 }
 
