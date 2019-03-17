@@ -6,8 +6,10 @@ import FieldValue = firestore.FieldValue;
 import Timestamp = firestore.Timestamp;
 import StorageReference = storage.Reference;
 
-import { User } from "./User";
+import { User, UserDocument } from "./User";
 import { ActivationCode } from "./ActivationCode";
+import { Activation, ActivationDocument } from "./Activation";
+import * as logger from "../logger";
 
 export type PublishState = "publish" | "private";
 
@@ -85,8 +87,9 @@ class Omake implements OmakeDocument {
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp()
     };
+    await newOmakeRef.set(newOmake);
 
-    return await Omake.getColRef().add(newOmake);
+    return newOmakeRef;
   }
 
   public static async getOwnPublishes(): Promise<Map<string, Omake>> {
@@ -115,6 +118,47 @@ class Omake implements OmakeDocument {
     }
 
     return publishes;
+  }
+
+  public static async getOwnActivatedList(): Promise<Map<string, Omake>> {
+    const ownRef = await User.getOwn();
+    logger.debug(`getting own user ref is succeed. uid: ${ownRef.id}`);
+
+    const activationListQuery = Activation.getColRef().where(
+      "userRef",
+      "==",
+      ownRef
+    );
+    const activationListQuerySnap = await activationListQuery.get();
+    logger.debug(`got ${activationListQuerySnap.size} activation docs.`);
+
+    const activated = new Map<string, Omake>();
+    await Promise.all(
+      activationListQuerySnap.docs.map(activationSnap => {
+        const activationDoc = activationSnap.data() as ActivationDocument;
+        const activatedOmakeRef = activationDoc.omakeRef;
+        return activatedOmakeRef.get().then(activatedOmake => {
+          const activatedOmakeDoc = activatedOmake.data() as OmakeDocument;
+          activated.set(
+            activationSnap.id,
+            new Omake(
+              activatedOmakeDoc.name,
+              activatedOmakeDoc.description,
+              activatedOmakeDoc.imageRef,
+              activatedOmakeDoc.providerRef,
+              activatedOmakeDoc.activationCodeRef,
+              activatedOmakeDoc.itemRefs,
+              activatedOmakeDoc.state,
+              (activatedOmakeDoc.createdAt as Timestamp).toDate(),
+              (activatedOmakeDoc.updatedAt as Timestamp).toDate()
+            )
+          );
+        });
+      })
+    );
+
+    logger.info(`got ${activated.size} activated omake docs.`);
+    return activated;
   }
 
   public constructor(

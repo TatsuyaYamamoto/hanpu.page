@@ -12,23 +12,16 @@ const Info = styled.div``;
 const Name = styled.div``;
 const CreatedDate = styled.div``;
 
-interface PublishedOmakeListProps {}
+interface Props {}
 
-interface PublishedOmakeListState {
+interface State {
   omakes: Map<string, Omake>;
 }
 
-class PublishedOmakeList extends React.Component<
-  PublishedOmakeListProps,
-  PublishedOmakeListState
-> {
-  constructor(params: any) {
-    super(params);
-
-    this.state = {
-      omakes: new Map()
-    };
-  }
+class PublishedOmakeList extends React.Component<Props, State> {
+  public state = {
+    omakes: new Map()
+  };
 
   public componentDidMount(): void {
     Omake.getOwnPublishes().then(omakes => {

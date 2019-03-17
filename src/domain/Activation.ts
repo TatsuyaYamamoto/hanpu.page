@@ -56,7 +56,6 @@ class Activation implements ActivationDocument {
 
     if (activationCodeSnapshot.empty) {
       logger.debug(`provided activation code doesn't exist.`);
-      // throw new Error();
       throw new OmakeError("invalid-activation-code");
     } else {
       logger.debug(`provided activation code exists.`);
