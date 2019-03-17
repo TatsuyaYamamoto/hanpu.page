@@ -24,14 +24,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { auth } from "firebase/app";
 
 import LoginUserDrawerItem from "../molecules/LoginUserDrawerItem";
+import StyledLink from "../helper/StyledLink";
 import SettingsFullDialog from "./SettingsFullDialog";
 
 // TODO check actual drawer style. chrome dev tool siad it's 258.27px.
 const drawerWidth = 280;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
 
 const StyledDrawer = styled(MuiDrawer)`
   width: ${drawerWidth}px;

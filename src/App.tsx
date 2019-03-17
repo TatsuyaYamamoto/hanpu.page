@@ -27,6 +27,9 @@ const Login = loadable(() => import("./components/pages/Login"));
 const ActivatedList = loadable(() =>
   import("./components/pages/ActivatedList")
 );
+const ActivatedDetail = loadable(() =>
+  import("./components/pages/ActivatedDetail")
+);
 const Activate = loadable(() => import("./components/pages/Activate"));
 const PublishedList = loadable(() =>
   import("./components/pages/PublishedList")
@@ -67,9 +70,9 @@ const App = () => (
                 component={(props: any) => <ActivatedList {...props} />}
               />
               <Route
-                path={`/dashboard/activate`}
+                path={`/dashboard/activated/:omakeId`}
                 // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <Activate {...props} />}
+                component={(props: any) => <ActivatedDetail {...props} />}
               />
               <Route
                 path={`/dashboard/published-list`}
