@@ -3,6 +3,7 @@ import CollectionReference = firestore.CollectionReference;
 import DocumentReference = firestore.DocumentReference;
 import DocumentData = firestore.DocumentData;
 import FieldValue = firestore.FieldValue;
+import Timestamp = firestore.Timestamp;
 import StorageReference = storage.Reference;
 
 import { User } from "./User";
@@ -88,6 +89,34 @@ class Omake implements OmakeDocument {
     return await Omake.getColRef().add(newOmake);
   }
 
+  public static async getOwnPublishes(): Promise<Map<string, Omake>> {
+    const providerRef = User.getOwn();
+    const query = Omake.getColRef().where("providerRef", "==", providerRef);
+    const querySnapshot = await query.get();
+
+    const publishes = new Map();
+    for (const snapshot of querySnapshot.docs) {
+      const doc = snapshot.data() as OmakeDocument;
+
+      publishes.set(
+        snapshot.id,
+        new Omake(
+          doc.name,
+          doc.description,
+          doc.imageRef,
+          doc.providerRef,
+          doc.activationCodeRef,
+          doc.itemRefs,
+          doc.state,
+          (doc.createdAt as Timestamp).toDate(),
+          (doc.updatedAt as Timestamp).toDate()
+        )
+      );
+    }
+
+    return publishes;
+  }
+
   public constructor(
     readonly name: string,
     readonly description: string,
@@ -96,8 +125,8 @@ class Omake implements OmakeDocument {
     readonly activationCodeRef: DocumentReference,
     readonly itemRefs: { [omakeItemId: string]: DocumentReference },
     readonly state: PublishState,
-    readonly createdAt: FieldValue,
-    readonly updatedAt: FieldValue
+    readonly createdAt: Date,
+    readonly updatedAt: Date
   ) {}
 }
 
