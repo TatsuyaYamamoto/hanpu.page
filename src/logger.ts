@@ -9,4 +9,15 @@ function log(message?: any, ...optionalParams: any[]): void {
   console.log(message, ...optionalParams);
 }
 
-export { log };
+/**
+ * console.info
+ *
+ * @param message
+ * @param optionalParams
+ */
+function info(message?: any, ...optionalParams: any[]): void {
+  // tslint:disable:no-console
+  console.info(message, ...optionalParams);
+}
+
+export { log, info };

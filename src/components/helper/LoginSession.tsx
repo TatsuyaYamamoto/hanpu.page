@@ -3,20 +3,26 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { auth, Unsubscribe, User } from "firebase/app";
 
+import { info } from "../../logger";
+
 interface ILoginSessionContext {
+  checkedLoginState: boolean;
   firebaseUser: User | null;
 }
 
 const LoginSessionContext = React.createContext<ILoginSessionContext>({
+  checkedLoginState: false,
   firebaseUser: null
 });
 
 interface IState {
+  checkedLoginState: boolean;
   firebaseUser: User | null;
 }
 
 class LoginSession extends React.Component<RouteComponentProps, IState> {
   public state: IState = {
+    checkedLoginState: false,
     firebaseUser: null
   };
   private unsubscribe: Unsubscribe = null;
@@ -26,24 +32,11 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
 
     this.unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
-        // User is signed in.
-        this.setState({
-          firebaseUser: user
-        });
-
-        // redirect
-        // TODO check and push to URL before login page.
-        const currentPath = location.pathname;
-        let nextPath = "/dashboard/activated-list";
-        if (currentPath.startsWith("/dashboard")) {
-          nextPath = currentPath;
-        }
-        history.push(nextPath);
+        info(`user is signed in. uid: ${user.uid}`);
+        this.handleSignIn(user);
       } else {
-        // User is signed out.
-        this.setState({
-          firebaseUser: null
-        });
+        info(`user is signed out.`);
+        this.handleSignOut();
       }
     });
   }
@@ -56,9 +49,10 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
 
   public render(): React.ReactNode {
     const { children } = this.props;
-    const { firebaseUser } = this.state;
+    const { firebaseUser, checkedLoginState } = this.state;
     const contextValue = {
-      firebaseUser
+      firebaseUser,
+      checkedLoginState
     };
 
     return (
@@ -69,6 +63,36 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
       </React.Fragment>
     );
   }
+
+  private handleSignIn = (user: User) => {
+    this.setState({
+      firebaseUser: user,
+      checkedLoginState: true
+    });
+
+    // redirect
+    // TODO check and push to URL before login page.
+    const currentPath = location.pathname;
+    if (currentPath.startsWith(`/activation`)) {
+      return;
+    }
+
+    if (!currentPath.startsWith(`/dashboard`)) {
+      this.props.history.push(`/dashboard/activated-list`);
+    }
+  };
+
+  private handleSignOut = () => {
+    this.setState({
+      firebaseUser: null,
+      checkedLoginState: true
+    });
+
+    const currentPath = location.pathname;
+    if (currentPath.startsWith(`/dashboard`)) {
+      this.props.history.push(`/`);
+    }
+  };
 }
 
 export default withRouter(LoginSession);

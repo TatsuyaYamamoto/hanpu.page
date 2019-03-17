@@ -6,6 +6,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import loadable from "@loadable/component";
 
 import muiTheme from "./muiTheme";
+import LoginPage from "./components/pages/Login";
+import ActivationPage from "./components/pages/Activation";
 import LoginSession from "./components/helper/LoginSession";
 
 // firebase
@@ -24,7 +26,6 @@ const firebaseConfig = {
 };
 initializeApp(firebaseConfig);
 
-const Login = loadable(() => import("./components/pages/Login"));
 const ActivatedList = loadable(() =>
   import("./components/pages/ActivatedList")
 );
@@ -61,44 +62,34 @@ const App = () => (
       <Router>
         <LoginSession>
           <Switch>
+            {/* tslint:disable:jsx-no-lambda */}
+            <Route path={`/`} exact={true} component={LoginPage} />
+            <Route path={`/activation/:code`} component={ActivationPage} />
             <Route
-              path={`/`}
-              exact={true}
-              // tslint:disable-next-line:jsx-no-lambda
-              component={(props: any) => <Login {...props} />}
+              path={`/dashboard/activate`}
+              component={(props: any) => <Activate {...props} />}
             />
-            <Switch>
-              <Route
-                path={`/dashboard/activate`}
-                // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <Activate {...props} />}
-              />
-              <Route
-                path={`/dashboard/activated-list`}
-                // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <ActivatedList {...props} />}
-              />
-              <Route
-                path={`/dashboard/activated/:omakeId`}
-                // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <ActivatedDetail {...props} />}
-              />
-              <Route
-                path={`/dashboard/published-list`}
-                // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <PublishedList {...props} />}
-              />
-              <Route
-                path={`/dashboard/publishes/:omakeId`}
-                // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <PublishedEdit {...props} />}
-              />
-              <Route
-                path={`/dashboard/publish`}
-                // tslint:disable-next-line:jsx-no-lambda
-                component={(props: any) => <Publish {...props} />}
-              />
-            </Switch>
+            <Route
+              path={`/dashboard/activated-list`}
+              component={(props: any) => <ActivatedList {...props} />}
+            />
+            <Route
+              path={`/dashboard/activated/:omakeId`}
+              component={(props: any) => <ActivatedDetail {...props} />}
+            />
+            <Route
+              path={`/dashboard/published-list`}
+              component={(props: any) => <PublishedList {...props} />}
+            />
+            <Route
+              path={`/dashboard/publishes/:omakeId`}
+              component={(props: any) => <PublishedEdit {...props} />}
+            />
+            <Route
+              path={`/dashboard/publish`}
+              component={(props: any) => <Publish {...props} />}
+            />
+            {/* tslint:enable:jsx-no-lambda */}
           </Switch>
         </LoginSession>
       </Router>
