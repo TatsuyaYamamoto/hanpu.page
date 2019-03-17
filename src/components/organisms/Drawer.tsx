@@ -40,27 +40,27 @@ const ToolBar = styled.div`
 
 const receiverMenuItems = [
   {
-    name: "Acricate New Omake",
-    icon: <AddIcon />,
-    path: "/dashboard/activate"
-  },
-  {
     name: "Activated Omake List",
     icon: <ListIcon />,
     path: "/dashboard/activated-list"
+  },
+  {
+    name: "Acricate New Omake",
+    icon: <AddIcon />,
+    path: "/dashboard/activate"
   }
 ];
 
 const providerMenuItems = [
   {
+    name: "Published Omake List",
+    icon: <ListIcon />,
+    path: "/dashboard/published-list"
+  },
+  {
     name: "Publish New Omake",
     icon: <AddIcon />,
     path: "/dashboard/publish"
-  },
-  {
-    name: "Published Omake List",
-    icon: <AddIcon />,
-    path: "/dashboard/published-list"
   }
 ];
 
