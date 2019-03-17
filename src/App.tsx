@@ -35,6 +35,9 @@ const Activate = loadable(() => import("./components/pages/Activate"));
 const PublishedList = loadable(() =>
   import("./components/pages/PublishedList")
 );
+const PublishedEdit = loadable(() =>
+  import("./components/pages/PublishedEdit")
+);
 const Publish = loadable(() => import("./components/pages/Publish"));
 
 const GlobalStyle = createGlobalStyle`
@@ -84,6 +87,11 @@ const App = () => (
                 path={`/dashboard/published-list`}
                 // tslint:disable-next-line:jsx-no-lambda
                 component={(props: any) => <PublishedList {...props} />}
+              />
+              <Route
+                path={`/dashboard/publishes/:omakeId`}
+                // tslint:disable-next-line:jsx-no-lambda
+                component={(props: any) => <PublishedEdit {...props} />}
               />
               <Route
                 path={`/dashboard/publish`}
