@@ -1,11 +1,8 @@
 import * as React from "react";
-import {
-  NavLink as Link,
-  RouteComponentProps,
-  withRouter
-} from "react-router-dom";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import styled from "styled-components";
+import { makeStyles } from "@material-ui/styles";
 
 import MuiDrawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
@@ -14,7 +11,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
-
 import AddIcon from "@material-ui/icons/Add";
 import ListIcon from "@material-ui/icons/FormatListBulleted";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -27,8 +23,7 @@ import LoginUserDrawerItem from "../molecules/LoginUserDrawerItem";
 import StyledLink from "../helper/StyledLink";
 import SettingsFullDialog from "./SettingsFullDialog";
 
-// TODO check actual drawer style. chrome dev tool siad it's 258.27px.
-const drawerWidth = 280;
+const drawerWidth = 240;
 
 const StyledDrawer = styled(MuiDrawer)`
   width: ${drawerWidth}px;
@@ -37,6 +32,12 @@ const StyledDrawer = styled(MuiDrawer)`
 const ToolBar = styled.div`
   ${props => props.theme.mixins.toolbar}
 `;
+
+const useDrawerStyles = makeStyles({
+  paper: {
+    width: drawerWidth
+  }
+});
 
 const receiverMenuItems = [
   {
@@ -91,12 +92,12 @@ const Drawer: React.FunctionComponent<RouteComponentProps> = props => {
     history.push(`/`);
   };
 
+  const classes = useDrawerStyles();
+
   return (
     <StyledDrawer
       variant="permanent"
-      classes={{
-        paper: `width: ${drawerWidth}`
-      }}
+      classes={classes}
       anchor="left"
       {...others}
     >
