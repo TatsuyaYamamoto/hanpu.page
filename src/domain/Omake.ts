@@ -9,7 +9,9 @@ import StorageReference = storage.Reference;
 import { User, UserDocument } from "./User";
 import { ActivationCode } from "./ActivationCode";
 import { Activation, ActivationDocument } from "./Activation";
-import * as logger from "../logger";
+import { getLogger } from "../logger";
+
+const logger = getLogger("omake");
 
 export type PublishState = "publish" | "private";
 

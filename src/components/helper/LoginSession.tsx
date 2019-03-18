@@ -3,7 +3,9 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { auth, Unsubscribe, User } from "firebase/app";
 
-import { info } from "../../logger";
+import { getLogger } from "../../logger";
+
+const logger = getLogger("login-session");
 
 interface ILoginSessionContext {
   checkedLoginState: boolean;
@@ -32,10 +34,10 @@ class LoginSession extends React.Component<RouteComponentProps, IState> {
 
     this.unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
-        info(`user is signed in. uid: ${user.uid}`);
+        logger.info(`user is signed in. uid: ${user.uid}`);
         this.handleSignIn(user);
       } else {
-        info(`user is signed out.`);
+        logger.info(`user is signed out.`);
         this.handleSignOut();
       }
     });

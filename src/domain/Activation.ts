@@ -10,7 +10,9 @@ import {
 } from "./ActivationCode";
 import OmakeError from "./OmakeError";
 import { User } from "./User";
-import * as logger from "../logger";
+import { getLogger } from "../logger";
+
+const logger = getLogger("activation");
 
 interface ActivationDocument extends DocumentData {
   /**

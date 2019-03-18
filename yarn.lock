@@ -159,6 +159,32 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@browser-bunyan/console-formatted-stream@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/console-formatted-stream/-/console-formatted-stream-1.5.0.tgz#8d5443fe1be59d023753525eb217e008c3a1050a"
+  integrity sha512-W6XF3tMyzA4sE/fnL2J9cpcD2G9xhlrB2yBA7xMmRkKIKb/n/QIpC7hDLbNZQXq1/fuTP0X3R+e3cFGK6z4b1g==
+  dependencies:
+    "@browser-bunyan/levels" "^1.3.0"
+
+"@browser-bunyan/console-plain-stream@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/console-plain-stream/-/console-plain-stream-1.4.0.tgz#6f91c9a23eaf82b059a70bd54dba87e13fffd54d"
+  integrity sha512-/8fCyMZyEN3jWToHzBsM3zf6WRUp1b4W87l298gjqPg98uws1mwVMY4Rfy4HUe/i/aDCYzDCQlxVNYXmoFzTUA==
+  dependencies:
+    "@browser-bunyan/levels" "^1.3.0"
+
+"@browser-bunyan/console-raw-stream@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/console-raw-stream/-/console-raw-stream-1.3.0.tgz#ccf24b56f2265058297c6517fbecea84ebb7818c"
+  integrity sha1-zPJLVvImUFgpfGUX++zqhOu3gYw=
+  dependencies:
+    "@browser-bunyan/levels" "^1.3.0"
+
+"@browser-bunyan/levels@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@browser-bunyan/levels/-/levels-1.3.0.tgz#a052303ae5d1a1f9b63eeb3a94495a2f429f4831"
+  integrity sha1-oFIwOuXRofm2Pus6lElaL0KfSDE=
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.3.tgz#099139eaec7ebf07a27c1786a3ff64f39464d2ef"
@@ -727,6 +753,21 @@
   integrity sha512-a2+YeUjPkztKJu5aIF2yArYFQQp8d51wZ7DavSHjFuY1mqVgidGyzEQ41JIVNy82fXj8yPgy2vJmfIywgESW6w==
   dependencies:
     "@types/connect" "*"
+    "@types/node" "*"
+
+"@types/browser-bunyan@^0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@types/browser-bunyan/-/browser-bunyan-0.4.5.tgz#c78754b12746c164e6cd230c1c8f94d7c51b52d9"
+  integrity sha512-CTPML9phl+F/dmWEcaPU6Db9PEGyo1n04JzWRc2NXenYganwPOWjjLi2hJf4Tv9SMajs1snXtyofFqwuuJA9fA==
+  dependencies:
+    "@types/bunyan" "*"
+    "@types/node" "*"
+
+"@types/bunyan@*":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@types/bunyan/-/bunyan-1.8.6.tgz#6527641cca30bedec5feb9ab527b7803b8000582"
+  integrity sha512-YiozPOOsS6bIuz31ilYqR5SlLif4TBWsousN2aCWLi5233nZSX19tFbcQUPdR7xJ8ypPyxkCGNxg0CIV5n9qxQ==
+  dependencies:
     "@types/node" "*"
 
 "@types/caseless@*":
@@ -1675,6 +1716,16 @@ brorand@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
   integrity sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=
+
+browser-bunyan@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/browser-bunyan/-/browser-bunyan-1.5.0.tgz#278cefae664655831f727bdc1142e997087d4d95"
+  integrity sha512-X/RLA/bJAVj6jp6UeAvvukKAKR+ALiP3aKK8aJ5z5CEZ3z0sFEhZXlhjS0kqsd7flsKSKkHKVBim9eIhHELvmA==
+  dependencies:
+    "@browser-bunyan/console-formatted-stream" "^1.5.0"
+    "@browser-bunyan/console-plain-stream" "^1.4.0"
+    "@browser-bunyan/console-raw-stream" "^1.3.0"
+    "@browser-bunyan/levels" "^1.3.0"
 
 browser-process-hrtime@^0.1.2:
   version "0.1.3"

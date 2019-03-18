@@ -10,7 +10,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { LoginSessionContext } from "../helper/LoginSession";
 import { Activation } from "../../domain/Activation";
-import * as logger from "../../logger";
+import { getLogger } from "../../logger";
+
+const logger = getLogger("activation");
 
 const Root = styled.div`
   display: flex;
@@ -46,7 +48,7 @@ interface StartActivateProps {
 const StartActivate: React.FC<StartActivateProps> = props => {
   const { code } = props;
   const onCLicked = () => {
-    logger.log("try activating");
+    logger.debug("try activating");
 
     Activation.activate(code).catch(e => {
       logger.error(e);

@@ -1,46 +1,35 @@
-/**
- * console.log
- *
- * @param message
- * @param optionalParams
- * @deprecated
- */
-function log(message?: any, ...optionalParams: any[]): void {
-  // tslint:disable:no-console
-  console.log(message, ...optionalParams);
+// tslint:disable:no-var-requires
+import { createLogger, INFO, DEBUG, stdSerializers } from "browser-bunyan";
+const {
+  ConsoleFormattedStream
+} = require("@browser-bunyan/console-formatted-stream");
+
+const l = createLogger({
+  name: "myLogger",
+  streams: [
+    {
+      level: INFO, // or use the string 'info'
+      stream: new ConsoleFormattedStream()
+    }
+  ],
+  serializers: stdSerializers,
+  src: true
+});
+
+const logLevel = process.env.NODE_ENV === "production" ? INFO : DEBUG;
+
+function getLogger(name: string) {
+  return createLogger({
+    name,
+    streams: [
+      {
+        level: logLevel,
+        stream: new ConsoleFormattedStream()
+      }
+    ],
+    serializers: stdSerializers,
+    src: true
+  });
 }
 
-/**
- * console.log
- *
- * @param message
- * @param optionalParams
- */
-function debug(message?: any, ...optionalParams: any[]): void {
-  // tslint:disable:no-console
-  console.log(message, ...optionalParams);
-}
-
-/**
- * console.info
- *
- * @param message
- * @param optionalParams
- */
-function info(message?: any, ...optionalParams: any[]): void {
-  // tslint:disable:no-console
-  console.info(message, ...optionalParams);
-}
-
-/**
- * console.error
- *
- * @param message
- * @param optionalParams
- */
-function error(message?: any, ...optionalParams: any[]): void {
-  // tslint:disable:no-console
-  console.error(message, ...optionalParams);
-}
-
-export { debug, log, info, error };
+export { getLogger };
