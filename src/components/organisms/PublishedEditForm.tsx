@@ -10,6 +10,7 @@ import { useDropzone } from "react-dropzone";
 
 import { getLogger } from "../../logger";
 import QrCodeView from "../molecules/QrCodeView";
+import OmakeItemList from "./OmakeItemList";
 
 const logger = getLogger("drawer");
 const Root = styled.div``;
@@ -149,44 +150,7 @@ const PublishedEditForm: React.FunctionComponent<
       </Grid>
 
       <Grid container={true} justify={"space-between"} alignItems="center">
-        <Paper>
-          <Grid container={true} justify={"space-between"} alignItems="center">
-            <Grid item={true} xs={true}>
-              <StyledTextField
-                label="Omake Item Name"
-                margin="normal"
-                fullWidth={true}
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item={true} xs={2}>
-              <Button>Edit</Button>
-            </Grid>
-          </Grid>
-          <Grid container={true} justify={"space-between"} alignItems="center">
-            <Grid item={true} xs={true}>
-              <StyledTextField
-                label="Omake Item Description"
-                margin="normal"
-                fullWidth={true}
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item={true} xs={2}>
-              <Button>Edit</Button>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Grid>
-
-      <Grid container={true} justify={"space-between"} alignItems="center">
-        <Paper>
-          <Button>追加</Button>
-        </Paper>
+        <OmakeItemList items={[{ key: 1 }, { key: 2 }, { key: 3 }]} />
       </Grid>
     </Root>
   );
