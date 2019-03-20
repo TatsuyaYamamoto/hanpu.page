@@ -128,66 +128,111 @@ const OmakeItemListItem: React.FC = () => {
   };
 
   return (
-    <OmakeItemListItemRoot>
-      <ExpansionPanel expanded={isExpanding} onChange={onHandleExpand}>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          {isEditing ? (
-            <TextField value={"title is here"} />
-          ) : (
-            <InputBase value={"title is here"} readOnly={true} />
-          )}
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Grid container={true} alignItems={"center"}>
-            <Grid item={true}>
-              {isEditing ? (
-                <TextField
-                  id="standard-select-currency"
-                  select={true}
-                  className={classes.textField}
-                  value={`wav_24bit`}
-                  SelectProps={{
-                    MenuProps: {
-                      className: classes.menu
-                    }
-                  }}
-                  margin="normal"
-                >
-                  {fileType.map(({ value, label }) => (
-                    <MenuItem key={value} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              ) : (
-                <InputBase value={"wav_24bit"} readOnly={true} />
-              )}
-            </Grid>
-            <Grid item={true}>
-              {isEditing ? (
-                <TextField value={"temp_file_path"} />
-              ) : (
-                <InputBase value={"temp_file_path"} readOnly={true} />
-              )}
-            </Grid>
+    <ExpansionPanel expanded={isExpanding} onChange={onHandleExpand}>
+      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        {isEditing ? (
+          <TextField value={"title is here"} />
+        ) : (
+          <InputBase value={"title is here"} readOnly={true} />
+        )}
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <Grid container={true} alignItems={"center"}>
+          <Grid item={true}>
+            {isEditing ? (
+              <TextField
+                id="standard-select-currency"
+                select={true}
+                className={classes.textField}
+                value={`wav_24bit`}
+                SelectProps={{
+                  MenuProps: {
+                    className: classes.menu
+                  }
+                }}
+                margin="normal"
+              >
+                {fileType.map(({ value, label }) => (
+                  <MenuItem key={value} value={value}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            ) : (
+              <InputBase value={"wav_24bit"} readOnly={true} />
+            )}
           </Grid>
-        </ExpansionPanelDetails>
-        <Divider />
-        <ExpansionPanelActions>
-          {isEditing ? (
-            <React.Fragment>
-              <CancelButton onClick={onCancelClicked} />
-              <SaveButton />
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <EditButton onClick={onEditClicked} />
-              <DeleteButton />
-            </React.Fragment>
-          )}
-        </ExpansionPanelActions>
-      </ExpansionPanel>
-    </OmakeItemListItemRoot>
+          <Grid item={true}>
+            {isEditing ? (
+              <TextField value={"temp_file_path"} />
+            ) : (
+              <InputBase value={"temp_file_path"} readOnly={true} />
+            )}
+          </Grid>
+        </Grid>
+      </ExpansionPanelDetails>
+      <Divider />
+      <ExpansionPanelActions>
+        {isEditing ? (
+          <React.Fragment>
+            <CancelButton onClick={onCancelClicked} />
+            <SaveButton />
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <EditButton onClick={onEditClicked} />
+            <DeleteButton />
+          </React.Fragment>
+        )}
+      </ExpansionPanelActions>
+    </ExpansionPanel>
+  );
+};
+
+const TryAddingItem = (props: any) => {
+  const { onCanceled } = props;
+  const classes = useStyles();
+
+  return (
+    <ExpansionPanel expanded={true}>
+      <ExpansionPanelSummary>
+        <TextField value={"title is here"} />
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <Grid container={true} alignItems={"center"}>
+          <Grid item={true}>
+            <TextField
+              id="standard-select-currency"
+              select={true}
+              className={classes.textField}
+              value={`wav_24bit`}
+              SelectProps={{
+                MenuProps: {
+                  className: classes.menu
+                }
+              }}
+              margin="normal"
+            >
+              {fileType.map(({ value, label }) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item={true}>
+            <TextField value={"temp_file_path"} />
+          </Grid>
+        </Grid>
+      </ExpansionPanelDetails>
+      <Divider />
+      <ExpansionPanelActions>
+        <React.Fragment>
+          <CancelButton onClick={onCanceled} />
+          <SaveButton />
+        </React.Fragment>
+      </ExpansionPanelActions>
+    </ExpansionPanel>
   );
 };
 
@@ -200,12 +245,26 @@ interface OmakeItemListProps {
 const OmakeItemList: React.FC<OmakeItemListProps> = props => {
   const { items, ...others } = props;
 
+  const [isTryAdding, setTryAdding] = React.useState(false);
+
+  const onAddClicked = () => {
+    setTryAdding(true);
+  };
+
+  const onCancelClicked = () => {
+    setTryAdding(false);
+  };
+
   return (
     <OmakeItemListRoot {...others}>
-      <AddItemButton />
-      {items.map(({ key }) => (
-        <OmakeItemListItem key={key} />
-      ))}
+      <AddItemButton onClick={onAddClicked} />
+      <OmakeItemListItemRoot>
+        {isTryAdding && <TryAddingItem onCanceled={onCancelClicked} />}
+
+        {items.map(({ key }) => (
+          <OmakeItemListItem key={key} />
+        ))}
+      </OmakeItemListItemRoot>
     </OmakeItemListRoot>
   );
 };
