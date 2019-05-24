@@ -7,16 +7,20 @@ const plugins = [
 ];
 
 module.exports = {
-  entry: "./app/index.tsx",
+  target: "web",
+
+  mode: "development",
+
+  entry: "./app/index.client.tsx",
+
   output: {
     filename: "bundle.js",
-    path: __dirname + "/dist"
+    path: __dirname + "/dist/public"
   },
 
   devtool: "source-map",
 
   resolve: {
-    // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: [".ts", ".tsx", ".js", ".json"]
   },
 
