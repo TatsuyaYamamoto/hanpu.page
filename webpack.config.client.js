@@ -25,9 +25,11 @@ module.exports = {
   },
 
   module: {
-    rules: [
-      { test: /\.tsx?$/, loader: "ts-loader" }
-    ]
+    rules: [{ test: /\.tsx?$/, loader: "ts-loader" }]
+  },
+
+  devServer: {
+    historyApiFallback: true
   },
 
   plugins
