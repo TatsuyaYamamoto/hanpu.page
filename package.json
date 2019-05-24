@@ -6,5 +6,22 @@
   "repository": "https://github.com/TatsuyaYamamoto/dl-code.git",
   "author": "TatsuyaYamamoto <yamamoto.tatsuya@fujixerox.co.jp>",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.18",
+    "@types/react-dom": "^16.8.4",
+    "html-webpack-plugin": "^3.2.0",
+    "ts-loader": "^6.0.1",
+    "typescript": "^3.4.5",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.4.1"
+  }
 }
