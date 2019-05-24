@@ -1,5 +1,11 @@
 import * as React from "react";
 
-const App = () => <div>App</div>;
+import Routing from "./routing";
+
+const App = () => (
+  <>
+    <Routing />
+  </>
+);
 
 export default App;

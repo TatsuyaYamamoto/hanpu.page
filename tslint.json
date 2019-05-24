@@ -9,6 +9,14 @@
   "rules": {
     "prettier": true,
     // This rule is here for now because of https://github.com/palantir/tslint-react/issues/120
-    "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"]
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-pascal-case"
+    ],
+    "import-name": false,
+    "ordered-imports": false,
+    "object-literal-sort-keys": false
   }
 }
