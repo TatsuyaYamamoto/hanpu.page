@@ -1,12 +1,9 @@
 import * as React from "react";
 
-import { auth } from "firebase/app";
+import { FirebaseAuthSessionContext } from "../utils/FirebaseAuthSession";
 
 const RootPage = () => {
-  const loginWithTwitter = () => {
-    const provider = new auth.TwitterAuthProvider();
-    auth().signInWithRedirect(provider);
-  };
+  const { loginWithTwitter } = React.useContext(FirebaseAuthSessionContext);
 
   return (
     <>
