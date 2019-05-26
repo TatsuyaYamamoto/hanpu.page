@@ -1,7 +1,9 @@
 import * as React from "react";
 
 import "firebase/auth";
-import { initializeApp, auth } from "firebase/app";
+import "firebase/firestore";
+import { initializeApp } from "firebase/app";
+
 import FirebaseAuthSession from "./components/utils/FirebaseAuthSession";
 
 initializeApp({
