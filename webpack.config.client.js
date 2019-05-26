@@ -2,7 +2,8 @@ const HtmllWebpackPlugin = require("html-webpack-plugin");
 
 const plugins = [
   new HtmllWebpackPlugin({
-    template: "./app/index.ejs"
+    template: "./app/index.ejs",
+    hash: true
   })
 ];
 
@@ -15,6 +16,7 @@ module.exports = {
 
   output: {
     filename: "bundle.js",
+    publicPath: "/",
     path: __dirname + "/dist/public"
   },
 
