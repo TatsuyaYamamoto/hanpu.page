@@ -5,6 +5,7 @@ import "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
 import FirebaseAuthSession from "./components/utils/FirebaseAuthSession";
+import Downloader from "./components/utils/Downloader";
 
 initializeApp({
   apiKey: "AIzaSyDkyIH-immHfoQY59kbEfWi9T1npPTUv0k",
@@ -21,7 +22,9 @@ import Routing from "./routing";
 const App = () => (
   <>
     <FirebaseAuthSession>
-      <Routing />
+      <Downloader>
+        <Routing />
+      </Downloader>
     </FirebaseAuthSession>
   </>
 );
