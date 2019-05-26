@@ -6,6 +6,7 @@ import Download from "./components/pages/download/IndexPage";
 import PublishIndex from "./components/pages/publish/IndexPage";
 import NewProduct from "./components/pages/publish/NewProduct";
 import ProductList from "./components/pages/publish/ProductListPage";
+import ProductDetail from "./components/pages/publish/ProductDetailPage";
 
 export default () => (
   <Router>
@@ -15,6 +16,11 @@ export default () => (
       <Route exact={true} path={`/publish`} component={PublishIndex} />
       <Route exact={true} path={`/publish/new`} component={NewProduct} />
       <Route exact={true} path={`/publish/products`} component={ProductList} />
+      <Route
+        exact={true}
+        path={`/publish/products/:id`}
+        component={ProductDetail}
+      />
     </Switch>
   </Router>
 );

@@ -1,9 +1,11 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router-dom";
+
 import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 
 import { Product } from "../../../domains/Product";
 
-const ProductListPage = () => {
+const ProductListPage: React.FC<RouteComponentProps> = props => {
   const { logout } = React.useContext(FirebaseAuthSessionContext);
   const [products, setProducts] = React.useState<Product[]>([]);
 
@@ -19,13 +21,17 @@ const ProductListPage = () => {
     }, 1000);
   }, []);
 
+  const onSelected = (id: string) => () => {
+    props.history.push(`/publish/products/${id}`);
+  };
+
   return (
     <>
-      New Product!
+      Product List!
       <ul>
         {products.map(p => {
           return (
-            <li key={p.name}>
+            <li key={p.name} onClick={onSelected(p.id)}>
               name: <div>{p.name}</div>
               desc: <div>{p.description}</div>
               created: <div>{p.createdAt.toDateString()}</div>

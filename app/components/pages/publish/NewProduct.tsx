@@ -6,9 +6,9 @@ import { Product } from "../../../domains/Product";
 const NewProductPage = () => {
   const { logout } = React.useContext(FirebaseAuthSessionContext);
   const submit = () => {
-    const name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-    const privateNote = document.getElementById("privateNote").value;
+    const name = (document.getElementById("name") as any).value;
+    const description = (document.getElementById("description") as any).value;
+    const privateNote = (document.getElementById("privateNote") as any).value;
 
     Product.createNew({
       name,

@@ -29,6 +29,8 @@ class Product implements ProductDocument {
       .where("ownerUid", "==", owner.uid)
       .get();
 
+    const owns: { [id: string]: Product } = {};
+
     return ownProductsSnap.docs.map(doc => {
       const {
         name,
@@ -39,6 +41,7 @@ class Product implements ProductDocument {
       } = doc.data() as ProductDocument;
 
       return new Product(
+        doc.id,
         name,
         description,
         privateNote,
@@ -46,6 +49,32 @@ class Product implements ProductDocument {
         (createdAt as Timestamp).toDate()
       );
     });
+  }
+
+  public static async getById(id: string): Promise<Product | null> {
+    const snap = await Product.getColRef()
+      .doc(id)
+      .get();
+
+    if (!snap.exists) {
+      return null;
+    }
+    const {
+      name,
+      description,
+      privateNote,
+      ownerUid,
+      createdAt
+    } = snap.data() as ProductDocument;
+
+    return new Product(
+      snap.id,
+      name,
+      description,
+      privateNote,
+      ownerUid,
+      (createdAt as Timestamp).toDate()
+    );
   }
 
   public static async createNew(params: {
@@ -72,6 +101,10 @@ class Product implements ProductDocument {
   }
 
   public constructor(
+    // metadata
+    readonly id: string,
+
+    // document fields
     readonly name: string,
     readonly description: string,
     readonly privateNote: string,
