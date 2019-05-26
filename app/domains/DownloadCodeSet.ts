@@ -1,6 +1,9 @@
 import { firestore } from "firebase/app";
 import DocumentData = firestore.DocumentData;
 import DocumentReference = firestore.DocumentReference;
+import Timestamp = firestore.Timestamp;
+
+import { Product, ProductDocument } from "./Product";
 
 interface DownloadCodeSetDocument extends DocumentData {
   productRef: DocumentReference;
@@ -16,10 +19,36 @@ class DownloadCodeSet {
     return firestore().collection(`downloadCodeSets`);
   }
 
-  public static async isValid(code: string) {
+  public static async verify(code: string): Promise<Product | null> {
     const snap = await DownloadCodeSet.getColRef()
-      .where(`codes/${code}`, "==", true)
+      .where(`codes.${code}`, "==", true)
       .get();
+
+    if (snap.empty) {
+      return null;
+    }
+
+    const { productRef } = snap.docs[0].data() as DownloadCodeSetDocument;
+    const productSnap = await productRef.get();
+
+    if (!productSnap.exists) {
+      // TODO
+      // tslint:disable:no-console
+      console.error("fatal error!");
+      return null;
+    }
+
+    const productDoc = productSnap.data() as ProductDocument;
+    const { name, description, privateNote, ownerUid, createdAt } = productDoc;
+
+    return new Product(
+      productSnap.id,
+      name,
+      description,
+      privateNote,
+      ownerUid,
+      (createdAt as Timestamp).toDate()
+    );
   }
 
   /**

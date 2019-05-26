@@ -12,7 +12,7 @@ export default () => (
   <Router>
     <Switch>
       <Route exact={true} path={`/`} component={Root} />
-      <Route exact={true} path={`/download`} component={Download} />
+      <Route exact={true} path={`/download/:code?`} component={Download} />
       <Route exact={true} path={`/publish`} component={PublishIndex} />
       <Route exact={true} path={`/publish/new`} component={NewProduct} />
       <Route exact={true} path={`/publish/products`} component={ProductList} />
