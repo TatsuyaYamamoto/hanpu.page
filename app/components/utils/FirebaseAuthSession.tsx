@@ -40,7 +40,7 @@ const FirebaseAuthSession: React.FC = props => {
       setUser(changedUser);
 
       // tslint:disable-next-line:no-console
-      console.log(`${!!user ? "logged-in" : "logged-out"}`, changedUser);
+      console.log(`${!!changedUser ? "logged-in" : "logged-out"}`, changedUser);
     });
 
     return function cleanup() {
