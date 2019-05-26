@@ -16,6 +16,10 @@ class Product implements ProductDocument {
     return firestore().collection(`products`);
   }
 
+  public static getDocRef(id: string) {
+    return Product.getColRef().doc(id);
+  }
+
   public static async getOwns(): Promise<Product[]> {
     const owner = auth().currentUser;
     if (!owner) {

@@ -18,6 +18,7 @@
     "import-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
-    "interface-name": false
+    "interface-name": false,
+    "object-shorthand-properties-first": false
   }
 }

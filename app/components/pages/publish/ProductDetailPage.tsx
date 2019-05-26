@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 
 import { Product } from "../../../domains/Product";
+import { DownloadCodeSet } from "../../../domains/DownloadCodeSet";
 
 const ProductListPage: React.FC<
   RouteComponentProps<{ id: string }>
@@ -21,6 +22,13 @@ const ProductListPage: React.FC<
     }, 1000);
   }, []);
 
+  const createDlCodeSet = () => {
+    const ref = Product.getDocRef(product.id);
+    DownloadCodeSet.create(ref, 2).then(set => {
+      //
+    });
+  };
+
   return (
     <>
       Product ID: {productId}
@@ -31,6 +39,7 @@ const ProductListPage: React.FC<
           created: <div>{product.createdAt.toDateString()}</div>
         </p>
       )}
+      <button onClick={createDlCodeSet}>Create DLCode Set</button>
       <button onClick={logout}>logout</button>
     </>
   );
