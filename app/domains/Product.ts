@@ -3,10 +3,13 @@ import DocumentData = firestore.DocumentData;
 import DocumentReference = firestore.DocumentReference;
 import Timestamp = firestore.Timestamp;
 
+import { ProductFile } from "./ProductFile";
+
 interface ProductDocument extends DocumentData {
   name: string;
   description: string;
   privateNote: string;
+  fileRefs: DocumentReference[];
   ownerUid: string;
   createdAt: Date | firestore.FieldValue;
 }
@@ -41,6 +44,7 @@ class Product implements ProductDocument {
         description,
         privateNote,
         ownerUid,
+        fileRefs,
         createdAt
       } = doc.data() as ProductDocument;
 
@@ -50,6 +54,7 @@ class Product implements ProductDocument {
         description,
         privateNote,
         ownerUid,
+        fileRefs,
         (createdAt as Timestamp).toDate()
       );
     });
@@ -68,6 +73,7 @@ class Product implements ProductDocument {
       description,
       privateNote,
       ownerUid,
+      fileRefs,
       createdAt
     } = snap.data() as ProductDocument;
 
@@ -77,6 +83,7 @@ class Product implements ProductDocument {
       description,
       privateNote,
       ownerUid,
+      fileRefs,
       (createdAt as Timestamp).toDate()
     );
   }
@@ -98,6 +105,7 @@ class Product implements ProductDocument {
       description,
       privateNote,
       ownerUid: owner.uid,
+      fileRefs: [],
       createdAt: firestore.FieldValue.serverTimestamp()
     };
 
@@ -113,8 +121,42 @@ class Product implements ProductDocument {
     readonly description: string,
     readonly privateNote: string,
     readonly ownerUid: string,
+    readonly fileRefs: DocumentReference[],
     readonly createdAt: Date
   ) {}
+
+  public get ref() {
+    return Product.getDocRef(this.id);
+  }
+
+  public getFiles = async (): Promise<ProductFile[]> => {
+    const allProductFileGetPromises = this.fileRefs.map(ref =>
+      ProductFile.getById(ref.id)
+    );
+
+    return await Promise.all(allProductFileGetPromises);
+  };
+
+  public addProductFile = async (
+    productFile: ProductFile
+  ): Promise<Product> => {
+    const docRef = Product.getDocRef(this.ref.id);
+
+    const updateDoc: Partial<Product> = {
+      fileRefs: [...this.fileRefs, productFile.ref]
+    };
+    await docRef.update(updateDoc);
+
+    return new Product(
+      this.id,
+      this.name,
+      this.description,
+      this.privateNote,
+      this.ownerUid,
+      updateDoc.fileRefs,
+      this.createdAt
+    );
+  };
 }
 
 export { Product, ProductDocument };

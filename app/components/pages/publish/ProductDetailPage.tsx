@@ -1,5 +1,6 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
+import ProductFileEditTable from "../../organisms/ProductFileEditTable";
 
 import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 
@@ -32,15 +33,18 @@ const ProductListPage: React.FC<
   return (
     <>
       Product ID: {productId}
-      {product && (
-        <p>
-          name: <div>{product.name}</div>
-          desc: <div>{product.description}</div>
-          created: <div>{product.createdAt.toDateString()}</div>
-        </p>
-      )}
       <button onClick={createDlCodeSet}>Create DLCode Set</button>
       <button onClick={logout}>logout</button>
+      {product && (
+        <>
+          <p>
+            name: <div>{product.name}</div>
+            desc: <div>{product.description}</div>
+            created: <div>{product.createdAt.toDateString()}</div>
+          </p>
+          <ProductFileEditTable product={product} />
+        </>
+      )}
     </>
   );
 };

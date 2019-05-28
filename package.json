@@ -41,6 +41,7 @@
     "firebase": "^6.0.4",
     "firebase-admin": "^8.0.0",
     "firebase-functions": "^2.3.1",
+    "material-table": "^1.36.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0"

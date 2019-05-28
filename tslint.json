@@ -19,6 +19,7 @@
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "interface-name": false,
-    "object-shorthand-properties-first": false
+    "object-shorthand-properties-first": false,
+    "array-type": false
   }
 }

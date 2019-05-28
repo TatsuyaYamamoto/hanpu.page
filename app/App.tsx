@@ -2,6 +2,7 @@ import * as React from "react";
 
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/storage";
 import { initializeApp } from "firebase/app";
 
 import FirebaseAuthSession from "./components/utils/FirebaseAuthSession";

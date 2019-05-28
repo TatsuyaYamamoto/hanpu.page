@@ -39,7 +39,14 @@ class DownloadCodeSet {
     }
 
     const productDoc = productSnap.data() as ProductDocument;
-    const { name, description, privateNote, ownerUid, createdAt } = productDoc;
+    const {
+      name,
+      description,
+      privateNote,
+      ownerUid,
+      fileRefs,
+      createdAt
+    } = productDoc;
 
     return new Product(
       productSnap.id,
@@ -47,6 +54,7 @@ class DownloadCodeSet {
       description,
       privateNote,
       ownerUid,
+      fileRefs,
       (createdAt as Timestamp).toDate()
     );
   }
