@@ -6,11 +6,10 @@ import { firestore, storage } from "firebase/app";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
 
-import { ProductFile } from "../../domains/ProductFile";
-import { Product } from "../../domains/Product";
+import { Product, ProductFile } from "../../domains/Product";
 
 interface InnerTableProps {
-  productFiles: ProductFile[];
+  productFiles: { [id: string]: ProductFile };
   onAddButtonClicked: () => void;
   onDeleteRequested: (productFileId: string, resolve: () => void) => void;
 }
@@ -20,9 +19,9 @@ const InnerTable: React.FC<InnerTableProps> = ({
   onAddButtonClicked,
   onDeleteRequested
 }) => {
-  const data = productFiles.map(f => ({
-    id: f.id,
-    displayFileName: f.name,
+  const data = Object.keys(productFiles).map(id => ({
+    id,
+    displayFileName: productFiles[id].name,
     originalFileName: "hogehoge.mp3"
   }));
 
@@ -104,14 +103,16 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   product
 }) => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
-  const [productFiles, setProductFiles] = React.useState<ProductFile[]>([]);
+  const [productFiles, setProductFiles] = React.useState<{
+    [id: string]: ProductFile;
+  }>({});
 
   const handleProductFileAddDialog = () => {
     setAddDialogOpen(!addDialogOpen);
   };
 
   const onProductFileAdded = async (displayFileName: string, file: File) => {
-    const task = ProductFile.upload(file);
+    const task = product.uploadProductFileToStorage(file);
 
     task.on(
       storage.TaskEvent.STATE_CHANGED,
@@ -124,31 +125,27 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
       },
       async () => {
         const uploadedRef = task.snapshot.ref;
-        const newProductFile = await ProductFile.create(
+        const updatedProduct = await product.addProductFile(
           displayFileName,
-          product.ref,
           uploadedRef
         );
-        const updatedProduct = await product.addProductFile(newProductFile);
 
-        updatedProduct.getFiles().then(files => setProductFiles(files));
+        setProductFiles(updatedProduct.productFiles);
         handleProductFileAddDialog();
       }
     );
   };
 
   const onProductFileDeleted = async (id: string, resolve: () => void) => {
-    const updatedProduct = await product.deleteFile(id);
+    const updatedProduct = await product.deleteProductFile(id);
 
-    updatedProduct.getFiles().then(files => setProductFiles(files));
+    setProductFiles(updatedProduct.productFiles);
 
     resolve();
   };
 
   React.useEffect(() => {
-    product.getFiles().then(files => {
-      setProductFiles(files);
-    });
+    setProductFiles(product.productFiles);
   }, []);
 
   return (

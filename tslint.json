@@ -20,6 +20,7 @@
     "object-literal-sort-keys": false,
     "interface-name": false,
     "object-shorthand-properties-first": false,
-    "array-type": false
+    "array-type": false,
+    "member-ordering": false
   }
 }

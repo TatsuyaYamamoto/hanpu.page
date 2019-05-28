@@ -5,7 +5,7 @@ import Timestamp = firestore.Timestamp;
 
 import { Product, ProductDocument } from "./Product";
 
-interface DownloadCodeSetDocument extends DocumentData {
+interface DownloadCodeSetDocument {
   productRef: DocumentReference;
   codes: {
     [value: string]: boolean;
@@ -44,7 +44,7 @@ class DownloadCodeSet {
       description,
       privateNote,
       ownerUid,
-      fileRefs,
+      productFiles,
       createdAt
     } = productDoc;
 
@@ -54,7 +54,7 @@ class DownloadCodeSet {
       description,
       privateNote,
       ownerUid,
-      fileRefs,
+      productFiles,
       (createdAt as Timestamp).toDate()
     );
   }

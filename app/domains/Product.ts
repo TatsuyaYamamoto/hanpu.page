@@ -1,15 +1,24 @@
-import { firestore, auth } from "firebase/app";
-import DocumentData = firestore.DocumentData;
-import DocumentReference = firestore.DocumentReference;
+import { firestore, storage, auth } from "firebase/app";
+import StorageReference = storage.Reference;
 import Timestamp = firestore.Timestamp;
 
-import { ProductFile } from "./ProductFile";
+// import { ProductFile } from "./ProductFile";
 
-interface ProductDocument extends DocumentData {
+interface ProductFile {
+  name: string;
+  /**
+   * @see storage.Reference#toString()
+   */
+  storageUrl: string;
+}
+
+interface ProductDocument {
   name: string;
   description: string;
   privateNote: string;
-  fileRefs: DocumentReference[];
+  productFiles: {
+    [id: string]: ProductFile;
+  };
   ownerUid: string;
   createdAt: Date | firestore.FieldValue;
 }
@@ -21,6 +30,10 @@ class Product implements ProductDocument {
 
   public static getDocRef(id: string) {
     return Product.getColRef().doc(id);
+  }
+
+  public static getProductFileStorageRef() {
+    return storage().ref(`productFiles`);
   }
 
   public static async getOwns(): Promise<Product[]> {
@@ -38,23 +51,23 @@ class Product implements ProductDocument {
 
     const owns: { [id: string]: Product } = {};
 
-    return ownProductsSnap.docs.map(doc => {
+    return ownProductsSnap.docs.map(docSnap => {
       const {
         name,
         description,
         privateNote,
         ownerUid,
-        fileRefs,
+        productFiles,
         createdAt
-      } = doc.data() as ProductDocument;
+      } = docSnap.data() as ProductDocument;
 
       return new Product(
-        doc.id,
+        docSnap.id,
         name,
         description,
         privateNote,
         ownerUid,
-        fileRefs,
+        productFiles,
         (createdAt as Timestamp).toDate()
       );
     });
@@ -73,7 +86,7 @@ class Product implements ProductDocument {
       description,
       privateNote,
       ownerUid,
-      fileRefs,
+      productFiles,
       createdAt
     } = snap.data() as ProductDocument;
 
@@ -83,7 +96,7 @@ class Product implements ProductDocument {
       description,
       privateNote,
       ownerUid,
-      fileRefs,
+      productFiles,
       (createdAt as Timestamp).toDate()
     );
   }
@@ -105,7 +118,7 @@ class Product implements ProductDocument {
       description,
       privateNote,
       ownerUid: owner.uid,
-      fileRefs: [],
+      productFiles: {},
       createdAt: firestore.FieldValue.serverTimestamp()
     };
 
@@ -121,7 +134,7 @@ class Product implements ProductDocument {
     readonly description: string,
     readonly privateNote: string,
     readonly ownerUid: string,
-    readonly fileRefs: DocumentReference[],
+    readonly productFiles: { [id: string]: ProductFile },
     readonly createdAt: Date
   ) {}
 
@@ -129,23 +142,22 @@ class Product implements ProductDocument {
     return Product.getDocRef(this.id);
   }
 
-  public getFiles = async (): Promise<ProductFile[]> => {
-    const allProductFileGetPromises = this.fileRefs.map(ref =>
-      ProductFile.getById(ref.id)
-    );
-
-    return await Promise.all(allProductFileGetPromises);
-  };
-
   public addProductFile = async (
-    productFile: ProductFile
+    name: string,
+    storageRef: StorageReference
   ): Promise<Product> => {
     const docRef = Product.getDocRef(this.ref.id);
-
-    const updateDoc: Partial<Product> = {
-      fileRefs: [...this.fileRefs, productFile.ref]
+    const newProductFileId = Product.getAutoNewId();
+    const partialNewDoc: Partial<ProductDocument> = {
+      productFiles: {
+        ...this.productFiles,
+        [newProductFileId]: {
+          name,
+          storageUrl: storageRef.toString()
+        }
+      }
     };
-    await docRef.update(updateDoc);
+    await docRef.update(partialNewDoc);
 
     return new Product(
       this.id,
@@ -153,23 +165,24 @@ class Product implements ProductDocument {
       this.description,
       this.privateNote,
       this.ownerUid,
-      updateDoc.fileRefs,
+      partialNewDoc.productFiles,
       this.createdAt
     );
   };
 
-  public deleteFile = async (deleteTargetId: string) => {
+  public deleteProductFile = async (deleteTargetId: string) => {
     const docRef = Product.getDocRef(this.ref.id);
-
-    const deleteProductFile = await ProductFile.getById(deleteTargetId);
-    await deleteProductFile.deleteFile();
-
-    const updateDoc: Partial<Product> = {
-      fileRefs: this.fileRefs.filter(f => {
-        return f.id !== deleteTargetId;
-      })
+    const filteredFiles = {
+      ...this.productFiles
     };
-    await docRef.update(updateDoc);
+    delete filteredFiles[deleteTargetId];
+
+    const deleteDoc: Partial<ProductDocument> = {
+      productFiles: filteredFiles
+    };
+    await docRef.update(deleteDoc);
+
+    await this.deleteProductFileFromStorage(deleteTargetId);
 
     return new Product(
       this.id,
@@ -177,10 +190,52 @@ class Product implements ProductDocument {
       this.description,
       this.privateNote,
       this.ownerUid,
-      updateDoc.fileRefs,
+      filteredFiles,
       this.createdAt
     );
   };
+
+  public uploadProductFileToStorage = (file: File): storage.UploadTask => {
+    const originalFileName = file.name;
+    const extension = originalFileName
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+    // TODO replace secure random id.
+    const id = Math.random()
+      .toString(16)
+      .substring(2);
+
+    const ref = Product.getProductFileStorageRef().child(`${id}.${extension}`);
+    return ref.put(file, {});
+  };
+
+  public deleteProductFileFromStorage = async (
+    deleteTargetId: string
+  ): Promise<void> => {
+    const deleteTargetProductFile = this.productFiles[deleteTargetId];
+
+    if (!deleteTargetProductFile) {
+      // tslint:disable-next-line:no-console
+      console.error(`target product file doesn't exist. ID: ${deleteTargetId}`);
+      return;
+    }
+
+    const targetRef = storage().refFromURL(deleteTargetProductFile.storageUrl);
+    await targetRef.delete();
+  };
+
+  /**
+   * Get new unique id with logic of `AutoId.newId()`
+   *
+   * @link https://github.com/firebase/firebase-js-sdk/blob/master/packages/firestore/src/api/database.ts#L2162
+   */
+  private static getAutoNewId() {
+    return firestore()
+      .collection("any")
+      .doc().id;
+  }
 }
 
-export { Product, ProductDocument };
+export { Product, ProductFile, ProductDocument };
