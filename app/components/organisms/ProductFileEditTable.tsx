@@ -12,13 +12,16 @@ import { Product } from "../../domains/Product";
 interface InnerTableProps {
   productFiles: ProductFile[];
   onAddButtonClicked: () => void;
+  onDeleteRequested: (productFileId: string, resolve: () => void) => void;
 }
 
 const InnerTable: React.FC<InnerTableProps> = ({
   productFiles,
-  onAddButtonClicked
+  onAddButtonClicked,
+  onDeleteRequested
 }) => {
   const data = productFiles.map(f => ({
+    id: f.id,
     displayFileName: f.name,
     originalFileName: "hogehoge.mp3"
   }));
@@ -76,15 +79,18 @@ const InnerTable: React.FC<InnerTableProps> = ({
               // setData(updated);
             }, 600);
           }),
-        onRowDelete: oldData =>
-          new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              const updated = [...data];
-              updated.splice(updated.indexOf(oldData), 1);
-              // setData(updated);
-            }, 600);
-          })
+        onRowDelete: ({ id }) => {
+          return new Promise(resolve => {
+            onDeleteRequested(id, resolve);
+
+            // setTimeout(() => {
+            //   resolve();
+            //   const updated = [...data];
+            //   updated.splice(updated.indexOf(oldData), 1);
+            //   // setData(updated);
+            // }, 600);
+          });
+        }
       }}
     />
   );
@@ -131,6 +137,14 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     );
   };
 
+  const onProductFileDeleted = async (id: string, resolve: () => void) => {
+    const updatedProduct = await product.deleteFile(id);
+
+    updatedProduct.getFiles().then(files => setProductFiles(files));
+
+    resolve();
+  };
+
   React.useEffect(() => {
     product.getFiles().then(files => {
       setProductFiles(files);
@@ -142,6 +156,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
       <InnerTable
         productFiles={productFiles}
         onAddButtonClicked={handleProductFileAddDialog}
+        onDeleteRequested={onProductFileDeleted}
       />
       <ProductFileAddDialog
         open={addDialogOpen}

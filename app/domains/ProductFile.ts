@@ -90,6 +90,11 @@ class ProductFile implements ProductFileDocument {
   public getStorageRef() {
     storage().refFromURL(this.storageUrl);
   }
+
+  public deleteFile = async (): Promise<void> => {
+    const targetRef = storage().refFromURL(this.storageUrl);
+    return targetRef.delete();
+  };
 }
 
 export { ProductFile, ProductFileDocument };

@@ -157,6 +157,30 @@ class Product implements ProductDocument {
       this.createdAt
     );
   };
+
+  public deleteFile = async (deleteTargetId: string) => {
+    const docRef = Product.getDocRef(this.ref.id);
+
+    const deleteProductFile = await ProductFile.getById(deleteTargetId);
+    await deleteProductFile.deleteFile();
+
+    const updateDoc: Partial<Product> = {
+      fileRefs: this.fileRefs.filter(f => {
+        return f.id !== deleteTargetId;
+      })
+    };
+    await docRef.update(updateDoc);
+
+    return new Product(
+      this.id,
+      this.name,
+      this.description,
+      this.privateNote,
+      this.ownerUid,
+      updateDoc.fileRefs,
+      this.createdAt
+    );
+  };
 }
 
 export { Product, ProductDocument };
