@@ -1,11 +1,14 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
+
+import Container from "@material-ui/core/Container";
+
 import ProductFileEditTable from "../../organisms/ProductFileEditTable";
+import ProductDetailEditForm from "../../organisms/ProductDetailEditForm";
 
 import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 
 import { Product } from "../../../domains/Product";
-import { DownloadCodeSet } from "../../../domains/DownloadCodeSet";
 
 const ProductListPage: React.FC<
   RouteComponentProps<{ id: string }>
@@ -23,29 +26,17 @@ const ProductListPage: React.FC<
     }, 1000);
   }, []);
 
-  const createDlCodeSet = () => {
-    const ref = Product.getDocRef(product.id);
-    DownloadCodeSet.create(ref, 2).then(set => {
-      //
-    });
-  };
-
   return (
-    <>
-      Product ID: {productId}
-      <button onClick={createDlCodeSet}>Create DLCode Set</button>
+    <Container>
       <button onClick={logout}>logout</button>
+
       {product && (
         <>
-          <p>
-            name: <div>{product.name}</div>
-            desc: <div>{product.description}</div>
-            created: <div>{product.createdAt.toDateString()}</div>
-          </p>
+          <ProductDetailEditForm product={product} />
           <ProductFileEditTable product={product} />
         </>
       )}
-    </>
+    </Container>
   );
 };
 
