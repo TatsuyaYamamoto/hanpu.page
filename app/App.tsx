@@ -5,6 +5,8 @@ import "firebase/firestore";
 import "firebase/storage";
 import { initializeApp } from "firebase/app";
 
+import CssBaseline from "@material-ui/core/CssBaseline";
+
 import FirebaseAuthSession from "./components/utils/FirebaseAuthSession";
 
 initializeApp({
@@ -21,6 +23,7 @@ import Routing from "./routing";
 
 const App = () => (
   <>
+    <CssBaseline />
     <FirebaseAuthSession>
       <Routing />
     </FirebaseAuthSession>

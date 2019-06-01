@@ -8,16 +8,16 @@ import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 
 import MaterialTable from "material-table";
 
-import { Product, ProductFile } from "../../../domains/Product";
+import AppBar from "../../organisms/AppBar";
 import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 
+import { Product, ProductFile } from "../../../domains/Product";
 import { formatFileSize } from "../../../utils/format";
 
 interface DownloaderTableProps {
@@ -169,7 +169,7 @@ const DownloadDashboardPage: React.FC<
 
   return (
     <>
-      DownloadDashboard
+      <AppBar title={"DownloadDashboard"} />
       {show}
     </>
   );

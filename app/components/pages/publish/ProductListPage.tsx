@@ -1,8 +1,9 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 
-import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
+import AppBar from "../../organisms/AppBar";
 
+import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 import { Product } from "../../../domains/Product";
 
 const ProductListPage: React.FC<RouteComponentProps> = props => {
@@ -27,7 +28,7 @@ const ProductListPage: React.FC<RouteComponentProps> = props => {
 
   return (
     <>
-      Product List!
+      <AppBar title={`Product List!`} />
       <ul>
         {products.map(p => {
           return (

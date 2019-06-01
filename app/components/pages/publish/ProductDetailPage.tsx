@@ -3,6 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
 
+import AppBar from "../../organisms/AppBar";
 import ProductFileEditTable from "../../organisms/ProductFileEditTable";
 import ProductDetailEditForm from "../../organisms/ProductDetailEditForm";
 import DownloadCodeSetForm from "../../organisms/DownloadCodeSetForm";
@@ -27,18 +28,25 @@ const ProductListPage: React.FC<
     }, 1000);
   }, []);
 
-  return (
-    <Container>
-      <button onClick={logout}>logout</button>
+  const onBack = () => {
+    props.history.goBack();
+  };
 
-      {product && (
-        <>
-          <ProductDetailEditForm product={product} />
-          <ProductFileEditTable product={product} />
-          <DownloadCodeSetForm product={product} />
-        </>
-      )}
-    </Container>
+  return (
+    <>
+      <AppBar title={`Detail ID: ${productId}`} onBack={onBack} />
+      <Container>
+        <button onClick={logout}>logout</button>
+
+        {product && (
+          <>
+            <ProductDetailEditForm product={product} />
+            <ProductFileEditTable product={product} />
+            <DownloadCodeSetForm product={product} />
+          </>
+        )}
+      </Container>
+    </>
   );
 };
 
