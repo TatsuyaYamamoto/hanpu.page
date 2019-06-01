@@ -41,7 +41,13 @@ class DownloadCodeSet {
     });
   }
 
-  public static async verify(code: string): Promise<Product | null> {
+  /**
+   * `DownloadCode`を検証する。
+   * 正常な`DownloadCode`なら、対応する`Product`のIDを返却する
+   *
+   * @param code
+   */
+  public static async verify(code: string): Promise<string | null> {
     const snap = await DownloadCodeSet.getColRef()
       .where(`codes.${code}`, "==", true)
       .get();
@@ -51,36 +57,8 @@ class DownloadCodeSet {
     }
 
     const { productRef } = snap.docs[0].data() as DownloadCodeSetDocument;
-    const productSnap = await productRef.get();
 
-    if (!productSnap.exists) {
-      // TODO
-      // tslint:disable:no-console
-      console.error("fatal error!");
-      return null;
-    }
-
-    const productDoc = productSnap.data() as ProductDocument;
-    const {
-      name,
-      iconStorageUrl,
-      description,
-      privateNote,
-      ownerUid,
-      productFiles,
-      createdAt
-    } = productDoc;
-
-    return new Product(
-      productSnap.id,
-      name,
-      iconStorageUrl,
-      description,
-      privateNote,
-      ownerUid,
-      productFiles,
-      (createdAt as Timestamp).toDate()
-    );
+    return productRef.id;
   }
 
   /**

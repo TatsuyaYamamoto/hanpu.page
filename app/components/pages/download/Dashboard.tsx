@@ -11,8 +11,7 @@ import PlayIcon from "@material-ui/icons/PlayArrow";
 
 import MaterialTable from "material-table";
 import { Product, ProductFile } from "../../../domains/Product";
-
-import { DownloaderContext } from "../../utils/Downloader";
+import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 
 interface DownloaderTableProps {
   files: { [id: string]: ProductFile };
@@ -100,15 +99,15 @@ const DownloadProductPanel: React.FC<DownloadProductPanelProps> = ({
 const DownloadDashboardPage: React.FC<
   RouteComponentProps<{ code?: string }>
 > = props => {
-  const { products } = React.useContext(DownloaderContext);
+  const { activeProducts } = useDownloadCodeVerifier();
 
   return (
     <>
       DownloadDashboard
       <>
-        {products.map(p => (
-          <DownloadProductPanel key={p.id} product={p} />
-        ))}
+        {activeProducts.map(p => {
+          return <DownloadProductPanel key={p.id} product={p} />;
+        })}
       </>
     </>
   );

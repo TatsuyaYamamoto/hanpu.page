@@ -11,8 +11,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 
-import { DownloadCodeSet } from "../../../domains/DownloadCodeSet";
-import { DownloaderContext } from "../../utils/Downloader";
+import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 
 interface NotFoundDialogProps {
   open: boolean;
@@ -45,7 +44,8 @@ const IndexPage: React.FC<RouteComponentProps<{ code?: string }>> = props => {
     props.match.params.code || ""
   );
   const [openNotFoundDialog, setOpenNotFoundDialog] = React.useState(false);
-  const { addProduct } = React.useContext(DownloaderContext);
+
+  const { verifyDownloadCode } = useDownloadCodeVerifier();
 
   const onChangeDownloadCodeValue = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -56,18 +56,13 @@ const IndexPage: React.FC<RouteComponentProps<{ code?: string }>> = props => {
   const disableSubmit = downloadCode.length === 0;
 
   const submit = () => {
-    DownloadCodeSet.verify(downloadCode).then(p => {
-      // TODO
-      // tslint:disable:no-console
-      console.log(p);
-
-      if (p) {
-        addProduct(p);
+    verifyDownloadCode(downloadCode)
+      .then(() => {
         props.history.push(`/download/dashboard`);
-      } else {
+      })
+      .catch(e => {
         handleNotFoundDialog();
-      }
-    });
+      });
   };
 
   const handleNotFoundDialog = () => {
