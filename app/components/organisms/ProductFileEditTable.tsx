@@ -1,6 +1,8 @@
 import * as React from "react";
 
 import MaterialTable from "material-table";
+import { storage } from "firebase/app";
+
 import { formatFileSize } from "../../utils/format";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
@@ -11,12 +13,14 @@ interface InnerTableProps {
   productFiles: { [id: string]: ProductFile };
   onAddButtonClicked: () => void;
   onDeleteRequested: (productFileId: string, resolve: () => void) => void;
+  onDownloadClicked: (productFileId: string) => void;
 }
 
 const InnerTable: React.FC<InnerTableProps> = ({
   productFiles,
   onAddButtonClicked,
-  onDeleteRequested
+  onDeleteRequested,
+  onDownloadClicked
 }) => {
   const data = Object.keys(productFiles).map(id => ({
     id,
@@ -70,7 +74,7 @@ const InnerTable: React.FC<InnerTableProps> = ({
         {
           icon: "arrow_downward",
           tooltip: "Download",
-          onClick: (event, rowData) => alert(`You saved ${rowData.name}`)
+          onClick: (event, { id }) => onDownloadClicked(id)
         },
         {
           icon: "add",
@@ -92,13 +96,6 @@ const InnerTable: React.FC<InnerTableProps> = ({
         onRowDelete: ({ id }) => {
           return new Promise(resolve => {
             onDeleteRequested(id, resolve);
-
-            // setTimeout(() => {
-            //   resolve();
-            //   const updated = [...data];
-            //   updated.splice(updated.indexOf(oldData), 1);
-            //   // setData(updated);
-            // }, 600);
           });
         }
       }}
@@ -142,6 +139,23 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     resolve();
   };
 
+  const onProductFileDownload = async (productFileId: string) => {
+    const { storageUrl, originalName } = productFiles[productFileId];
+    const downloadURL = await storage()
+      .refFromURL(storageUrl)
+      .getDownloadURL();
+
+    // TODO: CORSの対策
+    // ダウンロードではなくファイルページへの遷移になっている
+    const a = document.createElement("a");
+    a.download = originalName;
+    a.href = downloadURL;
+    a.innerText = originalName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   React.useEffect(() => {
     setProductFiles(product.productFiles);
   }, []);
@@ -152,6 +166,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
         productFiles={productFiles}
         onAddButtonClicked={handleProductFileAddDialog}
         onDeleteRequested={onProductFileDeleted}
+        onDownloadClicked={onProductFileDownload}
       />
       <ProductFileAddDialog
         open={addDialogOpen}
