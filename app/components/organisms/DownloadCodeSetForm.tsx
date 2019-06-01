@@ -42,6 +42,7 @@ const InnerTable: React.FC<InnerTableProps> = ({
         }
       }}
       columns={[
+        { title: "ID", field: "id", type: "string" },
         { title: "発行数", field: "length", type: "numeric" },
         {
           title: "作成日",
@@ -89,8 +90,22 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     setAddDialogOpen(!addDialogOpen);
   };
 
-  const onDownloadClicked = () => {
-    //
+  const onDownloadClicked = (id: string) => {
+    // TODO: duplicated logic `onAddRequested`.
+    DownloadCodeSet.getByProductRef(product.ref).then(downloadCodeSetList => {
+      const codeSet = downloadCodeSetList.find(item => item.id === id);
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      Object.keys(codeSet.codes).forEach(code => {
+        csvContent += `${code}\r\n`;
+      });
+
+      const a = document.createElement("a");
+      a.href = encodeURI(csvContent);
+      a.target = "_blank";
+      a.download = `download_code_set_${id}.csv`;
+      a.click();
+    });
   };
 
   const onAddRequested = (numberOfCodes: number, expiredAt: Date) => {
