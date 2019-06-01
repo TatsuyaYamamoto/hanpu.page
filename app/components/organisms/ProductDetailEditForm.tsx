@@ -214,13 +214,6 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
     });
   }, []);
 
-  const createDlCodeSet = () => {
-    const ref = Product.getDocRef(product.id);
-    DownloadCodeSet.create(ref, 2).then(set => {
-      //
-    });
-  };
-
   const onNameSubmitted = () => {
     //
   };
@@ -267,10 +260,6 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
             label={"created"}
             value={product.createdAt.toDateString()}
           />
-
-          <Box>
-            <Button onClick={createDlCodeSet}>Create DLCode Set</Button>
-          </Box>
         </Box>
       </Box>
     </Grid>

@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container";
 
 import ProductFileEditTable from "../../organisms/ProductFileEditTable";
 import ProductDetailEditForm from "../../organisms/ProductDetailEditForm";
+import DownloadCodeSetForm from "../../organisms/DownloadCodeSetForm";
 
 import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 
@@ -34,6 +35,7 @@ const ProductListPage: React.FC<
         <>
           <ProductDetailEditForm product={product} />
           <ProductFileEditTable product={product} />
+          <DownloadCodeSetForm product={product} />
         </>
       )}
     </Container>
