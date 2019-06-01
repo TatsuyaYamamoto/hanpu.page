@@ -41,6 +41,7 @@ class DownloadCodeSet {
     const productDoc = productSnap.data() as ProductDocument;
     const {
       name,
+      iconStorageUrl,
       description,
       privateNote,
       ownerUid,
@@ -51,6 +52,7 @@ class DownloadCodeSet {
     return new Product(
       productSnap.id,
       name,
+      iconStorageUrl,
       description,
       privateNote,
       ownerUid,

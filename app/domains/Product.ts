@@ -14,6 +14,7 @@ interface ProductFile {
 
 interface ProductDocument {
   name: string;
+  iconStorageUrl: string | null;
   description: string;
   privateNote: string;
   productFiles: {
@@ -36,6 +37,10 @@ class Product implements ProductDocument {
     return storage().ref(`productFiles`);
   }
 
+  public static getIconStorageRef() {
+    return storage().ref(`icons`);
+  }
+
   public static async getOwns(): Promise<Product[]> {
     const owner = auth().currentUser;
     if (!owner) {
@@ -54,6 +59,7 @@ class Product implements ProductDocument {
     return ownProductsSnap.docs.map(docSnap => {
       const {
         name,
+        iconStorageUrl,
         description,
         privateNote,
         ownerUid,
@@ -64,6 +70,7 @@ class Product implements ProductDocument {
       return new Product(
         docSnap.id,
         name,
+        iconStorageUrl,
         description,
         privateNote,
         ownerUid,
@@ -83,6 +90,7 @@ class Product implements ProductDocument {
     }
     const {
       name,
+      iconStorageUrl,
       description,
       privateNote,
       ownerUid,
@@ -93,6 +101,7 @@ class Product implements ProductDocument {
     return new Product(
       snap.id,
       name,
+      iconStorageUrl,
       description,
       privateNote,
       ownerUid,
@@ -115,6 +124,7 @@ class Product implements ProductDocument {
 
     const newProductDoc: ProductDocument = {
       name,
+      iconStorageUrl: null,
       description,
       privateNote,
       ownerUid: owner.uid,
@@ -131,6 +141,7 @@ class Product implements ProductDocument {
 
     // document fields
     readonly name: string,
+    readonly iconStorageUrl: string | null,
     readonly description: string,
     readonly privateNote: string,
     readonly ownerUid: string,
@@ -162,6 +173,7 @@ class Product implements ProductDocument {
     return new Product(
       this.id,
       this.name,
+      this.iconStorageUrl,
       this.description,
       this.privateNote,
       this.ownerUid,
@@ -187,6 +199,7 @@ class Product implements ProductDocument {
     return new Product(
       this.id,
       this.name,
+      this.iconStorageUrl,
       this.description,
       this.privateNote,
       this.ownerUid,
@@ -225,6 +238,59 @@ class Product implements ProductDocument {
     const targetRef = storage().refFromURL(deleteTargetProductFile.storageUrl);
     await targetRef.delete();
   };
+
+  public async getIconUrl(): Promise<string | null> {
+    if (!this.iconStorageUrl) {
+      return null;
+    }
+
+    return await storage()
+      .refFromURL(this.iconStorageUrl)
+      .getDownloadURL();
+  }
+
+  public uploadIconToStorage(file: File): storage.UploadTask {
+    // after success, delete an old icon.
+    const oldIconRef = storage().refFromURL(this.iconStorageUrl);
+
+    const originalFileName = file.name;
+    const extension = originalFileName
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+    // TODO replace secure random id.
+    const id = Math.random()
+      .toString(16)
+      .substring(2);
+
+    const storageRef = Product.getIconStorageRef().child(`${id}.${extension}`);
+    const task = storageRef.put(file, {});
+
+    const unsubscribe = task.on(
+      storage.TaskEvent.STATE_CHANGED,
+      () => {
+        //
+      },
+      () => {
+        //
+      },
+      async () => {
+        unsubscribe();
+
+        const docRef = Product.getDocRef(this.ref.id);
+        const partialNewDoc: Partial<ProductDocument> = {
+          iconStorageUrl: storageRef.toString()
+        };
+        await docRef.update(partialNewDoc);
+
+        // it no longer be referred.
+        oldIconRef.delete();
+      }
+    );
+
+    return task;
+  }
 
   /**
    * Get new unique id with logic of `AutoId.newId()`

@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { useDropzone } from "react-dropzone";
 
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -99,27 +100,104 @@ const ProductImageThumbnailNoImage = styled.div`
     content: "No Image";
     color: white;
   }
+  ${({ dragActive }: ThumbnailImageProps) =>
+    dragActive &&
+    css`
+      border: 2px #ff0000 solid;
+      box-sizing: border-box;
+
+      &::after {
+        content: "Drop the files here";
+      }
+    `}
 `;
+
+interface ThumbnailImageProps {
+  dragActive: boolean;
+}
 
 const ProductImageThumbnailImage = styled.img`
   width: 200px;
   height: 200px;
+  ${({ dragActive }: ThumbnailImageProps) =>
+    dragActive &&
+    css`
+      border: 2px #ff0000 solid;
+      box-sizing: border-box;
+      &::after {
+        content: "Drop the files here";
+      }
+    `}
 `;
 
+const ErrorMessage = styled.div`
+  color: red;
+`;
+
+const MB = 1000 * 1000;
+
+const readAsDataURLWithReader = (file: File): Promise<string> => {
+  const reader = new FileReader();
+
+  const promise = new Promise<string>(resolve => {
+    reader.onload = () => resolve(reader.result as string);
+  });
+
+  reader.readAsDataURL(file);
+
+  return promise;
+};
+
 interface ProductImageThumbnailProps {
-  defaultSrc: string | null;
+  src: string | null;
+  onChange: (file: File) => void;
 }
 
 const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
-  defaultSrc
+  src,
+  onChange
 }) => {
-  const [src, setSrc] = React.useState(defaultSrc);
+  const [
+    selectedFileErrorMessage,
+    setSelectedFileErrorMessage
+  ] = React.useState(null);
 
-  if (!src) {
-    return <ProductImageThumbnailNoImage />;
-  }
+  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+    const acceptedFile = acceptedFiles[0];
 
-  return <ProductImageThumbnailImage />;
+    if (1 * MB < acceptedFile.size) {
+      setSelectedFileErrorMessage("file size should be less than 1MB.");
+      return;
+    }
+    readAsDataURLWithReader(acceptedFile).then(dataUrl => {
+      // setSrc(dataUrl);
+    });
+
+    onChange(acceptedFile);
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: "image/*"
+  });
+
+  const thumbnail = !!src ? (
+    <ProductImageThumbnailImage src={src} dragActive={isDragActive} />
+  ) : (
+    <ProductImageThumbnailNoImage dragActive={isDragActive} />
+  );
+
+  return (
+    <>
+      {selectedFileErrorMessage && (
+        <ErrorMessage>{selectedFileErrorMessage}</ErrorMessage>
+      )}
+      <div id="hogehoge" {...getRootProps()}>
+        <input {...getInputProps()} />
+        {thumbnail}
+      </div>
+    </>
+  );
 };
 
 interface ProductDetailEditFormProps {
@@ -128,6 +206,14 @@ interface ProductDetailEditFormProps {
 const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
   product
 }) => {
+  const [iconUrl, setIconUrl] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    product.getIconUrl().then(url => {
+      setIconUrl(url);
+    });
+  }, []);
+
   const createDlCodeSet = () => {
     const ref = Product.getDocRef(product.id);
     DownloadCodeSet.create(ref, 2).then(set => {
@@ -143,11 +229,15 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
     //
   };
 
+  const onIconChanged = (file: File) => {
+    product.uploadIconToStorage(file);
+  };
+
   return (
     <Grid container={true}>
       <Box display="flex">
         <Box>
-          <ProductImageThumbnail defaultSrc={null} />
+          <ProductImageThumbnail src={iconUrl} onChange={onIconChanged} />
         </Box>
 
         <Box>
