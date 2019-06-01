@@ -2,8 +2,6 @@ import * as React from "react";
 
 import MaterialTable from "material-table";
 
-import { firestore, storage } from "firebase/app";
-
 import ProductFileAddDialog from "./ProductFileAddDialog";
 
 import { Product, ProductFile } from "../../domains/Product";
@@ -21,8 +19,10 @@ const InnerTable: React.FC<InnerTableProps> = ({
 }) => {
   const data = Object.keys(productFiles).map(id => ({
     id,
-    displayFileName: productFiles[id].name,
-    originalFileName: "hogehoge.mp3"
+    displayName: productFiles[id].displayName,
+    originalName: productFiles[id].originalName,
+    size: productFiles[id].size,
+    contentType: productFiles[id].contentType
   }));
 
   return (
@@ -45,10 +45,20 @@ const InnerTable: React.FC<InnerTableProps> = ({
         }
       }}
       columns={[
-        { title: "表示ファイル名", field: "displayFileName" },
+        { title: "表示ファイル名", field: "displayName" },
         {
           title: "オリジナルファイル名",
-          field: "originalFileName",
+          field: "originalName",
+          editable: "never"
+        },
+        {
+          title: "サイズ",
+          field: "size",
+          editable: "never"
+        },
+        {
+          title: "タイプ",
+          field: "contentType",
           editable: "never"
         }
       ]}
@@ -112,28 +122,15 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   };
 
   const onProductFileAdded = async (displayFileName: string, file: File) => {
-    const task = product.uploadProductFileToStorage(file);
-
-    task.on(
-      storage.TaskEvent.STATE_CHANGED,
-      () => {
-        //
-      },
-      e => {
-        // tslint:disable-next-line:no-console
-        console.error(e);
-      },
-      async () => {
-        const uploadedRef = task.snapshot.ref;
-        const updatedProduct = await product.addProductFile(
-          displayFileName,
-          uploadedRef
-        );
-
-        setProductFiles(updatedProduct.productFiles);
-        handleProductFileAddDialog();
-      }
+    const { task, promise } = await product.addProductFile(
+      displayFileName,
+      file
     );
+
+    const updatedProduct = await promise;
+
+    setProductFiles(updatedProduct.productFiles);
+    handleProductFileAddDialog();
   };
 
   const onProductFileDeleted = async (id: string, resolve: () => void) => {

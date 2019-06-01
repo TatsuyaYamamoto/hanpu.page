@@ -2,14 +2,30 @@ import { firestore, storage, auth } from "firebase/app";
 import StorageReference = storage.Reference;
 import Timestamp = firestore.Timestamp;
 
-// import { ProductFile } from "./ProductFile";
-
 interface ProductFile {
-  name: string;
   /**
-   * @see storage.Reference#toString()
+   * 一覧に表示する時にしようするファイル名
+   */
+  displayName: string;
+  /**
+   * @see storage#Reference#toString()
    */
   storageUrl: string;
+
+  /**
+   * ファイルサイズ[byte]
+   */
+  size: number;
+
+  /**
+   * @link storage#SettableMetadata#contentType
+   */
+  contentType: string;
+
+  /**
+   * アップロードされたときのファイル名
+   */
+  originalName: string;
 }
 
 interface ProductDocument {
@@ -153,33 +169,73 @@ class Product implements ProductDocument {
     return Product.getDocRef(this.id);
   }
 
-  public addProductFile = async (
-    name: string,
-    storageRef: StorageReference
-  ): Promise<Product> => {
-    const docRef = Product.getDocRef(this.ref.id);
-    const newProductFileId = Product.getAutoNewId();
-    const partialNewDoc: Partial<ProductDocument> = {
-      productFiles: {
-        ...this.productFiles,
-        [newProductFileId]: {
-          name,
-          storageUrl: storageRef.toString()
-        }
-      }
-    };
-    await docRef.update(partialNewDoc);
+  public addProductFile = (
+    displayName: string,
+    file: File
+  ): { task: storage.UploadTask; promise: Promise<Product> } => {
+    const originalFileName = file.name;
+    const extension = originalFileName
+      .split(".")
+      .pop()
+      .toLowerCase();
 
-    return new Product(
-      this.id,
-      this.name,
-      this.iconStorageUrl,
-      this.description,
-      this.privateNote,
-      this.ownerUid,
-      partialNewDoc.productFiles,
-      this.createdAt
+    // TODO replace secure random id.
+    const id = Math.random()
+      .toString(16)
+      .substring(2);
+
+    const storageRef = Product.getProductFileStorageRef().child(
+      `${id}.${extension}`
     );
+    const task = storageRef.put(file, {});
+    const promise = new Promise<Product>(resolve => {
+      task.on(
+        storage.TaskEvent.STATE_CHANGED,
+        () => {
+          //
+        },
+        () => {
+          //
+        },
+        async () => {
+          const docRef = Product.getDocRef(this.ref.id);
+          const newProductFileId = Product.getAutoNewId();
+          const newProductFile: ProductFile = {
+            displayName,
+            storageUrl: storageRef.toString(),
+            size: file.size,
+            contentType: file.type,
+            originalName: originalFileName
+          };
+
+          const partialNewDoc: Partial<ProductDocument> = {
+            productFiles: {
+              ...this.productFiles,
+              [newProductFileId]: newProductFile
+            }
+          };
+          await docRef.update(partialNewDoc);
+
+          resolve(
+            new Product(
+              this.id,
+              this.name,
+              this.iconStorageUrl,
+              this.description,
+              this.privateNote,
+              this.ownerUid,
+              partialNewDoc.productFiles,
+              this.createdAt
+            )
+          );
+        }
+      );
+    });
+
+    return {
+      task,
+      promise
+    };
   };
 
   public deleteProductFile = async (deleteTargetId: string) => {
@@ -206,22 +262,6 @@ class Product implements ProductDocument {
       filteredFiles,
       this.createdAt
     );
-  };
-
-  public uploadProductFileToStorage = (file: File): storage.UploadTask => {
-    const originalFileName = file.name;
-    const extension = originalFileName
-      .split(".")
-      .pop()
-      .toLowerCase();
-
-    // TODO replace secure random id.
-    const id = Math.random()
-      .toString(16)
-      .substring(2);
-
-    const ref = Product.getProductFileStorageRef().child(`${id}.${extension}`);
-    return ref.put(file, {});
   };
 
   public deleteProductFileFromStorage = async (
