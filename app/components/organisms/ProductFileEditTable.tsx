@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import MaterialTable from "material-table";
+import { formatFileSize } from "../../utils/format";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
 
@@ -21,7 +22,7 @@ const InnerTable: React.FC<InnerTableProps> = ({
     id,
     displayName: productFiles[id].displayName,
     originalName: productFiles[id].originalName,
-    size: productFiles[id].size,
+    size: formatFileSize(productFiles[id].size),
     contentType: productFiles[id].contentType
   }));
 
