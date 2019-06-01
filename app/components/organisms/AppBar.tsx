@@ -13,6 +13,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import styled from "styled-components";
 
+import useAuthSession from "../hooks/useAuthSession";
+
 const Space = styled.div`
   flex-grow: 1;
 `;
@@ -25,13 +27,10 @@ interface AppBarProps {
 const AppBar: React.FC<AppBarProps> = ({ title, onBack }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
+  const { logout } = useAuthSession();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
-
-  const logout = () => {
-    auth().signOut();
   };
 
   return (

@@ -3,11 +3,9 @@ import { RouteComponentProps } from "react-router-dom";
 
 import AppBar from "../../organisms/AppBar";
 
-import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
 import { Product } from "../../../domains/Product";
 
 const ProductListPage: React.FC<RouteComponentProps> = props => {
-  const { logout } = React.useContext(FirebaseAuthSessionContext);
   const [products, setProducts] = React.useState<Product[]>([]);
 
   React.useEffect(() => {
@@ -40,7 +38,6 @@ const ProductListPage: React.FC<RouteComponentProps> = props => {
           );
         })}
       </ul>
-      <button onClick={logout}>logout</button>
     </>
   );
 };

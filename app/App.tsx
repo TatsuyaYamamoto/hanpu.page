@@ -7,8 +7,6 @@ import { initializeApp } from "firebase/app";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-import FirebaseAuthSession from "./components/utils/FirebaseAuthSession";
-
 initializeApp({
   apiKey: "AIzaSyDkyIH-immHfoQY59kbEfWi9T1npPTUv0k",
   authDomain: "dl-code-dev.firebaseapp.com",
@@ -24,9 +22,7 @@ import Routing from "./routing";
 const App = () => (
   <>
     <CssBaseline />
-    <FirebaseAuthSession>
-      <Routing />
-    </FirebaseAuthSession>
+    <Routing />
   </>
 );
 

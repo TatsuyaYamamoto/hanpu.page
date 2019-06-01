@@ -1,13 +1,10 @@
 import * as React from "react";
-import { FirebaseAuthSessionContext } from "../../utils/FirebaseAuthSession";
+import AppBar from "../../organisms/AppBar";
 
 const DashboardPage = () => {
-  const { logout } = React.useContext(FirebaseAuthSessionContext);
-
   return (
     <>
-      DashboardPage!
-      <button onClick={logout}>logout</button>
+      <AppBar title={"  DashboardPage!"} />
     </>
   );
 };

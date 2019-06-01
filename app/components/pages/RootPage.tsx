@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { FirebaseAuthSessionContext } from "../utils/FirebaseAuthSession";
+import useAuthSession from "../hooks/useAuthSession";
 
 const RootPage = () => {
-  const { loginWithTwitter } = React.useContext(FirebaseAuthSessionContext);
+  const { loginWithTwitter } = useAuthSession();
 
   return (
     <>
