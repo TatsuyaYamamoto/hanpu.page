@@ -1,45 +1,31 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 
-import Typography from "@material-ui/core/Typography";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import LocalOffer from "@material-ui/icons/LocalOffer";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
+import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
+
+import DownloadCodeInputCard from "../../organisms/DownloadCodeInputCard";
+import DownloadCodeErrorDialog from "../../organisms/DownloadCodeErrorDialog";
 
 import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 
-interface NotFoundDialogProps {
-  open: boolean;
-  handleClose: () => void;
-}
+const Header: React.FC = () => {
+  return <>DLCode</>;
+};
 
-const NotFoundDialog: React.FC<NotFoundDialogProps> = props => {
-  const { open, handleClose } = props;
-
+const Footer: React.FC = () => {
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogContent>
-        <DialogContentText>
-          {
-            "ダウンロードコードが不正です。入力した文字に間違いがないか確認してください。"
-          }
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          OK
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <Grid container={true} justify="space-around" alignItems="center">
+      <Link to={`/`}>お問い合わせ</Link>
+      <Link to={`/`}>DLCode</Link>
+      <Link to={`/`}>Twitter</Link>
+    </Grid>
   );
 };
 
-const IndexPage: React.FC<RouteComponentProps<{ code?: string }>> = props => {
+interface IndexPageProps extends RouteComponentProps<{ code?: string }> {}
+
+const IndexPage: React.FC<IndexPageProps> = props => {
   const [downloadCode, setDownloadCode] = React.useState(
     props.match.params.code || ""
   );
@@ -52,8 +38,6 @@ const IndexPage: React.FC<RouteComponentProps<{ code?: string }>> = props => {
   ) => {
     setDownloadCode(e.target.value);
   };
-
-  const disableSubmit = downloadCode.length === 0;
 
   const submit = () => {
     verifyDownloadCode(downloadCode)
@@ -71,29 +55,36 @@ const IndexPage: React.FC<RouteComponentProps<{ code?: string }>> = props => {
 
   return (
     <>
-      <Typography>DownloadPage</Typography>
-      <TextField
-        label="ダウンロードコード"
-        value={downloadCode}
-        onChange={onChangeDownloadCodeValue}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <LocalOffer />
-            </InputAdornment>
-          )
-        }}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={disableSubmit}
-        onClick={submit}
-      >
-        実行
-      </Button>
+      <Container>
+        <Grid
+          container={true}
+          direction="column"
+          justify="space-between"
+          style={{ height: "100vh" }}
+        >
+          <Grid item={true}>
+            <Header>DLCode</Header>
+          </Grid>
+          <Grid item={true}>
+            <Grid container={true} justify="center">
+              <DownloadCodeInputCard
+                value={downloadCode}
+                onChange={onChangeDownloadCodeValue}
+                onSubmit={submit}
+              />
+            </Grid>
+          </Grid>
+          <Grid item={true}>
+            <Footer />
+          </Grid>
+        </Grid>
+      </Container>
 
-      <NotFoundDialog
+      <DownloadCodeErrorDialog
+        message={
+          // TODO: handle all errors
+          "ダウンロードコードが不正です。入力した文字に間違いがないか確認してください。"
+        }
         open={openNotFoundDialog}
         handleClose={handleNotFoundDialog}
       />

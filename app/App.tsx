@@ -5,7 +5,9 @@ import "firebase/firestore";
 import "firebase/storage";
 import { initializeApp } from "firebase/app";
 
+import { ThemeProvider } from "styled-components";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
 initializeApp({
   apiKey: "AIzaSyDkyIH-immHfoQY59kbEfWi9T1npPTUv0k",
@@ -18,11 +20,14 @@ initializeApp({
 });
 
 import Routing from "./routing";
+import theme from "./theme";
 
 const App = () => (
   <>
     <CssBaseline />
-    <Routing />
+    <ThemeProvider theme={theme}>
+      <Routing />
+    </ThemeProvider>
   </>
 );
 

@@ -153,24 +153,31 @@ const DownloadDashboardPage: React.FC<
     setSelectedProduct(product);
   };
 
-  const show = selectedProduct ? (
-    <DownloadProductDetail product={selectedProduct} />
-  ) : (
-    activeProducts.map(p => {
-      return (
-        <DownloadProductPanel
-          key={p.id}
-          product={p}
-          onClick={onProductSelected}
-        />
-      );
-    })
-  );
+  const showList = () => {
+    setSelectedProduct(null);
+  };
+
+  if (selectedProduct) {
+    return (
+      <>
+        <AppBar title={"DownloadDashboard"} onBack={showList} />
+        <DownloadProductDetail product={selectedProduct} />
+      </>
+    );
+  }
 
   return (
     <>
       <AppBar title={"DownloadDashboard"} />
-      {show}
+      {activeProducts.map(p => {
+        return (
+          <DownloadProductPanel
+            key={p.id}
+            product={p}
+            onClick={onProductSelected}
+          />
+        );
+      })}
     </>
   );
 };
