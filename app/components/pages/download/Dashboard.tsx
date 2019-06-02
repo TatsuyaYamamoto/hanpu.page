@@ -1,13 +1,14 @@
 import * as React from "react";
-const { useState, useMemo } = React;
+const { useState, useEffect } = React;
 import { RouteComponentProps } from "react-router-dom";
 
-import { Container } from "@material-ui/core";
+import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
 
 import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 import AppBar from "../../organisms/AppBar";
+import ProductDetail from "../../organisms/ProductDetail";
 import ProductFileDownloaderTable from "../../organisms/ProductFileDownloaderTable";
 import ActivatedProductList from "../../organisms/ActivatedProductList";
 
@@ -19,25 +20,31 @@ interface DetailPageProps {
 }
 
 const DetailPage: React.FC<DetailPageProps> = ({ product, onBack }) => {
+  const { name, description } = product;
+  const [iconUrl, setIconUrl] = useState("");
+
+  useEffect(() => {
+    product.getIconUrl().then(url => {
+      setIconUrl(url);
+    });
+  }, []);
+
   return (
     <>
       <AppBar title={"DownloadDashboard"} onBack={onBack} />
       <Container>
-        <Box>
-          <Box>
-            <Box>
-              <img src={""} />
-            </Box>
-
-            <Box>
-              <Typography>{product.name}</Typography>
-              <Typography>{product.description}</Typography>
-            </Box>
-          </Box>
-          <Box>
+        <Grid container={true} direction={"column"}>
+          <Grid item={true}>
+            <ProductDetail
+              name={product.name}
+              description={product.description}
+              iconUrl={iconUrl}
+            />
+          </Grid>
+          <Grid item={true}>
             <ProductFileDownloaderTable files={product.productFiles} />
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );
@@ -62,6 +69,7 @@ const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
   );
 };
 
+// TODO: cache and reuse product thumbnail image.
 const DownloadDashboardPage: React.FC<
   RouteComponentProps<{ code?: string }>
 > = props => {
