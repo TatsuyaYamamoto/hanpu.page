@@ -1,0 +1,95 @@
+version: 2.1
+
+workflows:
+  version: 2
+  git-push:
+    jobs:
+      - dependencies
+      - test:
+          requires:
+            - dependencies
+      - deploy:
+          requires:
+            - test
+#          filters:
+#            branches:
+#              only: develop
+
+executors:
+  default:
+    docker:
+      - image: circleci/node:8.15.0-browsers
+
+jobs:
+  dependencies:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - restore_node_cache
+      - check_build_environment
+      - run: yarn install
+      - save_node_cache
+
+  test:
+    executor:
+      name: default
+    steps:
+      - prepare_build
+      - check_build_environment
+      - run: yarn build:dev
+      - save_workspace
+
+  deploy:
+    executor:
+      name: default
+    steps:
+      - restore_workspace
+      - check_build_environment
+      - run: yarn --silent deploy:dev --token "$FIREBASE_TOKEN"
+
+commands:
+  check_build_environment:
+    steps:
+      - run:
+          name: check build environment
+          command: |
+            node -v
+            npm -v
+            yarn -v
+            pwd
+            find . -maxdepth 1 -type d | xargs ls -la
+
+  # https://circleci.com/docs/ja/2.0/caching/#yarn-node
+  restore_node_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ .Branch }}-
+            - yarn-packages-v1-
+
+  save_node_cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
+  prepare_build:
+    steps:
+      - checkout
+      - restore_node_cache
+      - run: yarn install
+
+  save_workspace:
+    steps:
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  restore_workspace:
+    steps:
+      - attach_workspace:
+          at: .
