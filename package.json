@@ -11,14 +11,13 @@
     "node": "8"
   },
   "scripts": {
-    "clear": "rm -rf dist",
+    "clean": "rm -rf dist",
     "start": "webpack-dev-server --config webpack.config.client.js",
     "serve": "firebase serve",
     "build-client": "   webpack --progress --config webpack.config.client.js",
     "build-functions": "webpack --progress --config webpack.config.functions.js",
-    "build:dev": "run-p build-client build-functions",
-    "copy-deps": "cpx '*{package.json,yarn.lock}' 'dist/functions' -C",
-    "install-deps": "yarn install --cwd dist/functions",
+    "build:dev": "npm-run-all clean --parallel build-client build-functions copy-deps",
+    "copy-deps": "cpx '*{package.json,yarn.lock}' 'dist/functions' && yarn install --cwd dist/functions",
     "format": "prettier --write app/**/*.{ts,tsx,js,jsx,json,css}",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "deploy:dev": "firebase deploy --project dl-code-dev",
