@@ -332,6 +332,14 @@ class Product implements ProductDocument {
     return task;
   }
 
+  public async partialUpdateFields(
+    values: Partial<ProductDocument>
+  ): Promise<void> {
+    await this.ref.update({
+      ...values
+    });
+  }
+
   /**
    * Get new unique id with logic of `AutoId.newId()`
    *

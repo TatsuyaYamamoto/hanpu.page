@@ -1,4 +1,5 @@
 import * as React from "react";
+const { useEffect } = React;
 
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -19,18 +20,22 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
 }) => {
   const [iconUrl, setIconUrl] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     product.getIconUrl().then(url => {
       setIconUrl(url);
     });
   }, []);
 
-  const onNameSubmitted = () => {
-    //
+  const onNameSubmitted = async (value: string) => {
+    await product.partialUpdateFields({
+      name: value
+    });
   };
 
-  const onDescriptionSubmitted = () => {
-    //
+  const onDescriptionSubmitted = async (value: string) => {
+    await product.partialUpdateFields({
+      description: value
+    });
   };
 
   const onIconChanged = (file: File) => {

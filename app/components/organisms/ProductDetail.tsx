@@ -28,8 +28,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         <ProductThumbnail src={iconUrl} />
       </Grid>
       <Grid item={true}>
-        <ProductName variant="h3">{name}</ProductName>
-        <ProductDescription variant="body1">{description} </ProductDescription>
+        <ProductName variant="h4">{name}</ProductName>
+        <ProductDescription variant="body1" component="pre">
+          {description}
+        </ProductDescription>
       </Grid>
     </Grid>
   );

@@ -35,6 +35,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 
   const onUpdateClicked = () => {
     onSubmit(editValue);
+    setEditing(false);
   };
 
   return (
