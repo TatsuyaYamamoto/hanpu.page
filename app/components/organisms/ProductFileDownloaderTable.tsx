@@ -4,9 +4,11 @@ import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 
 import MaterialTable from "material-table";
+import { storage } from "firebase";
 
 import { Product, ProductFile } from "../../domains/Product";
 import { formatFileSize } from "../../utils/format";
+import { downloadFromFirebaseStorage } from "../../utils/network";
 
 interface ProductFileDownloaderTableProps {
   files: { [id: string]: ProductFile };
@@ -14,14 +16,20 @@ interface ProductFileDownloaderTableProps {
 const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   files
 }) => {
-  const data = Object.keys(files).map(key => {
-    const productFile = files[key];
+  const data = Object.keys(files).map(id => {
+    const productFile = files[id];
     return {
+      id,
       name: productFile.displayName,
       contentType: productFile.contentType,
       size: formatFileSize(productFile.size)
     };
   });
+
+  const onDownloadClicked = async (id: string) => {
+    const { storageUrl, originalName } = files[id];
+    downloadFromFirebaseStorage(storageUrl, originalName);
+  };
 
   return (
     <MaterialTable
@@ -57,7 +65,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
         {
           icon: () => <DownloadIcon />,
           tooltip: "ダウンロード",
-          onClick: () => void 0
+          onClick: (event, { id }) => onDownloadClicked(id)
         }
       ]}
     />

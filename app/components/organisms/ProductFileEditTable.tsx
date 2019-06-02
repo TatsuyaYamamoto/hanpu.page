@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import MaterialTable from "material-table";
-import { storage } from "firebase/app";
-
-import { formatFileSize } from "../../utils/format";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
 
 import { Product, ProductFile } from "../../domains/Product";
+
+import { formatFileSize } from "../../utils/format";
+import { downloadFromFirebaseStorage } from "../../utils/network";
 
 interface InnerTableProps {
   productFiles: { [id: string]: ProductFile };
@@ -141,19 +141,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
 
   const onProductFileDownload = async (productFileId: string) => {
     const { storageUrl, originalName } = productFiles[productFileId];
-    const downloadURL = await storage()
-      .refFromURL(storageUrl)
-      .getDownloadURL();
-
-    // TODO: CORSの対策
-    // ダウンロードではなくファイルページへの遷移になっている
-    const a = document.createElement("a");
-    a.download = originalName;
-    a.href = downloadURL;
-    a.innerText = originalName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    downloadFromFirebaseStorage(storageUrl, originalName);
   };
 
   React.useEffect(() => {
