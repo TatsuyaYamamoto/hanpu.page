@@ -12,17 +12,33 @@ import { downloadFromFirebaseStorage } from "../../utils/network";
 interface InnerTableProps {
   productFiles: { [id: string]: ProductFile };
   onAddButtonClicked: () => void;
+  onUpdateRequested: (
+    productFileId: string,
+    edited: Partial<ProductFile>,
+    resolve: () => void
+  ) => void;
   onDeleteRequested: (productFileId: string, resolve: () => void) => void;
   onDownloadClicked: (productFileId: string) => void;
+}
+
+type Data = RowData[];
+
+interface RowData {
+  id: string;
+  displayName: string;
+  originalName: string;
+  size: string;
+  contentType: string;
 }
 
 const InnerTable: React.FC<InnerTableProps> = ({
   productFiles,
   onAddButtonClicked,
+  onUpdateRequested,
   onDeleteRequested,
   onDownloadClicked
 }) => {
-  const data = Object.keys(productFiles).map(id => ({
+  const data: Data = Object.keys(productFiles).map(id => ({
     id,
     displayName: productFiles[id].displayName,
     originalName: productFiles[id].originalName,
@@ -84,14 +100,16 @@ const InnerTable: React.FC<InnerTableProps> = ({
         }
       ]}
       editable={{
-        onRowUpdate: (newData, oldData) =>
+        onRowUpdate: (newData: RowData, oldData: RowData) =>
           new Promise(resolve => {
-            setTimeout(() => {
-              resolve();
-              const updated = [...data];
-              updated[updated.indexOf(oldData)] = newData;
-              // setData(updated);
-            }, 600);
+            const { id } = newData;
+            const edited: Partial<ProductFile> = {};
+
+            if (newData.displayName !== oldData.displayName) {
+              edited.displayName = newData.displayName;
+            }
+
+            onUpdateRequested(id, edited, resolve);
           }),
         onRowDelete: ({ id }) => {
           return new Promise(resolve => {
@@ -131,6 +149,15 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     handleProductFileAddDialog();
   };
 
+  const onProductFileUpdated = async (
+    id: string,
+    edited: Partial<ProductFile>,
+    resolve: () => void
+  ) => {
+    await product.partialUpdateFile(id, edited);
+    resolve();
+  };
+
   const onProductFileDeleted = async (id: string, resolve: () => void) => {
     const updatedProduct = await product.deleteProductFile(id);
 
@@ -153,6 +180,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
       <InnerTable
         productFiles={productFiles}
         onAddButtonClicked={handleProductFileAddDialog}
+        onUpdateRequested={onProductFileUpdated}
         onDeleteRequested={onProductFileDeleted}
         onDownloadClicked={onProductFileDownload}
       />

@@ -1,6 +1,7 @@
 import { firestore, storage, auth } from "firebase/app";
 import StorageReference = storage.Reference;
 import Timestamp = firestore.Timestamp;
+import UpdateData = firebase.firestore.UpdateData;
 
 interface ProductFile {
   /**
@@ -338,6 +339,17 @@ class Product implements ProductDocument {
     await this.ref.update({
       ...values
     });
+  }
+
+  public async partialUpdateFile(id: string, edited: Partial<ProductFile>) {
+    const updateData: UpdateData = {};
+    const productFilesKey: keyof Product = "productFiles";
+
+    Object.keys(edited).forEach((key: keyof ProductFile) => {
+      updateData[`${productFilesKey}.${id}.${key}`] = edited[key];
+    });
+
+    await this.ref.update(updateData);
   }
 
   /**
