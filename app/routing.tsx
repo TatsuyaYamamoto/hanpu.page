@@ -1,5 +1,10 @@
 import * as React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from "react-router-dom";
 
 import Root from "./components/pages/RootPage";
 
@@ -10,6 +15,8 @@ import PublishIndex from "./components/pages/publish/IndexPage";
 import NewProduct from "./components/pages/publish/NewProduct";
 import ProductList from "./components/pages/publish/ProductListPage";
 import ProductDetail from "./components/pages/publish/ProductDetailPage";
+
+const RedirectToRoot = () => <Redirect to={`/`} />;
 
 export default () => (
   <Router>
@@ -29,6 +36,8 @@ export default () => (
         path={`/publish/products/:id`}
         component={ProductDetail}
       />
+      {/* TODO: route 404 page. */}
+      <Route path={`*`} component={RedirectToRoot} />
     </Switch>
   </Router>
 );
