@@ -1,8 +1,6 @@
 import * as React from "react";
 const { useState } = React;
 
-import { auth } from "firebase/app";
-
 import MuiAppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -11,13 +9,9 @@ import Icon from "@material-ui/core/Icon";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
-import styled from "styled-components";
+import FlexSpace from "../atoms/FlexSpace";
 
 import useAuthSession from "../hooks/useAuthSession";
-
-const Space = styled.div`
-  flex-grow: 1;
-`;
 
 interface AppBarProps {
   title: string;
@@ -47,7 +41,7 @@ const AppBar: React.FC<AppBarProps> = ({ title, onBack }) => {
             {title}
           </Typography>
 
-          <Space />
+          <FlexSpace />
 
           <>
             <IconButton
