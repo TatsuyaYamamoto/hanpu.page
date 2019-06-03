@@ -11,9 +11,9 @@ workflows:
       - deploy:
           requires:
             - test
-#          filters:
-#            branches:
-#              only: develop
+          filters:
+            branches:
+              only: develop
 
 executors:
   default:
