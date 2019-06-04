@@ -9,6 +9,7 @@ import styled from "styled-components";
 
 import LinkButton from "../atoms/LinkButton";
 import Logo from "../atoms/Logo";
+import Footer from "../organisms/Footer";
 
 const Root = styled.div``;
 
@@ -58,39 +59,26 @@ const AboutAppSection = () => {
   );
 };
 
-const Footer = () => {
-  return (
-    <Grid item={true} style={{ marginTop: "auto" }}>
-      <Grid container={true} justify="space-around">
-        <Grid item={true}>
-          <Typography>お問い合わせ</Typography>
-        </Grid>
-        <Grid item={true}>
-          <Typography>利用規約</Typography>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-};
-
 const RootPage = () => {
   return (
     <Root>
-      <Container>
-        <Grid
-          container={true}
-          direction={"column"}
-          style={{ minHeight: "100vh" }}
-        >
+      <Grid
+        container={true}
+        direction={"column"}
+        style={{ minHeight: "100vh" }}
+      >
+        <Container>
           <Hero />
 
           <Space />
 
           <AboutAppSection />
+        </Container>
 
+        <Grid item={true} style={{ marginTop: "auto" }}>
           <Footer />
         </Grid>
-      </Container>
+      </Grid>
     </Root>
   );
 };
