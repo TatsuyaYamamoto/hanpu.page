@@ -1,7 +1,10 @@
 import * as React from "react";
 const { useState } = React;
 
-import MuiAppBar from "@material-ui/core/AppBar";
+import {
+  default as MuiAppBar,
+  AppBarProps as MuiAppBarProps
+} from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
@@ -9,16 +12,26 @@ import Icon from "@material-ui/core/Icon";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
+import styled from "styled-components";
+
 import FlexSpace from "../atoms/FlexSpace";
+import Logo from "../atoms/Logo";
 
 import useAuthSession from "../hooks/useAuthSession";
 
+const StyledMuiAppBar: React.FC<MuiAppBarProps> = styled(MuiAppBar)`
+  && {
+    background-color: transparent;
+    color: grey;
+    z-index: 99;
+  }
+`;
+
 interface AppBarProps {
-  title: string;
   onBack?: () => void;
 }
 
-const AppBar: React.FC<AppBarProps> = ({ title, onBack }) => {
+const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
   const { logout } = useAuthSession();
@@ -27,19 +40,22 @@ const AppBar: React.FC<AppBarProps> = ({ title, onBack }) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
+  const back = (
+    <IconButton color="inherit" onClick={onBack}>
+      <Icon>arrow_back</Icon>
+    </IconButton>
+  );
+  const logo = (
+    <Typography variant="h6" color="inherit">
+      <Logo />
+    </Typography>
+  );
+
   return (
     <>
-      <MuiAppBar position="static">
+      <StyledMuiAppBar position="static">
         <Toolbar>
-          {onBack && (
-            <IconButton color="inherit" onClick={onBack}>
-              <Icon>arrow_back</Icon>
-            </IconButton>
-          )}
-
-          <Typography variant="h6" color="inherit">
-            {title}
-          </Typography>
+          {onBack ? back : logo}
 
           <FlexSpace />
 
@@ -70,7 +86,7 @@ const AppBar: React.FC<AppBarProps> = ({ title, onBack }) => {
             </Menu>
           </>
         </Toolbar>
-      </MuiAppBar>
+      </StyledMuiAppBar>
     </>
   );
 };

@@ -3,11 +3,11 @@ const { useState, useEffect } = React;
 import { RouteComponentProps } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 
 import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 import AppBar from "../../organisms/AppBar";
+import Footer from "../../organisms/Footer";
 import ProductDetail from "../../organisms/ProductDetail";
 import ProductFileDownloaderTable from "../../organisms/ProductFileDownloaderTable";
 import ActivatedProductList from "../../organisms/ActivatedProductList";
@@ -31,21 +31,32 @@ const DetailPage: React.FC<DetailPageProps> = ({ product, onBack }) => {
 
   return (
     <>
-      <AppBar title={"DownloadDashboard"} onBack={onBack} />
-      <Container>
-        <Grid container={true} direction={"column"}>
-          <Grid item={true}>
-            <ProductDetail
-              name={product.name}
-              description={product.description}
-              iconUrl={iconUrl}
-            />
-          </Grid>
-          <Grid item={true}>
-            <ProductFileDownloaderTable files={product.productFiles} />
-          </Grid>
+      <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
+        <Grid item={true}>
+          <AppBar onBack={onBack} />
         </Grid>
-      </Container>
+
+        <Grid item={true}>
+          <Container style={{ marginTop: 30, marginBottom: 30 }}>
+            <Grid container={true} direction={"column"}>
+              <Grid item={true}>
+                <ProductDetail
+                  name={product.name}
+                  description={product.description}
+                  iconUrl={iconUrl}
+                />
+              </Grid>
+              <Grid item={true}>
+                <ProductFileDownloaderTable files={product.productFiles} />
+              </Grid>
+            </Grid>
+          </Container>
+        </Grid>
+
+        <Grid item={true} style={{ marginTop: "auto" }}>
+          <Footer />
+        </Grid>
+      </Grid>
     </>
   );
 };
@@ -58,13 +69,24 @@ interface PanelPageProps {
 const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
   return (
     <>
-      <AppBar title={"DownloadDashboard"} />
-      <Container>
-        <ActivatedProductList
-          products={products}
-          onPanelClicked={onPanelClicked}
-        />
-      </Container>
+      <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
+        <Grid item={true}>
+          <AppBar />
+        </Grid>
+
+        <Grid item={true}>
+          <Container style={{ marginTop: 30, marginBottom: 30 }}>
+            <ActivatedProductList
+              products={products}
+              onPanelClicked={onPanelClicked}
+            />
+          </Container>
+        </Grid>
+
+        <Grid item={true} style={{ marginTop: "auto" }}>
+          <Footer />
+        </Grid>
+      </Grid>
     </>
   );
 };

@@ -1,27 +1,15 @@
 import * as React from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 
 import DownloadCodeInputCard from "../../organisms/DownloadCodeInputCard";
 import DownloadCodeErrorDialog from "../../organisms/DownloadCodeErrorDialog";
+import AppBar from "../../organisms/AppBar";
+import Footer from "../../organisms/Footer";
 
 import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
-
-const Header: React.FC = () => {
-  return <>DLCode</>;
-};
-
-const Footer: React.FC = () => {
-  return (
-    <Grid container={true} justify="space-around" alignItems="center">
-      <Link to={`/`}>お問い合わせ</Link>
-      <Link to={`/`}>DLCode</Link>
-      <Link to={`/`}>Twitter</Link>
-    </Grid>
-  );
-};
 
 interface IndexPageProps extends RouteComponentProps<{ code?: string }> {}
 
@@ -55,17 +43,16 @@ const IndexPage: React.FC<IndexPageProps> = props => {
 
   return (
     <>
-      <Container>
+      <>
         <Grid
           container={true}
           direction="column"
           justify="space-between"
           style={{ height: "100vh" }}
         >
-          <Grid item={true}>
-            <Header>DLCode</Header>
-          </Grid>
-          <Grid item={true}>
+          <AppBar />
+
+          <Container>
             <Grid container={true} justify="center">
               <DownloadCodeInputCard
                 value={downloadCode}
@@ -73,13 +60,11 @@ const IndexPage: React.FC<IndexPageProps> = props => {
                 onSubmit={submit}
               />
             </Grid>
-          </Grid>
-          <Grid item={true}>
-            <Footer />
-          </Grid>
-        </Grid>
-      </Container>
+          </Container>
 
+          <Footer />
+        </Grid>
+      </>
       <DownloadCodeErrorDialog
         message={
           // TODO: handle all errors

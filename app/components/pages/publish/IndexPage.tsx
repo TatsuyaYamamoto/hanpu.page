@@ -4,7 +4,7 @@ import AppBar from "../../organisms/AppBar";
 const DashboardPage = () => {
   return (
     <>
-      <AppBar title={"  DashboardPage!"} />
+      <AppBar />
     </>
   );
 };

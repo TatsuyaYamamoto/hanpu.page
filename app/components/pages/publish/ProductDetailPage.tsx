@@ -1,7 +1,11 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+
 import AppBar from "../../organisms/AppBar";
+import Footer from "../../organisms/Footer";
 import ProductFileEditTable from "../../organisms/ProductFileEditTable";
 import ProductDetailEditForm from "../../organisms/ProductDetailEditForm";
 import DownloadCodeSetForm from "../../organisms/DownloadCodeSetForm";
@@ -29,14 +33,27 @@ const ProductDetailPage: React.FC<
 
   return (
     <>
-      <AppBar title={`Detail ID: ${productId}`} onBack={onBack} />
-      {product && (
-        <>
-          <ProductDetailEditForm product={product} />
-          <ProductFileEditTable product={product} />
-          <DownloadCodeSetForm product={product} />
-        </>
-      )}
+      <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
+        <Grid item={true}>
+          <AppBar onBack={onBack} />
+        </Grid>
+
+        <Grid item={true}>
+          <Container style={{ marginTop: 30, marginBottom: 30 }}>
+            {product && (
+              <>
+                <ProductDetailEditForm product={product} />
+                <ProductFileEditTable product={product} />
+                <DownloadCodeSetForm product={product} />
+              </>
+            )}
+          </Container>
+        </Grid>
+
+        <Grid item={true} style={{ marginTop: "auto" }}>
+          <Footer />
+        </Grid>
+      </Grid>
     </>
   );
 };
