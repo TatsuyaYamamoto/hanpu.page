@@ -9,6 +9,8 @@ const useAuthSession = () => {
    */
   const [user, setUser] = useState<User | null>(null);
 
+  const isLoggedIn = Boolean(user);
+
   const loginWithTwitter = () => {
     const provider = new auth.TwitterAuthProvider();
     return auth().signInWithRedirect(provider);
@@ -33,6 +35,7 @@ const useAuthSession = () => {
 
   return {
     user,
+    isLoggedIn,
     loginWithTwitter,
     logout
   };

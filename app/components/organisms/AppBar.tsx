@@ -1,5 +1,6 @@
 import * as React from "react";
 const { useState } = React;
+import { withRouter } from "react-router-dom";
 
 import {
   default as MuiAppBar,
@@ -27,19 +28,59 @@ const StyledMuiAppBar: React.FC<MuiAppBarProps> = styled(MuiAppBar)`
   }
 `;
 
-interface AppBarProps {
-  onBack?: () => void;
-}
-
-const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
+const AppBarMenu = withRouter(({ history }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const { logout } = useAuthSession();
+  const { logout, isLoggedIn } = useAuthSession();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleSettings = () => {
+    history.push(`/settings`);
+  };
+
+  return (
+    <>
+      <IconButton
+        aria-owns={openMenu ? "menu-appbar" : undefined}
+        aria-haspopup="true"
+        onClick={handleMenu}
+        color="inherit"
+      >
+        <Icon>more_vert</Icon>
+      </IconButton>
+      <Menu
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
+        open={openMenu}
+        onClose={handleMenu}
+      >
+        {isLoggedIn && <MenuItem onClick={handleLogout}>ログアウト</MenuItem>}
+        <MenuItem onClick={handleSettings}>設定</MenuItem>
+      </Menu>
+    </>
+  );
+});
+
+interface AppBarProps {
+  onBack?: () => void;
+}
+
+const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
   const back = (
     <IconButton color="inherit" onClick={onBack}>
       <Icon>arrow_back</Icon>
@@ -59,32 +100,7 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
 
           <FlexSpace />
 
-          <>
-            <IconButton
-              aria-owns={openMenu ? "menu-appbar" : undefined}
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <Icon>more_vert</Icon>
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-              open={openMenu}
-              onClose={handleMenu}
-            >
-              <MenuItem onClick={logout}>ログアウト</MenuItem>
-            </Menu>
-          </>
+          <AppBarMenu />
         </Toolbar>
       </StyledMuiAppBar>
     </>

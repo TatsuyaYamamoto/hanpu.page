@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import Root from "./components/pages/RootPage";
+import Settings from "./components/pages/SettingsPage";
 
 import Download from "./components/pages/download/IndexPage";
 import DownloadDashboard from "./components/pages/download/Dashboard";
@@ -22,6 +23,7 @@ export default () => (
   <Router>
     <Switch>
       <Route exact={true} path={`/`} component={Root} />
+      <Route exact={true} path={`/settings`} component={Settings} />
       <Route exact={true} path={`/d/:code?`} component={Download} />
       <Route
         exact={true}
