@@ -1,12 +1,12 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import { Container, Grid, Typography } from "@material-ui/core";
 import Icon, { IconProps } from "@material-ui/core/Icon";
 
 import styled from "styled-components";
 
+import useDate from "../hooks/useDate";
 import LinkButton from "../atoms/LinkButton";
 import Logo from "../atoms/Logo";
 import Footer from "../organisms/Footer";
@@ -44,18 +44,37 @@ const AboutAppSection = () => {
   const logo = <Logo />;
   const book = <Icon>book</Icon>;
   const disk = <Icon>album</Icon>;
+  const { formattedNow } = useDate();
+  const now = formattedNow("yyyy/mm/dd");
+  const t28Link = (
+    <Link to={`https://twitter.com/T28_tatsuya`}>@T28_tatsuya</Link>
+  );
 
   return (
-    <Grid item={true}>
-      <Typography variant="h5">なにができるの？</Typography>
-      <Typography variant="body1">
-        <span>
-          {logo}は、ダウンロードコードを使った作品配信が行えるアプリです。
-          {book}本や、{disk}
-          CDに収録しきれないコンテンツはダウンロード配信しましょう。
-        </span>
-      </Typography>
-    </Grid>
+    <>
+      <Grid item={true}>
+        <Typography variant="h5">なにができるの？</Typography>
+        <Typography variant="body1">
+          <span>
+            {logo}は、ダウンロードコードを使った作品配信が行えるアプリです。
+            {book}本や、{disk}
+            CDに収録しきれないコンテンツはダウンロード配信しましょう。
+          </span>
+        </Typography>
+      </Grid>
+      <Space />
+      <Grid item={true}>
+        <Typography variant="h5">だれが使えるの？</Typography>
+        <Typography variant="h6">ダウンロード</Typography>
+        <Typography variant="body1">
+          <span>>> 誰でも！</span>
+        </Typography>
+        <Typography variant="h6">ファイル配信</Typography>
+        <Typography variant="body1">
+          >> {now}時点では、{t28Link}のみです。
+        </Typography>
+      </Grid>
+    </>
   );
 };
 
