@@ -4,7 +4,12 @@ import MaterialTable from "material-table";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
 
-import { Product, ProductFile } from "../../domains/Product";
+import {
+  Product,
+  ProductFile,
+  ProductFileDisplayName,
+  ProductFileOriginalName
+} from "../../domains/Product";
 
 import { formatFileSize } from "../../utils/format";
 import { downloadFromFirebaseStorage } from "../../utils/network";
@@ -25,8 +30,8 @@ type Data = RowData[];
 
 interface RowData {
   id: string;
-  displayName: string;
-  originalName: string;
+  displayName: ProductFileDisplayName;
+  originalName: ProductFileOriginalName;
   size: string;
   contentType: string;
 }
@@ -137,7 +142,10 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     setAddDialogOpen(!addDialogOpen);
   };
 
-  const onProductFileAdded = async (displayFileName: string, file: File) => {
+  const onProductFileAdded = async (
+    displayFileName: ProductFileDisplayName,
+    file: File
+  ) => {
     const { task, promise } = await product.addProductFile(
       displayFileName,
       file

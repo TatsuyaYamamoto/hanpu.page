@@ -4,8 +4,6 @@ import Timestamp = firestore.Timestamp;
 
 import * as base32 from "hi-base32";
 
-import { Product, ProductDocument } from "./Product";
-
 interface DownloadCodeSetDocument {
   productRef: DocumentReference;
   codes: {

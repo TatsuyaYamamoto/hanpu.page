@@ -4,8 +4,9 @@ import { Product } from "../../../domains/Product";
 
 const NewProductPage = () => {
   const submit = () => {
-    const name = (document.getElementById("name") as any).value;
-    const description = (document.getElementById("description") as any).value;
+    const name = (document.getElementById("name") as any).value as any;
+    const description = (document.getElementById("description") as any)
+      .value as any;
 
     Product.createNew({
       name,

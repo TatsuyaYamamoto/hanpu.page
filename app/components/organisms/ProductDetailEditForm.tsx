@@ -9,7 +9,11 @@ import IdField from "../atoms/IdField";
 import EditableField from "../atoms/EditableField";
 import ProductImageThumbnail from "../molecules/ProductImageThumbnail";
 
-import { Product } from "../../domains/Product";
+import {
+  Product,
+  ProductDescription,
+  ProductName
+} from "../../domains/Product";
 
 interface ProductDetailEditFormProps {
   product: Product;
@@ -26,13 +30,13 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
     });
   }, []);
 
-  const onNameSubmitted = async (value: string) => {
+  const onNameSubmitted = async (value: ProductName) => {
     await product.partialUpdateFields({
       name: value
     });
   };
 
-  const onDescriptionSubmitted = async (value: string) => {
+  const onDescriptionSubmitted = async (value: ProductDescription) => {
     await product.partialUpdateFields({
       description: value
     });

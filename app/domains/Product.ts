@@ -1,13 +1,34 @@
 import { firestore, storage, auth } from "firebase/app";
-import StorageReference = storage.Reference;
 import Timestamp = firestore.Timestamp;
 import UpdateData = firebase.firestore.UpdateData;
+
+// NominalTypings
+// @link https://basarat.gitbooks.io/typescript/docs/tips/nominalTyping.html
+type ProductName = string & {
+  _productNameBrand: never;
+};
+
+type ProductDescription = string & {
+  _productDescriptionBrand: never;
+};
+
+type ProductFileDisplayName = string & {
+  _productFileDisplayNameBrand: never;
+};
+
+type ProductFileSize = number & {
+  _productFileDisplayNameBrand: never;
+};
+
+type ProductFileOriginalName = string & {
+  _productFileOriginalName: never;
+};
 
 interface ProductFile {
   /**
    * 一覧に表示する時にしようするファイル名
    */
-  displayName: string;
+  displayName: ProductFileDisplayName;
   /**
    * @see storage#Reference#toString()
    */
@@ -26,13 +47,16 @@ interface ProductFile {
   /**
    * アップロードされたときのファイル名
    */
-  originalName: string;
+  originalName: ProductFileOriginalName;
 }
 
 interface ProductDocument {
-  name: string;
+  name: ProductName;
+  /**
+   * @see storage#Reference#toString()
+   */
   iconStorageUrl: string | null;
-  description: string;
+  description: ProductDescription;
   productFiles: {
     [id: string]: ProductFile;
   };
@@ -123,8 +147,8 @@ class Product implements ProductDocument {
   }
 
   public static async createNew(params: {
-    name: string;
-    description?: string;
+    name: ProductName;
+    description?: ProductDescription;
   }): Promise<void> {
     const { name, description } = params;
 
@@ -150,9 +174,9 @@ class Product implements ProductDocument {
     readonly id: string,
 
     // document fields
-    readonly name: string,
+    readonly name: ProductName,
     readonly iconStorageUrl: string | null,
-    readonly description: string,
+    readonly description: ProductDescription,
     readonly ownerUid: string,
     readonly productFiles: { [id: string]: ProductFile },
     readonly createdAt: Date
@@ -163,10 +187,10 @@ class Product implements ProductDocument {
   }
 
   public addProductFile = (
-    displayName: string,
+    displayName: ProductFileDisplayName,
     file: File
   ): { task: storage.UploadTask; promise: Promise<Product> } => {
-    const originalFileName = file.name;
+    const originalFileName = file.name as ProductFileOriginalName;
     const extension = originalFileName
       .split(".")
       .pop()
@@ -354,4 +378,12 @@ class Product implements ProductDocument {
   }
 }
 
-export { Product, ProductFile, ProductDocument };
+export {
+  Product,
+  ProductDocument,
+  ProductName,
+  ProductDescription,
+  ProductFile,
+  ProductFileDisplayName,
+  ProductFileOriginalName
+};
