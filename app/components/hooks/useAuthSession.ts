@@ -7,9 +7,13 @@ const useAuthSession = () => {
   /**
    * Firebase User State
    */
-  const [user, setUser] = useState<User | null>(null);
+  const [loginUser, setLoginUser] = useState<User | null>(null);
 
-  const isLoggedIn = Boolean(user);
+  const [loginCheckState, setLoginCheckState] = useState<
+    "inProgress" | "completed"
+  >("inProgress");
+
+  const isLoggedIn: boolean = Boolean(loginUser);
 
   const loginWithTwitter = () => {
     const provider = new auth.TwitterAuthProvider();
@@ -22,10 +26,8 @@ const useAuthSession = () => {
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(changedUser => {
-      setUser(changedUser);
-
-      // tslint:disable-next-line:no-console
-      console.log(`${!!changedUser ? "logged-in" : "logged-out"}`, changedUser);
+      setLoginUser(changedUser);
+      setLoginCheckState("completed");
     });
 
     return function cleanup() {
@@ -34,7 +36,8 @@ const useAuthSession = () => {
   }, []);
 
   return {
-    user,
+    loginUser,
+    loginCheckState,
     isLoggedIn,
     loginWithTwitter,
     logout

@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import Root from "./components/pages/RootPage";
+import Login from "./components/pages/__loginpage__";
 import Settings from "./components/pages/SettingsPage";
 
 import Download from "./components/pages/download/IndexPage";
@@ -23,6 +24,7 @@ export default () => (
   <Router>
     <Switch>
       <Route exact={true} path={`/`} component={Root} />
+      <Route exact={true} path={`/__login__`} component={Login} />
       <Route exact={true} path={`/settings`} component={Settings} />
       <Route exact={true} path={`/d/:code?`} component={Download} />
       <Route
