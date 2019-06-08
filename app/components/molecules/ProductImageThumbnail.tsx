@@ -7,6 +7,7 @@ import ProductImageThumbnailNoImage from "../atoms/ProductImageThumbnailNoImage"
 import ProductImageThumbnailImage from "../atoms/ProductImageThumbnailImage";
 
 const MB = 1000 * 1000;
+const THUMBNAIL_WIDTH = 200;
 
 const readAsDataURLWithReader = (file: File): Promise<string> => {
   const reader = new FileReader();
@@ -58,9 +59,16 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
   });
 
   const thumbnail = !!src ? (
-    <ProductImageThumbnailImage src={src} dragActive={isDragActive} />
+    <ProductImageThumbnailImage
+      width={THUMBNAIL_WIDTH}
+      src={src}
+      dragActive={isDragActive}
+    />
   ) : (
-    <ProductImageThumbnailNoImage dragActive={isDragActive} />
+    <ProductImageThumbnailNoImage
+      width={THUMBNAIL_WIDTH}
+      dragActive={isDragActive}
+    />
   );
 
   return (
@@ -68,7 +76,7 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
       {selectedFileErrorMessage && (
         <ErrorMessage>{selectedFileErrorMessage}</ErrorMessage>
       )}
-      <div id="hogehoge" {...getRootProps()}>
+      <div {...getRootProps()}>
         <input {...getInputProps()} />
         {thumbnail}
       </div>

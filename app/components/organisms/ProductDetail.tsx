@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import styled, { ThemeProps } from "styled-components";
+import styled from "styled-components";
 
 import Grid from "@material-ui/core/Grid";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
 
-import ProductThumbnail from "../atoms/ProductThumbnail";
+import ProductThumbnail from "../atoms/ProductImageThumbnailImage";
 
 const ProductName: React.FC<TypographyProps> = styled(Typography)``;
 const ProductDescription: React.FC<TypographyProps> = styled(Typography)``;
@@ -24,7 +24,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   return (
     <Grid container={true}>
       <Grid item={true}>
-        <ProductThumbnail src={iconUrl} />
+        <ProductThumbnail src={iconUrl} width={200} />
       </Grid>
       <Grid item={true}>
         <ProductName variant="h4">{name}</ProductName>

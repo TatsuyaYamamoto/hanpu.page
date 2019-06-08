@@ -3,12 +3,16 @@ import * as React from "react";
 import styled, { css } from "styled-components";
 
 interface ThumbnailImageProps {
-  dragActive: boolean;
+  dragActive?: boolean;
+  width: number;
 }
 
 const ProductImageThumbnailImage = styled.img`
-  width: 200px;
-  height: 200px;
+  ${({ width }: ThumbnailImageProps) => css`
+    width: ${width}px;
+    height: ${width}px;
+  `}
+
   ${({ dragActive }: ThumbnailImageProps) =>
     dragActive &&
     css`

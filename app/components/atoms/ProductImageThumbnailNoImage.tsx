@@ -3,15 +3,25 @@ import * as React from "react";
 import styled, { css } from "styled-components";
 
 interface ThumbnailImageProps {
-  dragActive: boolean;
+  dragActive?: boolean;
+  width: number;
 }
 
 const ProductImageThumbnailNoImage = styled.div`
-  width: 200px;
-  height: 200px;
   background-color: darkgray;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ${({ width }: ThumbnailImageProps) => css`
+    width: ${width}px;
+    height: ${width}px;
+  `}
+
   &::after {
     content: "No Image";
+    font-size: 2rem;
     color: white;
   }
   ${({ dragActive }: ThumbnailImageProps) =>

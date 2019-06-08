@@ -2,16 +2,24 @@ import * as React from "react";
 
 import styled from "styled-components";
 
-import Card, { CardProps } from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import Typography from "@material-ui/core/Typography";
+import {
+  Grid,
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography
+} from "@material-ui/core/";
+import { CardProps } from "@material-ui/core/Card";
+
+import ThumbnailImage from "../atoms/ProductImageThumbnailImage";
+import NoImage from "../atoms/ProductImageThumbnailNoImage";
 
 import { Product } from "../../domains/Product";
 
+const CARD_WIDTH = 200;
+
 const StyledCard: React.FC<CardProps> = styled(Card)`
-  max-width: 345px;
+  width: ${CARD_WIDTH}px;
 `;
 
 interface PanelItemProps {
@@ -31,15 +39,19 @@ const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
     onClick(product.id);
   };
 
+  const cardMedia = iconUrl ? (
+    <ThumbnailImage src={iconUrl} width={CARD_WIDTH} />
+  ) : (
+    <NoImage width={CARD_WIDTH} />
+  );
+
   return (
     <>
       <StyledCard>
         <CardActionArea onClick={onCardClicked}>
-          <CardMedia title={product.name} image={iconUrl} component="img" />
+          {cardMedia}
           <CardContent>
-            <Typography gutterBottom={true} variant="h5" component="h2">
-              {product.name}
-            </Typography>
+            <Typography variant="h6">{product.name}</Typography>
           </CardContent>
         </CardActionArea>
       </StyledCard>
@@ -61,11 +73,17 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
   };
 
   return (
-    <>
-      {products.map(p => {
-        return <PanelItem key={p.id} product={p} onClick={onClick(p.id)} />;
-      })}
-    </>
+    <Grid
+      container={true}
+      justify="flex-start"
+      spacing={2 /* TODO: get it from theme */}
+    >
+      {products.map(p => (
+        <Grid key={p.id} item={true}>
+          <PanelItem product={p} onClick={onClick(p.id)} />
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 
