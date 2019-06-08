@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useEffect, useMemo } = React;
+const { useEffect } = React;
 import { RouteComponentProps } from "react-router-dom";
 
 import useAuthSession from "../hooks/useAuthSession";
@@ -11,7 +11,7 @@ import useAuthSession from "../hooks/useAuthSession";
 const LoginPage = (props: RouteComponentProps) => {
   const { loginWithTwitter, isLoggedIn, loginCheckState } = useAuthSession();
 
-  useMemo(() => {
+  useEffect(() => {
     if (loginCheckState === "completed") {
       if (isLoggedIn) {
         props.history.push(`/publish`);

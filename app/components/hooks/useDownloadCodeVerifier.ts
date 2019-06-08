@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useEffect, useState, useMemo } = React;
+const { useEffect, useState } = React;
 
 import Dexie from "dexie";
 import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
@@ -39,18 +39,18 @@ const useDownloadCodeVerifier = () => {
     });
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     const loadedProductIds = activeProducts.map(({ id }) => id);
 
     const nonLoadedProductIds = activeProductIds.filter(activeProductId => {
       return !loadedProductIds.includes(activeProductId);
     });
 
-    nonLoadedProductIds.forEach(id => {
-      Product.getById(id).then(p => {
-        setActiveProducts([...activeProducts, p]);
-      });
-    });
+    Promise.all(nonLoadedProductIds.map(id => Product.getById(id))).then(
+      products => {
+        setActiveProducts(products);
+      }
+    );
   }, [activeProductIds]);
 
   const verifyDownloadCode = async (code: string) => {
