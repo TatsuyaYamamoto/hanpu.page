@@ -82,37 +82,29 @@ interface InnerListProps {
 
 const InnerList: React.FC<InnerListProps> = ({ data, onStart, onDownload }) => {
   return (
-    <>
-      <List>
-        {data.map(({ id, name, contentType, size, canPlay }) => (
-          <React.Fragment key={id}>
-            <ListItem>
-              <ListItemText
-                primary={name}
-                secondary={
-                  <>
-                    <Typography>
-                      {contentType}: {size}
-                    </Typography>
-                  </>
-                }
-              />
-              <ListItemSecondaryAction>
-                <IconButton edge="start" onClick={onDownload(id)}>
-                  <DownloadIcon />
+    <List>
+      {data.map(({ id, name, contentType, size, canPlay }) => (
+        <React.Fragment key={id}>
+          <ListItem>
+            <ListItemText
+              primary={name}
+              secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
+            />
+            <ListItemSecondaryAction>
+              <IconButton edge="start" onClick={onDownload(id)}>
+                <DownloadIcon />
+              </IconButton>
+              {canPlay && (
+                <IconButton edge="end" onClick={onStart(id)}>
+                  <PlayIcon />
                 </IconButton>
-                {canPlay && (
-                  <IconButton edge="end" onClick={onStart(id)}>
-                    <PlayIcon />
-                  </IconButton>
-                )}
-              </ListItemSecondaryAction>
-            </ListItem>
-            <Divider />
-          </React.Fragment>
-        ))}
-      </List>
-    </>
+              )}
+            </ListItemSecondaryAction>
+          </ListItem>
+          <Divider />
+        </React.Fragment>
+      ))}
+    </List>
   );
 };
 

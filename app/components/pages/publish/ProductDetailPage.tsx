@@ -39,15 +39,13 @@ const ProductDetailPage: React.FC<
         </Grid>
 
         <Grid item={true}>
-          <Container style={{ marginTop: 30, marginBottom: 30 }}>
-            {product && (
-              <>
-                <ProductDetailEditForm product={product} />
-                <ProductFileEditTable product={product} />
-                <DownloadCodeSetForm product={product} />
-              </>
-            )}
-          </Container>
+          {product && (
+            <Container style={{ marginTop: 30, marginBottom: 30 }}>
+              <ProductDetailEditForm product={product} />
+              <ProductFileEditTable product={product} />
+              <DownloadCodeSetForm product={product} />
+            </Container>
+          )}
         </Grid>
 
         <Grid item={true} style={{ marginTop: "auto" }}>
