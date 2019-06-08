@@ -33,7 +33,6 @@ interface ProductDocument {
   name: string;
   iconStorageUrl: string | null;
   description: string;
-  privateNote: string;
   productFiles: {
     [id: string]: ProductFile;
   };
@@ -78,7 +77,6 @@ class Product implements ProductDocument {
         name,
         iconStorageUrl,
         description,
-        privateNote,
         ownerUid,
         productFiles,
         createdAt
@@ -89,7 +87,6 @@ class Product implements ProductDocument {
         name,
         iconStorageUrl,
         description,
-        privateNote,
         ownerUid,
         productFiles,
         (createdAt as Timestamp).toDate()
@@ -109,7 +106,6 @@ class Product implements ProductDocument {
       name,
       iconStorageUrl,
       description,
-      privateNote,
       ownerUid,
       productFiles,
       createdAt
@@ -120,7 +116,6 @@ class Product implements ProductDocument {
       name,
       iconStorageUrl,
       description,
-      privateNote,
       ownerUid,
       productFiles,
       (createdAt as Timestamp).toDate()
@@ -130,9 +125,8 @@ class Product implements ProductDocument {
   public static async createNew(params: {
     name: string;
     description?: string;
-    privateNote: string;
   }): Promise<void> {
-    const { name, description, privateNote } = params;
+    const { name, description } = params;
 
     const owner = auth().currentUser;
     if (!owner) {
@@ -143,7 +137,6 @@ class Product implements ProductDocument {
       name,
       iconStorageUrl: null,
       description,
-      privateNote,
       ownerUid: owner.uid,
       productFiles: {},
       createdAt: firestore.FieldValue.serverTimestamp()
@@ -160,7 +153,6 @@ class Product implements ProductDocument {
     readonly name: string,
     readonly iconStorageUrl: string | null,
     readonly description: string,
-    readonly privateNote: string,
     readonly ownerUid: string,
     readonly productFiles: { [id: string]: ProductFile },
     readonly createdAt: Date
@@ -223,7 +215,6 @@ class Product implements ProductDocument {
               this.name,
               this.iconStorageUrl,
               this.description,
-              this.privateNote,
               this.ownerUid,
               partialNewDoc.productFiles,
               this.createdAt
@@ -258,7 +249,6 @@ class Product implements ProductDocument {
       this.name,
       this.iconStorageUrl,
       this.description,
-      this.privateNote,
       this.ownerUid,
       filteredFiles,
       this.createdAt

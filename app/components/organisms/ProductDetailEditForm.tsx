@@ -65,13 +65,6 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
             onSubmit={onDescriptionSubmitted}
           />
 
-          <EditableField
-            label={"Private note"}
-            defaultValue={product.privateNote}
-            multiline={true}
-            onSubmit={onDescriptionSubmitted}
-          />
-
           <TextField
             label={"created"}
             value={product.createdAt.toDateString()}
