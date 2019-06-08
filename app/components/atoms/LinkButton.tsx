@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { Link, LinkProps } from "react-router-dom";
-import * as H from "history";
 
 import Button, { ButtonProps } from "@material-ui/core/Button";
 
@@ -14,6 +13,15 @@ const AdapterLink = React.forwardRef<HTMLAnchorElement, LinkProps>(
 
 const LinkButton: React.FC<ButtonProps & LinkProps> = props => {
   const { children, to, replace, innerRef, ...others } = props;
+
+  if (typeof to === "string" && to.startsWith("http")) {
+    // use a#href if provided url is absolute path with protocol
+    return (
+      <Button href={to} {...others as any}>
+        {children}
+      </Button>
+    );
+  }
 
   return (
     <Button

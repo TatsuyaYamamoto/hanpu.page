@@ -4,14 +4,9 @@ import Grid from "@material-ui/core/Grid";
 import styled from "styled-components";
 
 import LinkButton from "../atoms/LinkButton";
+import Logo from "../atoms/Logo";
 
-const LinkSection = () => (
-  <>
-    <LinkButton to={`/`}>お問い合わせ</LinkButton>
-    <LinkButton to={`/`}>DLCode</LinkButton>
-    <LinkButton to={`/`}>Twitter</LinkButton>
-  </>
-);
+import config from "../../configs";
 
 const copyRightSymbol = `\u00A9`;
 
@@ -30,15 +25,31 @@ const Root = styled.div`
 `;
 
 const Footer: React.FC = () => {
+  const contact = (
+    <StyledLinkButton to={config.contactFormUrl}>お問い合わせ</StyledLinkButton>
+  );
+
+  const dlCode = (
+    <StyledLinkButton to={`/`}>
+      <Logo />
+    </StyledLinkButton>
+  );
+
+  const twitter = (
+    <StyledLinkButton to={config.twitterUrl}>Twitter</StyledLinkButton>
+  );
+
+  const copyRight = <CopyRight>{copyRightSymbol} 2019 DBCode</CopyRight>;
+
   return (
     <Root>
       <Grid container={true} justify="space-around" alignItems="center">
-        <StyledLinkButton to={`/`}>お問い合わせ</StyledLinkButton>
-        <StyledLinkButton to={`/`}>DLCode</StyledLinkButton>
-        <StyledLinkButton to={`/`}>Twitter</StyledLinkButton>
+        {contact}
+        {dlCode}
+        {twitter}
       </Grid>
       <Grid container={true} justify="space-around" alignItems="center">
-        <CopyRight>{copyRightSymbol} 2019 DBCode</CopyRight>
+        {copyRight}
       </Grid>
     </Root>
   );
