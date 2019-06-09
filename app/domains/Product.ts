@@ -50,6 +50,10 @@ interface ProductFile {
   originalName: ProductFileOriginalName;
 }
 
+interface ProductFileMap {
+  [id: string]: ProductFile;
+}
+
 interface ProductDocument {
   name: ProductName;
   /**
@@ -57,9 +61,7 @@ interface ProductDocument {
    */
   iconStorageUrl: string | null;
   description: ProductDescription;
-  productFiles: {
-    [id: string]: ProductFile;
-  };
+  productFiles: ProductFileMap;
   ownerUid: string;
   createdAt: Date | firestore.FieldValue;
 }
@@ -189,7 +191,7 @@ class Product implements ProductDocument {
   public addProductFile = (
     displayName: ProductFileDisplayName,
     file: File
-  ): { task: storage.UploadTask; promise: Promise<Product> } => {
+  ): { task: storage.UploadTask; promise: Promise<void> } => {
     const originalFileName = file.name as ProductFileOriginalName;
     const extension = originalFileName
       .split(".")
@@ -205,7 +207,7 @@ class Product implements ProductDocument {
       `${id}.${extension}`
     );
     const task = storageRef.put(file, {});
-    const promise = new Promise<Product>(resolve => {
+    const promise = new Promise<void>(resolve => {
       task.on(
         storage.TaskEvent.STATE_CHANGED,
         () => {
@@ -233,17 +235,7 @@ class Product implements ProductDocument {
           };
           await docRef.update(partialNewDoc);
 
-          resolve(
-            new Product(
-              this.id,
-              this.name,
-              this.iconStorageUrl,
-              this.description,
-              this.ownerUid,
-              partialNewDoc.productFiles,
-              this.createdAt
-            )
-          );
+          resolve();
         }
       );
     });
@@ -384,6 +376,7 @@ export {
   ProductName,
   ProductDescription,
   ProductFile,
+  ProductFileMap,
   ProductFileDisplayName,
   ProductFileOriginalName
 };

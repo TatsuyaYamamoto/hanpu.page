@@ -1,18 +1,57 @@
 import * as React from "react";
+const { useMemo } = React;
 
-import MaterialTable from "material-table";
+import MaterialTable, { Column, Options as TableOptions } from "material-table";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
 
 import {
-  Product,
   ProductFile,
   ProductFileDisplayName,
+  ProductFileMap,
   ProductFileOriginalName
 } from "../../domains/Product";
 
 import { formatFileSize } from "../../utils/format";
 import { downloadFromFirebaseStorage } from "../../utils/network";
+
+const TABLE_OPTIONS: TableOptions = {
+  showTitle: false,
+  addRowPosition: "first",
+  paging: false,
+  search: false,
+  actionsColumnIndex: -1
+};
+
+const TABLE_LOCALIZATION = {
+  header: {
+    actions: ""
+  },
+  body: {
+    editRow: {
+      deleteText: "けします"
+    }
+  }
+};
+
+const TABLE_COLUMNS: Column[] = [
+  { title: "表示ファイル名", field: "displayName" },
+  {
+    title: "オリジナルファイル名",
+    field: "originalName",
+    editable: "never"
+  },
+  {
+    title: "サイズ",
+    field: "size",
+    editable: "never"
+  },
+  {
+    title: "タイプ",
+    field: "contentType",
+    editable: "never"
+  }
+];
 
 interface InnerTableProps {
   productFiles: { [id: string]: ProductFile };
@@ -26,8 +65,6 @@ interface InnerTableProps {
   onDownloadClicked: (productFileId: string) => void;
 }
 
-type Data = RowData[];
-
 interface RowData {
   id: string;
   displayName: ProductFileDisplayName;
@@ -36,166 +73,108 @@ interface RowData {
   contentType: string;
 }
 
-const InnerTable: React.FC<InnerTableProps> = ({
-  productFiles,
-  onAddButtonClicked,
-  onUpdateRequested,
-  onDeleteRequested,
-  onDownloadClicked
-}) => {
-  const data: Data = Object.keys(productFiles).map(id => ({
-    id,
-    displayName: productFiles[id].displayName,
-    originalName: productFiles[id].originalName,
-    size: formatFileSize(productFiles[id].size),
-    contentType: productFiles[id].contentType
-  }));
-
-  return (
-    <MaterialTable
-      options={{
-        showTitle: false,
-        addRowPosition: "first",
-        paging: false,
-        search: false,
-        actionsColumnIndex: -1
-      }}
-      localization={{
-        header: {
-          actions: ""
-        },
-        body: {
-          editRow: {
-            deleteText: "けします"
-          }
-        }
-      }}
-      columns={[
-        { title: "表示ファイル名", field: "displayName" },
-        {
-          title: "オリジナルファイル名",
-          field: "originalName",
-          editable: "never"
-        },
-        {
-          title: "サイズ",
-          field: "size",
-          editable: "never"
-        },
-        {
-          title: "タイプ",
-          field: "contentType",
-          editable: "never"
-        }
-      ]}
-      data={data}
-      actions={[
-        // TODO ダウンロードアイコンの場所の調整。
-        // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。
-        {
-          icon: "arrow_downward",
-          tooltip: "Download",
-          onClick: (event, { id }) => onDownloadClicked(id)
-        },
-        {
-          icon: "add",
-          tooltip: "追加",
-          isFreeAction: true,
-          onClick: onAddButtonClicked
-        }
-      ]}
-      editable={{
-        onRowUpdate: (newData: RowData, oldData: RowData) =>
-          new Promise(resolve => {
-            const { id } = newData;
-            const edited: Partial<ProductFile> = {};
-
-            if (newData.displayName !== oldData.displayName) {
-              edited.displayName = newData.displayName;
-            }
-
-            onUpdateRequested(id, edited, resolve);
-          }),
-        onRowDelete: ({ id }) => {
-          return new Promise(resolve => {
-            onDeleteRequested(id, resolve);
-          });
-        }
-      }}
-    />
-  );
-};
-
 interface ProductFileEditTableProps {
-  product: Product;
+  productFiles: ProductFileMap;
+  onAdd: (displayFileName: ProductFileDisplayName, file: File) => Promise<void>;
+  onUpdate: (
+    productFileId: string,
+    edited: Partial<ProductFile>
+  ) => Promise<void>;
+  onDelete: (productFileId: string) => Promise<void>;
 }
 
 const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
-  product
+  productFiles,
+  onAdd,
+  onUpdate,
+  onDelete
 }) => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
-  const [productFiles, setProductFiles] = React.useState<{
-    [id: string]: ProductFile;
-  }>({});
 
   const handleProductFileAddDialog = () => {
     setAddDialogOpen(!addDialogOpen);
   };
 
-  const onProductFileAdded = async (
-    displayFileName: ProductFileDisplayName,
-    file: File
-  ) => {
-    const { task, promise } = await product.addProductFile(
-      displayFileName,
-      file
-    );
-
-    const updatedProduct = await promise;
-
-    setProductFiles(updatedProduct.productFiles);
+  const onAddButtonClicked = () => {
     handleProductFileAddDialog();
   };
 
-  const onProductFileUpdated = async (
-    id: string,
-    edited: Partial<ProductFile>,
-    resolve: () => void
+  const onNewProductFileSubmitted = async (
+    displayFileName: ProductFileDisplayName,
+    file: File
   ) => {
-    await product.partialUpdateFile(id, edited);
-    resolve();
+    await onAdd(displayFileName, file);
+    handleProductFileAddDialog();
   };
 
-  const onProductFileDeleted = async (id: string, resolve: () => void) => {
-    const updatedProduct = await product.deleteProductFile(id);
-
-    setProductFiles(updatedProduct.productFiles);
-
-    resolve();
-  };
-
-  const onProductFileDownload = async (productFileId: string) => {
+  const onDownloadButtonClicked = (
+    event: any,
+    { id: productFileId }: RowData
+  ) => {
     const { storageUrl, originalName } = productFiles[productFileId];
     downloadFromFirebaseStorage(storageUrl, originalName);
   };
 
-  React.useEffect(() => {
-    setProductFiles(product.productFiles);
-  }, []);
+  const onProductFileUpdate = (
+    newData: RowData,
+    oldData: RowData
+  ): Promise<void> => {
+    const { id } = newData;
+    const edited: Partial<ProductFile> = {};
+
+    if (newData.displayName !== oldData.displayName) {
+      edited.displayName = newData.displayName;
+    }
+
+    return onUpdate(id, edited);
+  };
+
+  const onProductFileDelete = ({ id }: RowData): Promise<void> => {
+    return onDelete(id);
+  };
+
+  const data: RowData[] = useMemo(() => {
+    return Object.keys(productFiles).map(id => ({
+      id,
+      displayName: productFiles[id].displayName,
+      originalName: productFiles[id].originalName,
+      size: formatFileSize(productFiles[id].size),
+      contentType: productFiles[id].contentType
+    }));
+  }, [productFiles]);
 
   return (
     <>
-      <InnerTable
-        productFiles={productFiles}
-        onAddButtonClicked={handleProductFileAddDialog}
-        onUpdateRequested={onProductFileUpdated}
-        onDeleteRequested={onProductFileDeleted}
-        onDownloadClicked={onProductFileDownload}
+      <MaterialTable
+        options={TABLE_OPTIONS}
+        localization={TABLE_LOCALIZATION}
+        columns={TABLE_COLUMNS}
+        data={data}
+        actions={[
+          // TODO ダウンロードアイコンの場所の調整。
+          // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。
+          {
+            icon: "arrow_downward",
+            tooltip: "Download",
+            onClick: onDownloadButtonClicked
+          },
+          {
+            icon: "add",
+            tooltip: "追加",
+            isFreeAction: true,
+            onClick: onAddButtonClicked
+          }
+        ]}
+        editable={{
+          onRowUpdate: onProductFileUpdate,
+          onRowDelete: onProductFileDelete
+        }}
       />
+
       <ProductFileAddDialog
         open={addDialogOpen}
         handleClose={handleProductFileAddDialog}
-        onSubmit={onProductFileAdded}
+        onSubmit={onNewProductFileSubmitted}
       />
     </>
   );
