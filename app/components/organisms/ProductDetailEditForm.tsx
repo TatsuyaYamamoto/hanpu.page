@@ -7,6 +7,7 @@ import TextField from "@material-ui/core/TextField";
 
 import IdField from "../atoms/IdField";
 import EditableField from "../atoms/EditableField";
+import useProductEditor from "../hooks/useProductEditor";
 import ProductImageThumbnail from "../molecules/ProductImageThumbnail";
 
 import {

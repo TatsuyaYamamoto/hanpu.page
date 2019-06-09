@@ -1,5 +1,6 @@
 import MaterialTable from "material-table";
 import * as React from "react";
+import { saveDownloadCodeSetAsCsvFile } from "../../utils/network";
 
 import DownloadCodeSetAddDialog from "./DownloadCodeSetAddDialog";
 
@@ -95,16 +96,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     DownloadCodeSet.getByProductRef(product.ref).then(downloadCodeSetList => {
       const codeSet = downloadCodeSetList.find(item => item.id === id);
 
-      let csvContent = "data:text/csv;charset=utf-8,";
-      Object.keys(codeSet.codes).forEach(code => {
-        csvContent += `${code}\r\n`;
-      });
-
-      const a = document.createElement("a");
-      a.href = encodeURI(csvContent);
-      a.target = "_blank";
-      a.download = `download_code_set_${id}.csv`;
-      a.click();
+      saveDownloadCodeSetAsCsvFile(codeSet);
     });
   };
 
