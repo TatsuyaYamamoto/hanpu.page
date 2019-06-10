@@ -7,44 +7,56 @@ import TextField from "@material-ui/core/TextField";
 
 import IdField from "../atoms/IdField";
 import EditableField from "../atoms/EditableField";
-import useProductEditor from "../hooks/useProductEditor";
 import ProductImageThumbnail from "../molecules/ProductImageThumbnail";
 
 import {
   Product,
   ProductDescription,
+  ProductDocument,
   ProductName
 } from "../../domains/Product";
 
 interface ProductDetailEditFormProps {
   product: Product;
+  onUpdateFields: (values: Partial<ProductDocument>) => Promise<void>;
+  onUpdateIcon: (file: File) => Promise<void>;
 }
 
+/**
+ * Productの詳細、ProductFile、DownloadCodeの編集を行うForm
+ *
+ * @param product
+ * @param onUpdate
+ * @constructor
+ */
 const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
-  product
+  product,
+  onUpdateFields,
+  onUpdateIcon
 }) => {
   const [iconUrl, setIconUrl] = React.useState<string | null>(null);
 
   useEffect(() => {
+    // TODO: check whether url is updated
     product.getIconUrl().then(url => {
       setIconUrl(url);
     });
-  }, []);
+  }, [product]);
 
-  const onNameSubmitted = async (value: ProductName) => {
-    await product.partialUpdateFields({
+  const onNameSubmitted = (value: ProductName) => {
+    return onUpdateFields({
       name: value
     });
   };
 
   const onDescriptionSubmitted = async (value: ProductDescription) => {
-    await product.partialUpdateFields({
+    return onUpdateFields({
       description: value
     });
   };
 
   const onIconChanged = (file: File) => {
-    product.uploadIconToStorage(file);
+    return onUpdateIcon(file);
   };
 
   return (

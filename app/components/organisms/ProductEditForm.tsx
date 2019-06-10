@@ -7,7 +7,11 @@ import DownloadCodeSetForm from "./DownloadCodeSetForm";
 import ProductDetailEditForm from "./ProductDetailEditForm";
 import ProductFileEditTable from "./ProductFileEditTable";
 
-import { ProductFile, ProductFileDisplayName } from "../../domains/Product";
+import {
+  ProductDocument,
+  ProductFile,
+  ProductFileDisplayName
+} from "../../domains/Product";
 
 interface ProductDetailEditFormProps {
   productId: string;
@@ -25,6 +29,8 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
   const {
     watch,
     product,
+    updateProduct,
+    updateProductIcon,
     addProductFile,
     updateProductFile,
     deleteProductFile
@@ -33,6 +39,16 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
   useEffect(() => {
     watch(productId);
   }, []);
+
+  const onProductFieldsUpdate = (
+    values: Partial<ProductDocument>
+  ): Promise<void> => {
+    return updateProduct(values);
+  };
+
+  const onProductIconUpdate = (icon: File): Promise<void> => {
+    return updateProductIcon(icon);
+  };
 
   const onProductFileAdd = (
     displayFileName: ProductFileDisplayName,
@@ -58,7 +74,11 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     <>
       {product && (
         <>
-          <ProductDetailEditForm product={product} />
+          <ProductDetailEditForm
+            product={product}
+            onUpdateFields={onProductFieldsUpdate}
+            onUpdateIcon={onProductIconUpdate}
+          />
           <ProductFileEditTable
             productFiles={product.productFiles}
             onAdd={onProductFileAdd}

@@ -296,7 +296,9 @@ class Product implements ProductDocument {
       .getDownloadURL();
   }
 
-  public uploadIconToStorage(file: File): storage.UploadTask {
+  public uploadIconToStorage(
+    file: File
+  ): { task: storage.UploadTask; promise: Promise<void> } {
     // after success, delete an old icon.
     const oldIconRef = storage().refFromURL(this.iconStorageUrl);
 
@@ -314,29 +316,36 @@ class Product implements ProductDocument {
     const storageRef = Product.getIconStorageRef().child(`${id}.${extension}`);
     const task = storageRef.put(file, {});
 
-    const unsubscribe = task.on(
-      storage.TaskEvent.STATE_CHANGED,
-      () => {
-        //
-      },
-      () => {
-        //
-      },
-      async () => {
-        unsubscribe();
+    const promise = new Promise<void>(resolve => {
+      const unsubscribe = task.on(
+        storage.TaskEvent.STATE_CHANGED,
+        () => {
+          //
+        },
+        () => {
+          //
+        },
+        async () => {
+          unsubscribe();
 
-        const docRef = Product.getDocRef(this.ref.id);
-        const partialNewDoc: Partial<ProductDocument> = {
-          iconStorageUrl: storageRef.toString()
-        };
-        await docRef.update(partialNewDoc);
+          const docRef = Product.getDocRef(this.ref.id);
+          const partialNewDoc: Partial<ProductDocument> = {
+            iconStorageUrl: storageRef.toString()
+          };
+          await docRef.update(partialNewDoc);
 
-        // it no longer be referred.
-        oldIconRef.delete();
-      }
-    );
+          // it no longer be referred.
+          await oldIconRef.delete();
 
-    return task;
+          resolve();
+        }
+      );
+    });
+
+    return {
+      task,
+      promise
+    };
   }
 
   public async partialUpdateFields(

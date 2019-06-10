@@ -29,10 +29,27 @@ const useProductEditor = () => {
     return Product.createNew({ name, description });
   };
 
-  const updateProduct = async (values: Partial<ProductDocument>) => {
-    await product.partialUpdateFields(values);
-    const updated = await Product.getById(productId);
-    setProduct(updated);
+  const updateProduct = (values: Partial<ProductDocument>) => {
+    // TODO validate provided params
+
+    return product
+      .partialUpdateFields(values)
+      .then(() => Product.getById(productId))
+      .then(newProduct => {
+        setProduct(newProduct);
+      });
+  };
+
+  const updateProductIcon = (icon: File): Promise<void> => {
+    // TODO validate provided params
+
+    const { promise } = product.uploadIconToStorage(icon);
+
+    return promise
+      .then(() => Product.getById(productId))
+      .then(newProduct => {
+        setProduct(newProduct);
+      });
   };
 
   const addProductFile = (
@@ -94,6 +111,8 @@ const useProductEditor = () => {
     product,
     watch,
     addProduct,
+    updateProduct,
+    updateProductIcon,
     addProductFile,
     updateProductFile,
     deleteProductFile
