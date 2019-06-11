@@ -33,7 +33,8 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     updateProductIcon,
     addProductFile,
     updateProductFile,
-    deleteProductFile
+    deleteProductFile,
+    addDownloadCodeSet
   } = useProductEditor();
 
   useEffect(() => {
@@ -70,6 +71,13 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     return deleteProductFile(id);
   };
 
+  const onDownloadCodeSetAdd = (
+    numberOfCodes: number,
+    expiredAt: Date
+  ): Promise<void> => {
+    return addDownloadCodeSet(numberOfCodes, expiredAt);
+  };
+
   return (
     <>
       {product && (
@@ -85,7 +93,7 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
             onUpdate={onProductFileUpdate}
             onDelete={onProductFileDelete}
           />
-          <DownloadCodeSetForm product={product} />
+          <DownloadCodeSetForm product={product} onAdd={onDownloadCodeSetAdd} />
         </>
       )}
     </>

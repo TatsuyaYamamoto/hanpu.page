@@ -1,5 +1,6 @@
 import { storage } from "firebase";
 import { useEffect, useState } from "react";
+import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
 import {
   Product,
   ProductDescription,
@@ -93,6 +94,14 @@ const useProductEditor = () => {
       });
   };
 
+  const addDownloadCodeSet = (
+    numberOfCodes: number,
+    expiredAt: Date
+  ): Promise<void> => {
+    const ref = Product.getDocRef(product.id);
+    return DownloadCodeSet.create(ref, numberOfCodes, expiredAt);
+  };
+
   useEffect(() => {
     return function cleanup() {
       unwatch();
@@ -115,7 +124,8 @@ const useProductEditor = () => {
     updateProductIcon,
     addProductFile,
     updateProductFile,
-    deleteProductFile
+    deleteProductFile,
+    addDownloadCodeSet
   };
 };
 
