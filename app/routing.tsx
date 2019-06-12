@@ -26,12 +26,8 @@ export default () => (
       <Route exact={true} path={`/`} component={Root} />
       <Route exact={true} path={`/__login__`} component={Login} />
       <Route exact={true} path={`/settings`} component={Settings} />
-      <Route exact={true} path={`/d/:code?`} component={Download} />
-      <Route
-        exact={true}
-        path={`/download/dashboard`}
-        component={DownloadDashboard}
-      />
+      <Route exact={true} path={`/d`} component={Download} />
+      <Route exact={true} path={`/d/dashboard`} component={DownloadDashboard} />
       <Route exact={true} path={`/publish`} component={PublishIndex} />
       <Route exact={true} path={`/publish/new`} component={NewProduct} />
       <Route exact={true} path={`/publish/products`} component={ProductList} />

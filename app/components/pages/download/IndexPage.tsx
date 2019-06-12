@@ -1,9 +1,11 @@
 import * as React from "react";
+const { useState } = React;
 import { RouteComponentProps } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 
+import LinkButton from "../../atoms/LinkButton";
 import DownloadCodeInputCard from "../../organisms/DownloadCodeInputCard";
 import DownloadCodeErrorDialog from "../../organisms/DownloadCodeErrorDialog";
 import AppBar from "../../organisms/AppBar";
@@ -13,11 +15,18 @@ import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 
 interface IndexPageProps extends RouteComponentProps<{ code?: string }> {}
 
-const IndexPage: React.FC<IndexPageProps> = props => {
-  const [downloadCode, setDownloadCode] = React.useState(
-    props.match.params.code || ""
-  );
-  const [openNotFoundDialog, setOpenNotFoundDialog] = React.useState(false);
+/**
+ * QueryParameters:
+ *  - Key: c
+ *    Description: ダウンロードコードのテキストフィールドに値を入力した状態で表示する
+ *
+ * @param props
+ * @constructor
+ */
+const DownloadPage: React.FC<IndexPageProps> = props => {
+  const params = new URLSearchParams(props.location.search);
+  const [downloadCode, setDownloadCode] = useState(params.get("c") || "");
+  const [openNotFoundDialog, setOpenNotFoundDialog] = useState(false);
 
   const { verifyDownloadCode } = useDownloadCodeVerifier();
 
@@ -30,7 +39,7 @@ const IndexPage: React.FC<IndexPageProps> = props => {
   const submit = () => {
     verifyDownloadCode(downloadCode)
       .then(() => {
-        props.history.push(`/download/dashboard`);
+        props.history.push(`/d/dashboard`);
       })
       .catch(e => {
         handleNotFoundDialog();
@@ -60,6 +69,11 @@ const IndexPage: React.FC<IndexPageProps> = props => {
                 onSubmit={submit}
               />
             </Grid>
+            <Grid container={true} justify="center">
+              <LinkButton to={`/d/dashboard`}>
+                過去にコードを入力したコンテンツを見る
+              </LinkButton>
+            </Grid>
           </Container>
 
           <Footer />
@@ -77,4 +91,4 @@ const IndexPage: React.FC<IndexPageProps> = props => {
   );
 };
 
-export default IndexPage;
+export default DownloadPage;
