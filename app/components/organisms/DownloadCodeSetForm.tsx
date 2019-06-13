@@ -15,7 +15,6 @@ import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
 import { Product } from "../../domains/Product";
 
 const TABLE_OPTIONS: TableOptions = {
-  showTitle: false,
   addRowPosition: "first",
   paging: false,
   search: false,
@@ -114,6 +113,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
         options={TABLE_OPTIONS}
         localization={TABLE_LOCALIZATION}
         columns={TABLE_COLUMNS}
+        title={"ダウンロードコード一覧"}
         data={codeSetList}
         actions={[
           // TODO ダウンロードアイコンの場所の調整。

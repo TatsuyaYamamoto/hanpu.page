@@ -16,7 +16,6 @@ import { formatFileSize } from "../../utils/format";
 import { downloadFromFirebaseStorage } from "../../utils/network";
 
 const TABLE_OPTIONS: TableOptions = {
-  showTitle: false,
   addRowPosition: "first",
   paging: false,
   search: false,
@@ -143,12 +142,15 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     }));
   }, [productFiles]);
 
+  const Container = (props: any) => <div {...props} />;
+
   return (
     <>
       <MaterialTable
         options={TABLE_OPTIONS}
         localization={TABLE_LOCALIZATION}
         columns={TABLE_COLUMNS}
+        title={"配信ファイル一覧"}
         data={data}
         actions={[
           // TODO ダウンロードアイコンの場所の調整。

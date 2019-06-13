@@ -1,6 +1,8 @@
 import * as React from "react";
 const { useEffect } = React;
 
+import styled from "styled-components";
+
 import useProductEditor from "../hooks/useProductEditor";
 
 import DownloadCodeSetForm from "./DownloadCodeSetForm";
@@ -12,6 +14,10 @@ import {
   ProductFile,
   ProductFileDisplayName
 } from "../../domains/Product";
+
+const Section = styled.div`
+  margin-bottom: 30px;
+`;
 
 interface ProductDetailEditFormProps {
   productId: string;
@@ -82,18 +88,27 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     <>
       {product && (
         <>
-          <ProductDetailEditForm
-            product={product}
-            onUpdateFields={onProductFieldsUpdate}
-            onUpdateIcon={onProductIconUpdate}
-          />
-          <ProductFileEditTable
-            productFiles={product.productFiles}
-            onAdd={onProductFileAdd}
-            onUpdate={onProductFileUpdate}
-            onDelete={onProductFileDelete}
-          />
-          <DownloadCodeSetForm product={product} onAdd={onDownloadCodeSetAdd} />
+          <Section>
+            <ProductDetailEditForm
+              product={product}
+              onUpdateFields={onProductFieldsUpdate}
+              onUpdateIcon={onProductIconUpdate}
+            />
+          </Section>
+          <Section>
+            <ProductFileEditTable
+              productFiles={product.productFiles}
+              onAdd={onProductFileAdd}
+              onUpdate={onProductFileUpdate}
+              onDelete={onProductFileDelete}
+            />
+          </Section>
+          <Section>
+            <DownloadCodeSetForm
+              product={product}
+              onAdd={onDownloadCodeSetAdd}
+            />
+          </Section>
         </>
       )}
     </>

@@ -1,12 +1,14 @@
 import * as React from "react";
 const { useEffect } = React;
 
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
+import { Paper } from "@material-ui/core";
+import { PaperProps } from "@material-ui/core/Paper";
 
-import IdField from "../atoms/IdField";
-import EditableField from "../atoms/EditableField";
+import styled from "styled-components";
+
+import FormControl from "../molecules/ProductDetailFormControl";
+import FormInput from "../molecules/ProductDetailFormInput";
+
 import ProductImageThumbnail from "../molecules/ProductImageThumbnail";
 
 import {
@@ -15,6 +17,12 @@ import {
   ProductDocument,
   ProductName
 } from "../../domains/Product";
+import TextField from "../molecules/TextField";
+
+const StyledPaper: React.FC<PaperProps> = styled(Paper)`
+  // TODO: set padding value with theme
+  padding: 24px;
+`;
 
 interface ProductDetailEditFormProps {
   product: Product;
@@ -60,35 +68,44 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
   };
 
   return (
-    <Grid container={true}>
-      <Box display="flex">
-        <Box>
-          <ProductImageThumbnail src={iconUrl} onChange={onIconChanged} />
-        </Box>
+    <StyledPaper>
+      <FormControl
+        label={"ID"}
+        input={<FormInput readonly={true} defaultValue={product.id} />}
+      />
 
-        <Box>
-          <IdField id={product.id} />
+      <FormControl
+        label={"Thumbnail"}
+        input={<ProductImageThumbnail src={iconUrl} onChange={onIconChanged} />}
+      />
 
-          <EditableField
-            label={"Name"}
-            defaultValue={product.name}
-            onSubmit={onNameSubmitted}
-          />
-
-          <EditableField
-            label={"Description"}
+      <FormControl
+        label={"Name"}
+        input={
+          <FormInput defaultValue={product.name} onSubmit={onNameSubmitted} />
+        }
+      />
+      <FormControl
+        label={"Description"}
+        input={
+          <FormInput
             defaultValue={product.description}
             multiline={true}
             onSubmit={onDescriptionSubmitted}
           />
+        }
+      />
 
-          <TextField
-            label={"created"}
-            value={product.createdAt.toDateString()}
+      <FormControl
+        label={"Created Date"}
+        input={
+          <FormInput
+            readonly={true}
+            defaultValue={product.createdAt.toDateString()}
           />
-        </Box>
-      </Box>
-    </Grid>
+        }
+      />
+    </StyledPaper>
   );
 };
 
