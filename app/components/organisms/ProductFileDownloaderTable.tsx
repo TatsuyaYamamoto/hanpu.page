@@ -1,26 +1,36 @@
 import * as React from "react";
 const { useState, useMemo } = React;
 
-import Grid from "@material-ui/core/Grid";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-
+import {
+  Paper,
+  Drawer,
+  Grid,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Divider,
+  IconButton,
+  Typography,
+  MenuItem,
+  Select,
+  FormControlLabel,
+  Switch
+} from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 
-import { Product, ProductFile } from "../../domains/Product";
+import AudioPlayer from "./AudioPlayer";
+
+import useAudio from "../hooks/useAudio";
+
+import { ProductFile } from "../../domains/Product";
+
 import { formatFileSize } from "../../utils/format";
-import { downloadFromFirebaseStorage } from "../../utils/network";
+import {
+  downloadFromFirebaseStorage,
+  getStorageObjectDownloadUrl
+} from "../../utils/network";
 
 interface PlayableOnlySwitchProps {
   playableOnly: boolean;
@@ -76,11 +86,23 @@ interface ListItemData {
 
 interface InnerListProps {
   data: ListItemData[];
-  onStart: (id: string) => (e: React.MouseEvent<HTMLButtonElement>) => void;
-  onDownload: (id: string) => (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onStart: (id: string) => Promise<void>;
+  onDownload: (id: string) => void;
 }
 
 const InnerList: React.FC<InnerListProps> = ({ data, onStart, onDownload }) => {
+  const onPlayIconClicked = (id: string) => (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    onStart(id);
+  };
+
+  const onDownloadIconClicked = (id: string) => (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    onDownload(id);
+  };
+
   return (
     <List>
       {data.map(({ id, name, contentType, size, canPlay }) => (
@@ -91,11 +113,11 @@ const InnerList: React.FC<InnerListProps> = ({ data, onStart, onDownload }) => {
               secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
             />
             <ListItemSecondaryAction>
-              <IconButton edge="start" onClick={onDownload(id)}>
+              <IconButton edge="start" onClick={onDownloadIconClicked(id)}>
                 <DownloadIcon />
               </IconButton>
               {canPlay && (
-                <IconButton edge="end" onClick={onStart(id)}>
+                <IconButton edge="end" onClick={onPlayIconClicked(id)}>
                   <PlayIcon />
                 </IconButton>
               )}
@@ -128,6 +150,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
+  const { play, pause, state, currentTime, duration } = useAudio();
 
   const handlePlayableOnly = () => {
     setPlayableOnly(!playableOnly);
@@ -139,17 +162,20 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     setSortType(e.target.value);
   };
 
-  const onDownloadClicked = (id: string) => (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const onDownloadClicked = (id: string) => {
     const { storageUrl, originalName } = files[id];
     downloadFromFirebaseStorage(storageUrl, originalName);
   };
 
-  const onStartClicked = (id: string) => (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    //
+  const onStartWithList = async (id: string) => {
+    const { storageUrl } = files[id];
+
+    const url = await getStorageObjectDownloadUrl(storageUrl);
+    await play(url);
+  };
+
+  const onStartWithPlayer = async () => {
+    await play();
   };
 
   const visibleData = useMemo(() => {
@@ -198,12 +224,22 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
           <Grid item={true}>
             <InnerList
               data={visibleData}
-              onStart={onStartClicked}
+              onStart={onStartWithList}
               onDownload={onDownloadClicked}
             />
           </Grid>
         </Grid>
       </Paper>
+
+      <Drawer anchor="bottom" variant="persistent" open={state !== "none"}>
+        <AudioPlayer
+          playing={state === "playing"}
+          currentSec={currentTime}
+          totalSec={duration}
+          onPlay={onStartWithPlayer}
+          onPause={pause}
+        />
+      </Drawer>
     </>
   );
 };

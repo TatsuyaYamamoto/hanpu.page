@@ -17,13 +17,17 @@ export const saveDownloadCodeSetAsCsvFile = (codeSet: DownloadCodeSet) => {
   a.click();
 };
 
+export const getStorageObjectDownloadUrl = (storageUrl: string) => {
+  return storage()
+    .refFromURL(storageUrl)
+    .getDownloadURL();
+};
+
 export const downloadFromFirebaseStorage = async (
   storageUrl: string,
   originalName: string
 ): Promise<void> => {
-  const downloadUrl = await storage()
-    .refFromURL(storageUrl)
-    .getDownloadURL();
+  const downloadUrl = await getStorageObjectDownloadUrl(storageUrl);
 
   const xhr = new XMLHttpRequest();
   xhr.responseType = "blob";

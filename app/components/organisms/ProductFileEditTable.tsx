@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useMemo } = React;
+const { useMemo, useCallback } = React;
 
 import MaterialTable, { Column, Options as TableOptions } from "material-table";
 
@@ -141,8 +141,6 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
       contentType: productFiles[id].contentType
     }));
   }, [productFiles]);
-
-  const Container = (props: any) => <div {...props} />;
 
   return (
     <>
