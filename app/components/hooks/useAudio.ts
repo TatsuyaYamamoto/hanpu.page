@@ -93,6 +93,11 @@ const useAudio = () => {
       return audio.play();
     }
 
+    if (audio) {
+      audio.pause();
+      setAudio(null);
+    }
+
     const a = new Audio(url);
     a.addEventListener("play", onPlay);
     a.addEventListener("waiting", onWaiting);
