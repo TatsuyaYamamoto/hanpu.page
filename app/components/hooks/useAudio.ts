@@ -112,9 +112,14 @@ const useAudio = () => {
     audio.pause();
   };
 
+  const changeTime = (time: number) => {
+    audio.currentTime = time;
+  };
+
   return {
     play,
     pause,
+    changeTime,
     state,
     currentTime,
     duration

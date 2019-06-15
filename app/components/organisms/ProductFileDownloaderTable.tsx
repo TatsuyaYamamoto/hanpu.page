@@ -150,7 +150,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
-  const { play, pause, state, currentTime, duration } = useAudio();
+  const { play, pause, changeTime, state, currentTime, duration } = useAudio();
 
   const handlePlayableOnly = () => {
     setPlayableOnly(!playableOnly);
@@ -238,6 +238,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
           totalSec={duration}
           onPlay={onStartWithPlayer}
           onPause={pause}
+          onChangeTime={changeTime}
         />
       </Drawer>
     </>

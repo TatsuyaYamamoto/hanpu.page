@@ -1,6 +1,8 @@
 import * as React from "react";
+const { useState } = React;
 
-import { Paper, LinearProgress, IconButton } from "@material-ui/core";
+import { Paper, IconButton } from "@material-ui/core";
+import Slider from "@material-ui/lab/Slider";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 
@@ -10,6 +12,7 @@ interface AudioPlayerProps {
   playing: boolean;
   onPlay: () => Promise<void>;
   onPause: () => void;
+  onChangeTime: (time: number) => void;
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
@@ -17,14 +20,29 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   totalSec,
   playing,
   onPlay,
-  onPause
+  onPause,
+  onChangeTime
 }) => {
-  const progress = (currentSec / totalSec) * 100;
+  const audioProgress = (currentSec / totalSec) * 100;
+  const [handlingProgress, setHandlingProgress] = useState<number | null>(null);
+  const indicatingProgress = handlingProgress || audioProgress;
+  const handleChange = (event: React.ChangeEvent<{}>, value: number) => {
+    setHandlingProgress(value);
+  };
+  const onChangeCommitted = (event: React.ChangeEvent<{}>, value: number) => {
+    setHandlingProgress(null);
+
+    const time = (totalSec * value) / 100;
+    onChangeTime(time);
+  };
 
   return (
     <Paper>
-      {/* TODO replace Slider */}
-      <LinearProgress variant="determinate" value={progress} />
+      <Slider
+        value={indicatingProgress}
+        onChange={handleChange}
+        onChangeCommitted={onChangeCommitted}
+      />
       {playing ? (
         <IconButton onClick={onPause}>
           <PauseIcon />
