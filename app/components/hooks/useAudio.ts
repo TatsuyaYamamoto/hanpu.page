@@ -6,9 +6,7 @@ const useAudio = () => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [currentTime, setCurrentTime] = useState(null);
   const [duration, setDuration] = useState(null);
-  const [state, setState] = useState<"none" | "loading" | "ready" | "playing">(
-    "none"
-  );
+  const [state, setState] = useState<"none" | "loading" | "playing">("none");
 
   /**
    * 再生が始まった。
@@ -56,7 +54,7 @@ const useAudio = () => {
    * @link https://developer.mozilla.org/ja/docs/Web/API/HTMLMediaElement/pause_event
    */
   const onPause = () => {
-    setState("ready");
+    //
   };
 
   /**
@@ -94,8 +92,7 @@ const useAudio = () => {
     }
 
     if (audio) {
-      audio.pause();
-      setAudio(null);
+      release();
     }
 
     const a = new Audio(url);
@@ -121,10 +118,17 @@ const useAudio = () => {
     audio.currentTime = time;
   };
 
+  const release = () => {
+    audio.pause();
+    setAudio(null);
+    setState("none");
+  };
+
   return {
     play,
     pause,
     changeTime,
+    release,
     state,
     currentTime,
     duration

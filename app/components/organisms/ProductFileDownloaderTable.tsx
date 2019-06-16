@@ -144,13 +144,21 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
       contentType: productFile.contentType,
       size: formatFileSize(productFile.size),
       // TODO!
-      canPlay: productFile.contentType === "audio/mp3"
+      canPlay: ["audio/mp3", "audio/x-m4a"].includes(productFile.contentType)
     };
   });
 
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
-  const { play, pause, changeTime, state, currentTime, duration } = useAudio();
+  const {
+    play,
+    pause,
+    release,
+    changeTime,
+    state,
+    currentTime,
+    duration
+  } = useAudio();
 
   const handlePlayableOnly = () => {
     setPlayableOnly(!playableOnly);
@@ -176,6 +184,10 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
   const onStartWithPlayer = async () => {
     await play();
+  };
+
+  const onClosePlayer = () => {
+    release();
   };
 
   const visibleData = useMemo(() => {
@@ -236,6 +248,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
           playing={state === "playing"}
           currentSec={currentTime}
           totalSec={duration}
+          onClose={onClosePlayer}
           onPlay={onStartWithPlayer}
           onPause={pause}
           onChangeTime={changeTime}

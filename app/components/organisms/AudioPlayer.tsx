@@ -5,6 +5,7 @@ import { Paper, IconButton } from "@material-ui/core";
 import Slider from "@material-ui/lab/Slider";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
+import CloseIcon from "@material-ui/icons/Close";
 
 interface AudioPlayerProps {
   currentSec: number;
@@ -13,6 +14,7 @@ interface AudioPlayerProps {
   onPlay: () => Promise<void>;
   onPause: () => void;
   onChangeTime: (time: number) => void;
+  onClose: () => void;
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
@@ -21,7 +23,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   playing,
   onPlay,
   onPause,
-  onChangeTime
+  onChangeTime,
+  onClose
 }) => {
   const audioProgress = (currentSec / totalSec) * 100;
   const [handlingProgress, setHandlingProgress] = useState<number | null>(null);
@@ -43,6 +46,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         onChange={handleChange}
         onChangeCommitted={onChangeCommitted}
       />
+      <IconButton onClick={onClose}>
+        <CloseIcon />
+      </IconButton>
+
       {playing ? (
         <IconButton onClick={onPause}>
           <PauseIcon />
