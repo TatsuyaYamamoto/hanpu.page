@@ -2,10 +2,15 @@ import * as React from "react";
 const { useState } = React;
 
 import { Paper, IconButton } from "@material-ui/core";
-import Slider from "@material-ui/lab/Slider";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import CloseIcon from "@material-ui/icons/Close";
+
+// @material-ui/lab#Sliderがあるし、こっちの方が動きが滑らかだけれど、上端の謎のmergin(pagging?)が消せないため、こっちを使う
+import Slider, { SliderProps } from "rc-slider";
+import "rc-slider/assets/index.css";
+
+import styled from "styled-components";
 
 interface AudioPlayerProps {
   currentSec: number;
@@ -16,6 +21,12 @@ interface AudioPlayerProps {
   onChangeTime: (time: number) => void;
   onClose: () => void;
 }
+
+const StyledSlider: React.FC<SliderProps> = styled(Slider)`
+  && {
+    padding: 0;
+  }
+`;
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   currentSec,
@@ -29,10 +40,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const audioProgress = (currentSec / totalSec) * 100;
   const [handlingProgress, setHandlingProgress] = useState<number | null>(null);
   const indicatingProgress = handlingProgress || audioProgress;
-  const handleChange = (event: React.ChangeEvent<{}>, value: number) => {
+
+  const onSliderChange = (value: number) => {
     setHandlingProgress(value);
   };
-  const onChangeCommitted = (event: React.ChangeEvent<{}>, value: number) => {
+  const onSliderAfterChange = (value: number) => {
     setHandlingProgress(null);
 
     const time = (totalSec * value) / 100;
@@ -41,10 +53,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
   return (
     <Paper>
-      <Slider
+      <StyledSlider
+        min={0}
+        max={100}
         value={indicatingProgress}
-        onChange={handleChange}
-        onChangeCommitted={onChangeCommitted}
+        onChange={onSliderChange}
+        onAfterChange={onSliderAfterChange}
       />
       <IconButton onClick={onClose}>
         <CloseIcon />

@@ -243,7 +243,18 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
         </Grid>
       </Paper>
 
-      <Drawer anchor="bottom" variant="persistent" open={state !== "none"}>
+      <Drawer
+        PaperProps={{
+          style: {
+            // NOTE: Mui#Drawerのdefault valueはautoだけれど、Drawerの上端にSliderを表示、かつ操作ボタンをはみ出して表示するために変更する
+            // 不都合がある場合は要検討...
+            overflowY: "visible"
+          }
+        }}
+        anchor="bottom"
+        variant="persistent"
+        open={state !== "none"}
+      >
         <AudioPlayer
           playing={state === "playing"}
           currentSec={currentTime}
