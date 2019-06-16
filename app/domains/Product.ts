@@ -75,12 +75,12 @@ class Product implements ProductDocument {
     return Product.getColRef().doc(id);
   }
 
-  public static getProductFileStorageRef() {
-    return storage().ref(`productFiles`);
+  public static getProductFileStorageRef(uid: string, productId: string) {
+    return storage().ref(`users/${uid}/products/${productId}/files`);
   }
 
-  public static getIconStorageRef() {
-    return storage().ref(`icons`);
+  public static getImageStorageRef(uid: string, productId: string) {
+    return storage().ref(`users/${uid}/products/${productId}/images`);
   }
 
   public static async getOwns(): Promise<Product[]> {
@@ -192,6 +192,7 @@ class Product implements ProductDocument {
     displayName: ProductFileDisplayName,
     file: File
   ): { task: storage.UploadTask; promise: Promise<void> } => {
+    const { uid } = auth().currentUser;
     const originalFileName = file.name as ProductFileOriginalName;
     const extension = originalFileName
       .split(".")
@@ -199,13 +200,14 @@ class Product implements ProductDocument {
       .toLowerCase();
 
     // TODO replace secure random id.
-    const id = Math.random()
+    const fileId = Math.random()
       .toString(16)
       .substring(2);
 
-    const storageRef = Product.getProductFileStorageRef().child(
-      `${id}.${extension}`
+    const storageRef = Product.getProductFileStorageRef(uid, this.id).child(
+      `${fileId}.${extension}`
     );
+
     const task = storageRef.put(file, {});
     const promise = new Promise<void>(resolve => {
       task.on(
@@ -213,8 +215,8 @@ class Product implements ProductDocument {
         () => {
           //
         },
-        () => {
-          //
+        e => {
+          console.error(e);
         },
         async () => {
           const docRef = Product.getDocRef(this.ref.id);
@@ -299,8 +301,10 @@ class Product implements ProductDocument {
   public uploadIconToStorage(
     file: File
   ): { task: storage.UploadTask; promise: Promise<void> } {
+    const { uid } = auth().currentUser;
     // after success, delete an old icon.
-    const oldIconRef = storage().refFromURL(this.iconStorageUrl);
+    const oldIconRef =
+      this.iconStorageUrl && storage().refFromURL(this.iconStorageUrl);
 
     const originalFileName = file.name;
     const extension = originalFileName
@@ -309,11 +313,14 @@ class Product implements ProductDocument {
       .toLowerCase();
 
     // TODO replace secure random id.
-    const id = Math.random()
+    const fileId = Math.random()
       .toString(16)
       .substring(2);
 
-    const storageRef = Product.getIconStorageRef().child(`${id}.${extension}`);
+    const storageRef = Product.getImageStorageRef(uid, this.id).child(
+      `${fileId}.${extension}`
+    );
+
     const task = storageRef.put(file, {});
 
     const promise = new Promise<void>(resolve => {
@@ -322,8 +329,8 @@ class Product implements ProductDocument {
         () => {
           //
         },
-        () => {
-          //
+        e => {
+          console.error(e);
         },
         async () => {
           unsubscribe();
@@ -334,8 +341,10 @@ class Product implements ProductDocument {
           };
           await docRef.update(partialNewDoc);
 
-          // it no longer be referred.
-          await oldIconRef.delete();
+          if (oldIconRef) {
+            // it no longer be referred.
+            await oldIconRef.delete();
+          }
 
           resolve();
         }
