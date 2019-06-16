@@ -41,4 +41,39 @@ const App = () => (
   </>
 );
 
+window.onerror = (message, file, lineNo, colNo, error) => {
+  const errorDetail = { message, file, lineNo, colNo, error };
+  requestErrorDetailContact(errorDetail);
+};
+
+window.addEventListener("unhandledrejection", e => {
+  requestErrorDetailContact(e.reason);
+});
+
+const requestErrorDetailContact = (errorDetail: any) => {
+  const { userAgent, language } = navigator;
+  const { location } = window;
+
+  const info = {
+    error: errorDetail,
+    userAgent,
+    language,
+    location
+  };
+
+  if (
+    confirm(
+      "予期せぬエラーが発生してしまいました。\n\n恐れ入りますが、問い合わせフォームを起動してエラーの詳細を送信して頂けませんでしょうか？(エラーの情報は自動で入力されます。)"
+    )
+  ) {
+    const detail = `${btoa(
+      unescape(encodeURIComponent(JSON.stringify(info)))
+    )}`;
+    const contactFormUrl = `https://docs.google.com/forms/d/e/1FAIpQLSe5bSPvJ5XQM0IACqZ9NKoHuRUAcC_V1an16JGwHh6HeGd-oQ/viewform?usp=pp_url&entry.1991364045=%E4%B8%8D%E5%85%B7%E5%90%88%E5%A0%B1%E5%91%8A...+/+Bug+Report&entry.326070868=DLCode&entry.1884055698=${detail}`;
+    window.location.href = contactFormUrl;
+  } else {
+    console.error(info);
+  }
+};
+
 export default App;
