@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useState, useMemo } = React;
+const { useState, useMemo, Fragment } = React;
 
 import {
   Paper,
@@ -21,8 +21,10 @@ import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 
 import AudioPlayer from "./AudioPlayer";
+import AudioWaveIcon from "../atoms/AudioWaveIcon";
+import LoadingIcon from "../atoms/LoadingIcon";
 
-import useAudio from "../hooks/useAudio";
+import useAudio, { PlayerState } from "../hooks/useAudio";
 
 import { ProductFile } from "../../domains/Product";
 
@@ -77,56 +79,57 @@ const SortSelector: React.FC<SortSelectorProps> = ({ type, onChange }) => {
 };
 
 interface ListItemData {
-  id: string;
   name: string;
   contentType: string;
   size: string;
   canPlay: boolean;
 }
 
-interface InnerListProps {
-  data: ListItemData[];
-  onStart: (id: string) => Promise<void>;
-  onDownload: (id: string) => void;
+interface ProductFileListItemProps extends ListItemData {
+  state: PlayerState | null;
+  onStart: () => Promise<void>;
+  onDownload: () => void;
 }
 
-const InnerList: React.FC<InnerListProps> = ({ data, onStart, onDownload }) => {
-  const onPlayIconClicked = (id: string) => (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    onStart(id);
+const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
+  name,
+  contentType,
+  size,
+  canPlay,
+  state,
+  onStart,
+  onDownload
+}) => {
+  const onPlayIconClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onStart();
   };
 
-  const onDownloadIconClicked = (id: string) => (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    onDownload(id);
+  const onDownloadIconClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onDownload();
   };
 
   return (
-    <List>
-      {data.map(({ id, name, contentType, size, canPlay }) => (
-        <React.Fragment key={id}>
-          <ListItem>
-            <ListItemText
-              primary={name}
-              secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
-            />
-            <ListItemSecondaryAction>
-              <IconButton edge="start" onClick={onDownloadIconClicked(id)}>
-                <DownloadIcon />
-              </IconButton>
-              {canPlay && (
-                <IconButton edge="end" onClick={onPlayIconClicked(id)}>
-                  <PlayIcon />
-                </IconButton>
-              )}
-            </ListItemSecondaryAction>
-          </ListItem>
-          <Divider />
-        </React.Fragment>
-      ))}
-    </List>
+    <ListItem>
+      <ListItemText
+        primary={name}
+        secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
+      />
+      <ListItemSecondaryAction>
+        {canPlay &&
+          (state === "playing" ? (
+            <AudioWaveIcon animation={true} />
+          ) : state === "loading" ? (
+            <LoadingIcon animation={true} />
+          ) : (
+            <IconButton edge="end" onClick={onPlayIconClicked}>
+              <PlayIcon />
+            </IconButton>
+          ))}
+        <IconButton edge="start" onClick={onDownloadIconClicked}>
+          <DownloadIcon />
+        </IconButton>
+      </ListItemSecondaryAction>
+    </ListItem>
   );
 };
 
@@ -150,6 +153,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const {
     play,
     pause,
@@ -170,15 +174,16 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     setSortType(e.target.value);
   };
 
-  const onDownloadClicked = (id: string) => {
+  const onDownloadClicked = (id: string) => async () => {
     const { storageUrl, originalName } = files[id];
-    downloadFromFirebaseStorage(storageUrl, originalName);
+    await downloadFromFirebaseStorage(storageUrl, originalName);
   };
 
-  const onStartWithList = async (id: string) => {
+  const onStartWithList = (id: string) => async () => {
     const { storageUrl } = files[id];
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
+    setSelectedId(id);
     await play(url);
   };
 
@@ -186,8 +191,13 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     await play();
   };
 
+  const onPauseWithPlayer = () => {
+    pause();
+  };
+
   const onClosePlayer = () => {
     release();
+    setSelectedId(null);
   };
 
   const visibleData = useMemo(() => {
@@ -234,11 +244,22 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
           </Grid>
 
           <Grid item={true}>
-            <InnerList
-              data={visibleData}
-              onStart={onStartWithList}
-              onDownload={onDownloadClicked}
-            />
+            <List>
+              {visibleData.map(({ id, name, contentType, size, canPlay }) => (
+                <Fragment key={id}>
+                  <ProductFileListItem
+                    state={id === selectedId ? state : null}
+                    name={name}
+                    contentType={contentType}
+                    size={size}
+                    canPlay={canPlay}
+                    onStart={onStartWithList(id)}
+                    onDownload={onDownloadClicked(id)}
+                  />
+                  <Divider />
+                </Fragment>
+              ))}
+            </List>
           </Grid>
         </Grid>
       </Paper>
@@ -256,12 +277,12 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
         open={state !== "none"}
       >
         <AudioPlayer
-          playing={state === "playing"}
+          state={state}
           currentSec={currentTime}
           totalSec={duration}
           onClose={onClosePlayer}
           onPlay={onStartWithPlayer}
-          onPause={pause}
+          onPause={onPauseWithPlayer}
           onChangeTime={changeTime}
         />
       </Drawer>

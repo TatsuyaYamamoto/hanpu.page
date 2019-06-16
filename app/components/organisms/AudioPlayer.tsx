@@ -12,10 +12,12 @@ import "rc-slider/assets/index.css";
 
 import styled from "styled-components";
 
+import { PlayerState } from "../hooks/useAudio";
+
 interface AudioPlayerProps {
   currentSec: number;
   totalSec: number;
-  playing: boolean;
+  state: PlayerState;
   onPlay: () => Promise<void>;
   onPause: () => void;
   onChangeTime: (time: number) => void;
@@ -31,7 +33,7 @@ const StyledSlider: React.FC<SliderProps> = styled(Slider)`
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   currentSec,
   totalSec,
-  playing,
+  state,
   onPlay,
   onPause,
   onChangeTime,
@@ -64,12 +66,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         <CloseIcon />
       </IconButton>
 
-      {playing ? (
+      {state === "playing" ? (
         <IconButton onClick={onPause}>
           <PauseIcon />
         </IconButton>
-      ) : (
+      ) : state === "ready" ? (
         <IconButton onClick={onPlay}>
+          <PlayIcon />
+        </IconButton>
+      ) : (
+        <IconButton disabled={true}>
           <PlayIcon />
         </IconButton>
       )}

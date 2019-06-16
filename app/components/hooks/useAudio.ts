@@ -2,11 +2,21 @@
 // tslint:disable:no-console
 import { useState, useEffect } from "react";
 
+type PlayerState =
+  // No audio file is selected
+  | "none"
+  // loading audio file
+  | "loading"
+  // can play after loading or pausing.
+  | "ready"
+  // now , audio is playing
+  | "playing";
+
 const useAudio = () => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [currentTime, setCurrentTime] = useState(null);
   const [duration, setDuration] = useState(null);
-  const [state, setState] = useState<"none" | "loading" | "playing">("none");
+  const [state, setState] = useState<PlayerState>("none");
 
   /**
    * 再生が始まった。
@@ -22,6 +32,7 @@ const useAudio = () => {
    */
   const onWaiting = () => {
     console.log("audio#wating");
+    setState("loading");
   };
 
   /**
@@ -54,7 +65,8 @@ const useAudio = () => {
    * @link https://developer.mozilla.org/ja/docs/Web/API/HTMLMediaElement/pause_event
    */
   const onPause = () => {
-    //
+    console.log("audio#pause");
+    setState("ready");
   };
 
   /**
@@ -136,3 +148,4 @@ const useAudio = () => {
 };
 
 export default useAudio;
+export { PlayerState };
