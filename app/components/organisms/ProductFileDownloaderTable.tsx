@@ -107,6 +107,7 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
 
   return (
     <ListItem>
+      {/* TODO: style ListItemText width not to overlap with action icons. とりあえず、 "君のこころは輝いているかい？	" では重ならないので、対応は後回し。 */}
       <ListItemText
         primary={name}
         secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
@@ -118,11 +119,11 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
           ) : state === "loading" ? (
             <LoadingIcon animation={true} />
           ) : (
-            <IconButton edge="end" onClick={onPlayIconClicked}>
+            <IconButton onClick={onPlayIconClicked}>
               <PlayIcon />
             </IconButton>
           ))}
-        <IconButton edge="start" onClick={onDownloadIconClicked}>
+        <IconButton onClick={onDownloadIconClicked}>
           <DownloadIcon />
         </IconButton>
       </ListItemSecondaryAction>
