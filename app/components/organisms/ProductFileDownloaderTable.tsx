@@ -12,9 +12,7 @@ import {
   IconButton,
   Typography,
   MenuItem,
-  Select,
-  FormControlLabel,
-  Switch
+  Select
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
@@ -31,27 +29,6 @@ import {
 } from "../../utils/network";
 import NativeAudioController from "./NativeAudioController";
 
-interface PlayableOnlySwitchProps {
-  playableOnly: boolean;
-  onChange: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean
-  ) => void;
-}
-
-const PlayableOnlySwitch: React.FC<PlayableOnlySwitchProps> = ({
-  playableOnly,
-  onChange
-}) => {
-  return (
-    <FormControlLabel
-      label="ブラウザで再生可能なファイルのみ表示"
-      labelPlacement="start"
-      control={<Switch checked={playableOnly} onChange={onChange} />}
-    />
-  );
-};
-
 type SortType = "none" | "contentType" | "size";
 
 interface SortSelectorProps {
@@ -61,17 +38,11 @@ interface SortSelectorProps {
 
 const SortSelector: React.FC<SortSelectorProps> = ({ type, onChange }) => {
   return (
-    <FormControlLabel
-      label={"並べ替え"}
-      labelPlacement="start"
-      control={
-        <Select value={type} onChange={onChange}>
-          <MenuItem value="none">なし</MenuItem>
-          <MenuItem value="contentType">ファイル形式</MenuItem>
-          <MenuItem value="size">ファイルサイズ</MenuItem>
-        </Select>
-      }
-    />
+    <Select value={type} onChange={onChange}>
+      <MenuItem value="none">並べ替え</MenuItem>
+      <MenuItem value="contentType">ファイル形式</MenuItem>
+      <MenuItem value="size">ファイルサイズ</MenuItem>
+    </Select>
   );
 };
 
@@ -234,14 +205,12 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     <>
       <Paper>
         <Grid container={true} direction="column">
-          <Grid item={true}>
-            <PlayableOnlySwitch
-              playableOnly={playableOnly}
-              onChange={handlePlayableOnly}
-            />
-          </Grid>
-
-          <Grid item={true}>
+          <Grid
+            container={true}
+            item={true}
+            justify={"flex-end"}
+            style={{ padding: 8 }} // TODO set with theme
+          >
             <SortSelector type={sortType} onChange={handleSortType} />
           </Grid>
 
@@ -249,6 +218,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
             <List>
               {visibleData.map(({ id, name, contentType, size, canPlay }) => (
                 <Fragment key={id}>
+                  <Divider />
                   <ProductFileListItem
                     state={id === selectedId ? playerState : null}
                     name={name}
@@ -258,7 +228,6 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
                     onStart={onStartWithList(id)}
                     onDownload={onDownloadClicked(id)}
                   />
-                  <Divider />
                 </Fragment>
               ))}
             </List>
