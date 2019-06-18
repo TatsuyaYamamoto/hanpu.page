@@ -3,7 +3,6 @@ const { useState, useMemo, Fragment } = React;
 
 import {
   Paper,
-  Drawer,
   Grid,
   List,
   ListItem,
@@ -20,11 +19,8 @@ import {
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 
-import AudioPlayer from "./AudioPlayer";
 import AudioWaveIcon from "../atoms/AudioWaveIcon";
 import LoadingIcon from "../atoms/LoadingIcon";
-
-import useAudio, { PlayerState } from "../hooks/useAudio";
 
 import { ProductFile } from "../../domains/Product";
 
@@ -33,6 +29,7 @@ import {
   downloadFromFirebaseStorage,
   getStorageObjectDownloadUrl
 } from "../../utils/network";
+import NativeAudioController from "./NativeAudioController";
 
 interface PlayableOnlySwitchProps {
   playableOnly: boolean;
@@ -133,6 +130,16 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
   );
 };
 
+type PlayerState =
+  // No audio file is selected
+  | "none"
+  // loading audio file
+  | "loading"
+  // can play after loading or pausing.
+  | "ready"
+  // now , audio is playing
+  | "playing";
+
 interface ProductFileDownloaderTableProps {
   files: { [id: string]: ProductFile };
 }
@@ -154,15 +161,8 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const {
-    play,
-    pause,
-    release,
-    changeTime,
-    state,
-    currentTime,
-    duration
-  } = useAudio();
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [playerState, setPlayerState] = useState<PlayerState>("none");
 
   const handlePlayableOnly = () => {
     setPlayableOnly(!playableOnly);
@@ -183,21 +183,22 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     const { storageUrl } = files[id];
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
+
     setSelectedId(id);
-    await play(url);
+    setAudioUrl(url);
   };
 
-  const onStartWithPlayer = async () => {
-    await play();
+  const onPlayWithPlayer = () => {
+    setPlayerState("playing");
   };
 
   const onPauseWithPlayer = () => {
-    pause();
+    setPlayerState("ready");
   };
 
   const onClosePlayer = () => {
-    release();
     setSelectedId(null);
+    setAudioUrl(null);
   };
 
   const visibleData = useMemo(() => {
@@ -248,7 +249,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
               {visibleData.map(({ id, name, contentType, size, canPlay }) => (
                 <Fragment key={id}>
                   <ProductFileListItem
-                    state={id === selectedId ? state : null}
+                    state={id === selectedId ? playerState : null}
                     name={name}
                     contentType={contentType}
                     size={size}
@@ -264,28 +265,13 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
         </Grid>
       </Paper>
 
-      <Drawer
-        PaperProps={{
-          style: {
-            // NOTE: Mui#Drawerのdefault valueはautoだけれど、Drawerの上端にSliderを表示、かつ操作ボタンをはみ出して表示するために変更する
-            // 不都合がある場合は要検討...
-            overflowY: "visible"
-          }
-        }}
-        anchor="bottom"
-        variant="persistent"
-        open={state !== "none"}
-      >
-        <AudioPlayer
-          state={state}
-          currentSec={currentTime}
-          totalSec={duration}
-          onClose={onClosePlayer}
-          onPlay={onStartWithPlayer}
-          onPause={onPauseWithPlayer}
-          onChangeTime={changeTime}
-        />
-      </Drawer>
+      <NativeAudioController
+        open={!!audioUrl}
+        src={audioUrl}
+        onPlay={onPlayWithPlayer}
+        onPause={onPauseWithPlayer}
+        onClose={onClosePlayer}
+      />
     </>
   );
 };
