@@ -1,8 +1,8 @@
 import * as React from "react";
-const { useEffect } = React;
 
 import styled from "styled-components";
 
+import useDownloadCodeEditor from "../hooks/useDownloadCodeEditor";
 import useProductEditor from "../hooks/useProductEditor";
 
 import DownloadCodeSetForm from "./DownloadCodeSetForm";
@@ -33,19 +33,16 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
   productId
 }) => {
   const {
-    watch,
     product,
     updateProduct,
     updateProductIcon,
     addProductFile,
     updateProductFile,
-    deleteProductFile,
-    addDownloadCodeSet
-  } = useProductEditor();
-
-  useEffect(() => {
-    watch(productId);
-  }, []);
+    deleteProductFile
+  } = useProductEditor(productId);
+  const { downloadCodeSets, addDownloadCodeSet } = useDownloadCodeEditor(
+    product
+  );
 
   const onProductFieldsUpdate = (
     values: Partial<ProductDocument>
@@ -105,7 +102,7 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
           </Section>
           <Section>
             <DownloadCodeSetForm
-              product={product}
+              downloadCodeSets={downloadCodeSets}
               onAdd={onDownloadCodeSetAdd}
             />
           </Section>

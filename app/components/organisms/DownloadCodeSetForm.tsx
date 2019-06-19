@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useEffect, useState } = React;
+const { useState, useMemo } = React;
 
 import MaterialTable, {
   Options as TableOptions,
@@ -12,7 +12,6 @@ import DownloadCodeSetAddDialog from "./DownloadCodeSetAddDialog";
 import { saveDownloadCodeSetAsCsvFile } from "../../utils/network";
 
 import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
-import { Product } from "../../domains/Product";
 
 const TABLE_OPTIONS: TableOptions = {
   addRowPosition: "first",
@@ -38,12 +37,12 @@ const TABLE_COLUMNS: TableColumn[] = [
   {
     title: "作成日",
     field: "createdAt",
-    type: "date"
+    type: "datetime"
   },
   {
     title: "有効期限",
     field: "expiredAt",
-    type: "date"
+    type: "datetime"
   }
 ];
 
@@ -55,30 +54,15 @@ interface CodeData {
 }
 
 interface DownloadCodeSetFormProps {
-  product: Product;
+  downloadCodeSets: DownloadCodeSet[];
   onAdd: (numberOfCodes: number, expiredAt: Date) => Promise<void>;
 }
+
 const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
-  product,
+  downloadCodeSets,
   onAdd
 }) => {
-  const [codeSetList, setCodeSetList] = useState<CodeData[]>([]);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-
-  useEffect(() => {
-    DownloadCodeSet.getByProductRef(product.ref).then(downloadCodeSetList => {
-      setCodeSetList(
-        downloadCodeSetList.map(codeSet => {
-          return {
-            id: codeSet.id,
-            length: Object.keys(codeSet.codes).length,
-            createdAt: codeSet.createdAt,
-            expiredAt: codeSet.expiredAt
-          };
-        })
-      );
-    });
-  }, []);
 
   const handleAddDialog = () => {
     setAddDialogOpen(!addDialogOpen);
@@ -88,24 +72,27 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     onAdd(numberOfCodes, expiredAt).then(() => {
       handleAddDialog();
     });
-
-    const ref = Product.getDocRef(product.id);
-    DownloadCodeSet.create(ref, numberOfCodes, expiredAt).then(set => {
-      handleAddDialog();
-    });
   };
 
   const onAddButtonClicked = () => {
     handleAddDialog();
   };
 
-  const onDownloadButtonClicked = (event: any, { id }: CodeData) => {
-    DownloadCodeSet.getByProductRef(product.ref).then(downloadCodeSetList => {
-      const codeSet = downloadCodeSetList.find(item => item.id === id);
-
-      saveDownloadCodeSetAsCsvFile(codeSet);
-    });
+  const onDownloadButtonClicked = (event: any, selected: CodeData) => {
+    const codeSet = downloadCodeSets.find(({ id }) => id === selected.id);
+    saveDownloadCodeSetAsCsvFile(codeSet);
   };
+
+  const tableData: CodeData[] = useMemo(
+    () =>
+      downloadCodeSets.map(set => ({
+        id: set.id,
+        length: Object.keys(set.codes).length,
+        createdAt: set.createdAt,
+        expiredAt: set.expiredAt
+      })),
+    [downloadCodeSets]
+  );
 
   return (
     <>
@@ -114,7 +101,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
         localization={TABLE_LOCALIZATION}
         columns={TABLE_COLUMNS}
         title={"ダウンロードコード一覧"}
-        data={codeSetList}
+        data={tableData}
         actions={[
           // TODO ダウンロードアイコンの場所の調整。
           // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。

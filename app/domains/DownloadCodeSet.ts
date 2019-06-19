@@ -62,8 +62,8 @@ class DownloadCodeSet {
   /**
    *
    * @param productRef
-   * @param count
-   *
+   * @param numberOfCodes
+   * @param expiredAt
    * TODO 最大作成数は100ぐらい？
    */
   public static async create(

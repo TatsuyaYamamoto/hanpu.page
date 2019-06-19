@@ -1,6 +1,6 @@
-import { storage } from "firebase";
 import { useEffect, useState } from "react";
-import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
+import { storage } from "firebase";
+
 import {
   Product,
   ProductDescription,
@@ -10,18 +10,8 @@ import {
   ProductName
 } from "../../domains/Product";
 
-const useProductEditor = () => {
-  const [productId, setProductId] = useState<string | null>(null);
+const useProductEditor = (productId: string) => {
   const [product, setProduct] = useState<Product | null>(null);
-
-  const watch = (id: string) => {
-    setProductId(id);
-  };
-
-  const unwatch = () => {
-    setProductId(null);
-    setProduct(null);
-  };
 
   const addProduct = (
     name: ProductName,
@@ -94,38 +84,25 @@ const useProductEditor = () => {
       });
   };
 
-  const addDownloadCodeSet = (
-    numberOfCodes: number,
-    expiredAt: Date
-  ): Promise<void> => {
-    const ref = Product.getDocRef(product.id);
-    return DownloadCodeSet.create(ref, numberOfCodes, expiredAt);
-  };
-
   useEffect(() => {
-    return function cleanup() {
-      unwatch();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (productId) {
-      Product.getById(productId).then(p => {
-        setProduct(p);
-      });
+    if (!productId) {
+      setProduct(null);
+      return;
     }
+
+    Product.getById(productId).then(p => {
+      setProduct(p);
+    });
   }, [productId]);
 
   return {
     product,
-    watch,
     addProduct,
     updateProduct,
     updateProductIcon,
     addProductFile,
     updateProductFile,
-    deleteProductFile,
-    addDownloadCodeSet
+    deleteProductFile
   };
 };
 
