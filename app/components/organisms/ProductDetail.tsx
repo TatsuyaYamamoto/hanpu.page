@@ -7,8 +7,13 @@ import Typography, { TypographyProps } from "@material-ui/core/Typography";
 
 import ProductThumbnail from "../atoms/ProductImageThumbnailImage";
 
-const ProductName: React.FC<TypographyProps> = styled(Typography)``;
-const ProductDescription: React.FC<TypographyProps> = styled(Typography)``;
+const ProductName: React.FC<TypographyProps> = styled(Typography)`
+  text-overflow: ellipsis;
+`;
+const ProductDescription: React.FC<TypographyProps> = styled(Typography)`
+  white-space: pre-wrap;
+  word-wrap: break-word;
+`;
 
 interface ProductDetailProps {
   name: string;
@@ -28,9 +33,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       </Grid>
       <Grid item={true}>
         <ProductName variant="h4">{name}</ProductName>
-        <ProductDescription variant="body1" component="pre">
-          {description}
-        </ProductDescription>
+        <ProductDescription variant="body1">{description}</ProductDescription>
       </Grid>
     </Grid>
   );
