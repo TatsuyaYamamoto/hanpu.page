@@ -21,7 +21,7 @@
     "format": "prettier --write app/**/*.{ts,tsx,js,jsx,json,css}",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "deploy:dev": "firebase deploy --project dl-code-dev",
-    "deploy:pro": ""
+    "deploy:pro": "firebase deploy --project dl-code"
   },
   "husky": {
     "hooks": {
