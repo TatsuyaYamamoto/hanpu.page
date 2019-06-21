@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="robots" content="noindex">
+    <meta charset="UTF-8"/>
+    <% if (noIndex) { %>
+        <meta name=”robots” content=”noindex,follow”/>
+    <% } %>
 
     <!-- Google Tag Manager -->
     <script>(function(w, d, s, l, i) {
@@ -19,10 +22,20 @@
       })(window, document, "script", "dataLayer", "GTM-N45JNJ2");</script>
     <!-- End Google Tag Manager -->
 
-    <meta charset="UTF-8"/>
-    <title>DLCode</title>
-
+    <title><%= title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta name=”keywords” content=”<%= keyword %>”>
+    <meta name="description" content="<%= description %>">
+    <meta name="author" content="https://github.com/TatsuyaYamamoto">
+
+    <meta property="og:site_name" content="<%= title %>">
+    <meta property="og:description" content="<%= description %>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= title %>">
+    <meta property="og:image" content="https://dl-code.web.app/assets/og.jpg">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:url" content="https://dl-code.web.app">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
