@@ -99,8 +99,8 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
           {onBack ? back : logo}
 
           <FlexSpace />
-
-          <AppBarMenu />
+          {/* TODO: Show help! */}
+          {/*<AppBarMenu />*/}
         </Toolbar>
       </StyledMuiAppBar>
     </>
