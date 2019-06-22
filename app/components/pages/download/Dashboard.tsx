@@ -6,6 +6,7 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
+import useGa from "../../hooks/useGa";
 import AppBar from "../../organisms/AppBar";
 import Footer from "../../organisms/Footer";
 import ProductDetail from "../../organisms/ProductDetail";
@@ -26,8 +27,12 @@ const DetailPage: React.FC<DetailPageProps> = ({
   onBack
 }) => {
   const [iconUrl, setIconUrl] = useState("");
+  const { gtagPageView } = useGa();
 
   useEffect(() => {
+    // TODO: handle with react-router-props
+    gtagPageView("/d/dashboard/detail");
+
     product.getIconUrl().then(url => {
       setIconUrl(url);
     });
@@ -72,6 +77,13 @@ interface PanelPageProps {
 }
 
 const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
+  const { gtagPageView } = useGa();
+
+  useEffect(() => {
+    // TODO: handle with react-router-props
+    gtagPageView("/d/dashboard/panel");
+  }, []);
+
   return (
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>

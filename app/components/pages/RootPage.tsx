@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+const { useEffect } = React;
+import { Link, RouteComponentProps } from "react-router-dom";
 
 import { Container, Grid, Typography } from "@material-ui/core";
 import Icon, { IconProps } from "@material-ui/core/Icon";
@@ -9,6 +10,7 @@ import styled from "styled-components";
 import useDate from "../hooks/useDate";
 import LinkButton from "../atoms/LinkButton";
 import Logo from "../atoms/Logo";
+import useGa from "../hooks/useGa";
 import Footer from "../organisms/Footer";
 
 const Root = styled.div``;
@@ -78,7 +80,12 @@ const AboutAppSection = () => {
   );
 };
 
-const RootPage = () => {
+const RootPage = (props: RouteComponentProps) => {
+  const { gtagPageView } = useGa();
+  useEffect(() => {
+    gtagPageView(props.location.pathname);
+  }, []);
+
   return (
     <Root>
       <Grid

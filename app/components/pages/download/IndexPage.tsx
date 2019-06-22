@@ -1,11 +1,12 @@
 import * as React from "react";
-const { useState } = React;
+const { useState, useEffect } = React;
 import { RouteComponentProps } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 
 import LinkButton from "../../atoms/LinkButton";
+import useGa from "../../hooks/useGa";
 import DownloadCodeInputCard from "../../organisms/DownloadCodeInputCard";
 import DownloadCodeErrorDialog from "../../organisms/DownloadCodeErrorDialog";
 import AppBar from "../../organisms/AppBar";
@@ -29,6 +30,11 @@ const DownloadPage: React.FC<IndexPageProps> = props => {
   const [openNotFoundDialog, setOpenNotFoundDialog] = useState(false);
 
   const { verifyDownloadCode } = useDownloadCodeVerifier();
+  const { gtagPageView } = useGa();
+
+  useEffect(() => {
+    gtagPageView(props.location.pathname);
+  }, []);
 
   const onChangeDownloadCodeValue = (
     e: React.ChangeEvent<HTMLInputElement>
