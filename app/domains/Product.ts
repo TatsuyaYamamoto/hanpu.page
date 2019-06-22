@@ -231,8 +231,9 @@ class Product implements ProductDocument {
 
           const partialNewDoc: Partial<ProductDocument> = {
             productFiles: {
-              ...this.productFiles,
-              [newProductFileId]: newProductFile
+              // 後入れ先出しにするには、この順番である必要がある(FirestoreのMapの仕様上？)
+              [newProductFileId]: newProductFile,
+              ...this.productFiles
             }
           };
           await docRef.update(partialNewDoc);

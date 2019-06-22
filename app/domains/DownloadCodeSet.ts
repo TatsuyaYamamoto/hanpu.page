@@ -45,7 +45,12 @@ class DownloadCodeSet {
    *
    * @param code
    */
-  public static async verify(code: string): Promise<string | null> {
+  public static async verify(
+    code: string
+  ): Promise<{
+    productId: string;
+    expiredAt: Date;
+  } | null> {
     const snap = await DownloadCodeSet.getColRef()
       .where(`codes.${code}`, "==", true)
       .get();
@@ -54,9 +59,12 @@ class DownloadCodeSet {
       return null;
     }
 
-    const { productRef } = snap.docs[0].data() as DownloadCodeSetDocument;
+    const doc = snap.docs[0].data() as DownloadCodeSetDocument;
 
-    return productRef.id;
+    return {
+      productId: doc.productRef.id,
+      expiredAt: (doc.expiredAt as Timestamp).toDate()
+    };
   }
 
   /**

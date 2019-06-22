@@ -1,24 +1,25 @@
 import * as React from "react";
-const { useState, useMemo, Fragment } = React;
 
 import {
-  Paper,
+  Divider,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  Divider,
-  IconButton,
-  Typography,
   MenuItem,
-  Select
+  Paper,
+  Select,
+  Snackbar,
+  Typography
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 
-import AudioWaveIcon from "../atoms/AudioWaveIcon";
-import LoadingIcon from "../atoms/LoadingIcon";
+import { useSnackbar } from "notistack";
+
+import { LogType } from "../../domains/AuditLog";
 
 import { ProductFile } from "../../domains/Product";
 
@@ -27,7 +28,13 @@ import {
   downloadFromFirebaseStorage,
   getStorageObjectDownloadUrl
 } from "../../utils/network";
+
+import AudioWaveIcon from "../atoms/AudioWaveIcon";
+import LoadingIcon from "../atoms/LoadingIcon";
+import useAuditLogger from "../hooks/useAuditLogger";
 import NativeAudioController from "./NativeAudioController";
+
+const { useState, useMemo, Fragment } = React;
 
 type SortType = "none" | "contentType" | "size";
 
@@ -129,6 +136,8 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
       canPlay: ["audio/mp3", "audio/x-m4a"].includes(productFile.contentType)
     };
   });
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { okAudit } = useAuditLogger();
 
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
@@ -148,13 +157,31 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
   const onDownloadClicked = (id: string) => async () => {
     const { storageUrl, originalName } = files[id];
-    await downloadFromFirebaseStorage(storageUrl, originalName);
+
+    // TODO: show progress status
+    const snackBarKey = enqueueSnackbar(`${originalName}をダウンロード中...`, {
+      persist: true
+    });
+
+    downloadFromFirebaseStorage(storageUrl, originalName).then(() => {
+      closeSnackbar(snackBarKey);
+
+      okAudit({
+        type: LogType.DOWNLOAD_PRODUCT_FILE,
+        params: { storageUrl, originalName }
+      });
+    });
   };
 
   const onStartWithList = (id: string) => async () => {
     const { storageUrl } = files[id];
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
+
+    okAudit({
+      type: LogType.PLAY_PRODUCT_FILE,
+      params: { productFileId: id, url }
+    });
 
     setSelectedId(id);
     setAudioUrl(url);

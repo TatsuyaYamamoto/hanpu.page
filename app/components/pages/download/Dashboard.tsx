@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useState, useEffect } = React;
+const { useState, useEffect, useMemo } = React;
 import { RouteComponentProps } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
@@ -16,11 +16,15 @@ import { Product } from "../../../domains/Product";
 
 interface DetailPageProps {
   product: Product;
+  downloadCodeExpiredAt: Date;
   onBack: () => void;
 }
 
-const DetailPage: React.FC<DetailPageProps> = ({ product, onBack }) => {
-  const { name, description } = product;
+const DetailPage: React.FC<DetailPageProps> = ({
+  product,
+  downloadCodeExpiredAt,
+  onBack
+}) => {
   const [iconUrl, setIconUrl] = useState("");
 
   useEffect(() => {
@@ -44,6 +48,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ product, onBack }) => {
                   name={product.name}
                   description={product.description}
                   iconUrl={iconUrl}
+                  downloadCodeExpiredAt={downloadCodeExpiredAt}
                 />
               </Grid>
               <Grid item={true}>
@@ -95,26 +100,42 @@ const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
 const DownloadDashboardPage: React.FC<
   RouteComponentProps<{ code?: string }>
 > = props => {
-  const { activeProducts } = useDownloadCodeVerifier();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { actives } = useDownloadCodeVerifier();
+  const [selected, setSelected] = useState<{
+    product: Product;
+    expiredAt: Date;
+  } | null>(null);
 
   const onProductSelected = (selectedId: string) => {
-    const product = activeProducts.find(({ id }) => id === selectedId);
+    const activeProduct = actives.find(
+      ({ product }) => product.id === selectedId
+    );
 
-    setSelectedProduct(product);
+    setSelected({
+      product: activeProduct.product,
+      expiredAt: activeProduct.expiredAt
+    });
   };
+
+  const products = useMemo(() => {
+    return actives.map(a => a.product);
+  }, [actives]);
 
   const showList = () => {
-    setSelectedProduct(null);
+    setSelected(null);
   };
 
-  if (selectedProduct) {
-    return <DetailPage product={selectedProduct} onBack={showList} />;
+  if (selected) {
+    return (
+      <DetailPage
+        product={selected.product}
+        downloadCodeExpiredAt={selected.expiredAt}
+        onBack={showList}
+      />
+    );
   }
 
-  return (
-    <PanelPage products={activeProducts} onPanelClicked={onProductSelected} />
-  );
+  return <PanelPage products={products} onPanelClicked={onProductSelected} />;
 };
 
 export default DownloadDashboardPage;
