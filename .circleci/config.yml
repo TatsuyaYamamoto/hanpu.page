@@ -5,16 +5,32 @@ workflows:
   git-push:
     jobs:
       - dependencies
-      - test:
+
+      - test-dev:
           requires:
             - dependencies
-      - deploy:
+          filters:
+            branches:
+              only: develop
+      - deploy-dev:
           requires:
-            - test
+            - test-dev
           filters:
             branches:
               only: develop
 
+      - test-pro:
+          requires:
+            - dependencies
+          filters:
+            branches:
+              only: master
+      - deploy-pro:
+          requires:
+            - test-pro
+          filters:
+            branches:
+              only: master
 executors:
   default:
     docker:
@@ -31,7 +47,7 @@ jobs:
       - run: yarn install
       - save_node_cache
 
-  test:
+  test-dev:
     executor:
       name: default
     steps:
@@ -40,13 +56,30 @@ jobs:
       - run: yarn build:dev
       - save_workspace
 
-  deploy:
+  deploy-dev:
     executor:
       name: default
     steps:
       - restore_workspace
       - check_build_environment
       - run: yarn --silent deploy:dev --token "$FIREBASE_TOKEN"
+
+  test-pro:
+    executor:
+      name: default
+    steps:
+      - prepare_build
+      - check_build_environment
+      - run: yarn build:pro
+      - save_workspace
+
+  deploy-pro:
+    executor:
+      name: default
+    steps:
+      - restore_workspace
+      - check_build_environment
+      - run: yarn --silent deploy:pro --token "$FIREBASE_TOKEN"
 
 commands:
   check_build_environment:
