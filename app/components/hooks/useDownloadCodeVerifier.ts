@@ -18,7 +18,7 @@ interface ActiveProductSchema {
 // Declare Database
 //
 class DlCodeDb extends Dexie {
-  public activeProducts: Dexie.Table<ActiveProductSchema, number>; // id is number in this case
+  public activeProducts: Dexie.Table<ActiveProductSchema, string>;
 
   public constructor() {
     super("dlCodeDb");
@@ -60,26 +60,41 @@ const useDownloadCodeVerifier = () => {
       throw e;
     }
 
+    const db = new DlCodeDb();
+
+    const target = await db.activeProducts.get({
+      productId: verifiedProductId
+    });
+
+    if (!!target /* exists */) {
+      // tslint:disable-next-line:no-console
+      console.info("requested product is already registered.");
+
+      okAudit({
+        type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
+        params: {
+          code,
+          alreadyRegistered: true
+        }
+      });
+
+      return;
+    }
+
     okAudit({
       type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
       params: { code }
     });
 
-    const db = new DlCodeDb();
-    db.transaction("rw", db.activeProducts, async () => {
-      await db.activeProducts.add({
+    db.transaction("rw", db.activeProducts, () => {
+      return db.activeProducts.add({
         downloadCode: code,
         productId: verifiedProductId,
         expiredAt
       });
-    })
-      .catch(e => {
-        // tslint:disable-next-line:no-console
-        console.error(e);
-      })
-      .then(() => {
-        return loadActives();
-      });
+    }).then(() => {
+      return loadActives();
+    });
   };
 
   const loadActives = async () => {
