@@ -1,24 +1,20 @@
-import * as React from "react";
-const { useState, useMemo, Fragment } = React;
-
 import {
-  Paper,
+  Divider,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  Divider,
-  IconButton,
-  Typography,
   MenuItem,
-  Select
+  Paper,
+  Select,
+  Typography
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
-
-import AudioWaveIcon from "../atoms/AudioWaveIcon";
-import LoadingIcon from "../atoms/LoadingIcon";
+import * as React from "react";
+import { LogType } from "../../domains/AuditLog";
 
 import { ProductFile } from "../../domains/Product";
 
@@ -27,7 +23,13 @@ import {
   downloadFromFirebaseStorage,
   getStorageObjectDownloadUrl
 } from "../../utils/network";
+
+import AudioWaveIcon from "../atoms/AudioWaveIcon";
+import LoadingIcon from "../atoms/LoadingIcon";
+import useAuditLogger from "../hooks/useAuditLogger";
 import NativeAudioController from "./NativeAudioController";
+
+const { useState, useMemo, Fragment } = React;
 
 type SortType = "none" | "contentType" | "size";
 
@@ -130,6 +132,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     };
   });
 
+  const { okAudit } = useAuditLogger();
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -149,12 +152,22 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   const onDownloadClicked = (id: string) => async () => {
     const { storageUrl, originalName } = files[id];
     await downloadFromFirebaseStorage(storageUrl, originalName);
+
+    okAudit({
+      type: LogType.DOWNLOAD_PRODUCT_FILE,
+      params: { storageUrl, originalName }
+    });
   };
 
   const onStartWithList = (id: string) => async () => {
     const { storageUrl } = files[id];
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
+
+    okAudit({
+      type: LogType.PLAY_PRODUCT_FILE,
+      params: { productFileId: id, url }
+    });
 
     setSelectedId(id);
     setAudioUrl(url);

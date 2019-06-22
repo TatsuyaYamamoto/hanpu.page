@@ -1,10 +1,12 @@
-import * as React from "react";
-const { useEffect, useState } = React;
-
 import Dexie from "dexie";
+import * as React from "react";
+import { LogType } from "../../domains/AuditLog";
 import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
 
 import { Product } from "../../domains/Product";
+import useAuditLogger from "./useAuditLogger";
+
+const { useEffect, useState } = React;
 
 interface ActiveProductSchema {
   downloadCode: string;
@@ -33,6 +35,7 @@ interface ActiveProduct {
 }
 
 const useDownloadCodeVerifier = () => {
+  const { okAudit, errorAudit } = useAuditLogger();
   const [actives, setActives] = useState<ActiveProduct[]>([]);
 
   useEffect(() => {
@@ -47,8 +50,20 @@ const useDownloadCodeVerifier = () => {
 
     // TODO: check code is expired too!
     if (!verifiedProductId) {
-      throw new Error("provided code is not valid.");
+      const e = new Error("provided code is not valid.");
+
+      errorAudit({
+        type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
+        params: { code },
+        error: e
+      });
+      throw e;
     }
+
+    okAudit({
+      type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
+      params: { code }
+    });
 
     const db = new DlCodeDb();
     db.transaction("rw", db.activeProducts, async () => {
