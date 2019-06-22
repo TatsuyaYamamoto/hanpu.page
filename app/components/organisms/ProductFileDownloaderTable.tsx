@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import {
   Divider,
   Grid,
@@ -9,11 +11,14 @@ import {
   MenuItem,
   Paper,
   Select,
+  Snackbar,
   Typography
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import PlayIcon from "@material-ui/icons/PlayArrow";
-import * as React from "react";
+
+import { useSnackbar } from "notistack";
+
 import { LogType } from "../../domains/AuditLog";
 
 import { ProductFile } from "../../domains/Product";
@@ -131,8 +136,9 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
       canPlay: ["audio/mp3", "audio/x-m4a"].includes(productFile.contentType)
     };
   });
-
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { okAudit } = useAuditLogger();
+
   const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -151,11 +157,19 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
   const onDownloadClicked = (id: string) => async () => {
     const { storageUrl, originalName } = files[id];
-    await downloadFromFirebaseStorage(storageUrl, originalName);
 
-    okAudit({
-      type: LogType.DOWNLOAD_PRODUCT_FILE,
-      params: { storageUrl, originalName }
+    // TODO: show progress status
+    const snackBarKey = enqueueSnackbar(`${originalName}をダウンロード中...`, {
+      persist: true
+    });
+
+    downloadFromFirebaseStorage(storageUrl, originalName).then(() => {
+      closeSnackbar(snackBarKey);
+
+      okAudit({
+        type: LogType.DOWNLOAD_PRODUCT_FILE,
+        params: { storageUrl, originalName }
+      });
     });
   };
 

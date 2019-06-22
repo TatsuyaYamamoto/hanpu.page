@@ -25,46 +25,54 @@ export const getStorageObjectDownloadUrl = (storageUrl: string) => {
 
 export const downloadFromFirebaseStorage = async (
   storageUrl: string,
-  originalName: string
+  originalName: string,
+  onProgressCallBack?: (percentComplete: number) => void
 ): Promise<void> => {
   const downloadUrl = await getStorageObjectDownloadUrl(storageUrl);
 
-  const xhr = new XMLHttpRequest();
-  xhr.responseType = "blob";
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "blob";
 
-  const onProgress = (event: ProgressEvent) => {
-    const { loaded, total, lengthComputable } = event;
+    const onProgress = (event: ProgressEvent) => {
+      const { loaded, total, lengthComputable } = event;
 
-    if (lengthComputable) {
-      const percentComplete = (loaded / total) * 100;
-      // ...
-    } else {
-      // 全体の長さが不明なため、進捗情報を計算できない
-    }
-  };
+      if (lengthComputable) {
+        const percentComplete = (loaded / total) * 100;
 
-  const onLoad = (event: ProgressEvent) => {
-    const blob = xhr.response;
-    const a = document.createElement("a");
-    a.download = originalName;
-    a.href = window.URL.createObjectURL(blob);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
+        if (onProgressCallBack) {
+          onProgressCallBack(percentComplete);
+        }
+      } else {
+        // 全体の長さが不明なため、進捗情報を計算できない
+      }
+    };
 
-  const onError = (event: ProgressEvent) => {
-    //
-  };
+    const onLoad = (event: ProgressEvent) => {
+      const blob = xhr.response;
+      const a = document.createElement("a");
+      a.download = originalName;
+      a.href = window.URL.createObjectURL(blob);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-  const onAbort = (event: ProgressEvent) => {
-    //
-  };
+      resolve();
+    };
 
-  xhr.addEventListener("progress", onProgress);
-  xhr.addEventListener("load", onLoad);
-  xhr.addEventListener("error", onError);
-  xhr.addEventListener("abort", onAbort);
-  xhr.open("GET", downloadUrl);
-  xhr.send();
+    const onError = (event: ProgressEvent) => {
+      reject(event);
+    };
+
+    const onAbort = (event: ProgressEvent) => {
+      resolve();
+    };
+
+    xhr.addEventListener("progress", onProgress);
+    xhr.addEventListener("load", onLoad);
+    xhr.addEventListener("error", onError);
+    xhr.addEventListener("abort", onAbort);
+    xhr.open("GET", downloadUrl);
+    xhr.send();
+  });
 };
