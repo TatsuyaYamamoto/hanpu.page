@@ -3,7 +3,16 @@ const useGa = () => {
     // @ts-ignore
     gtag("config", GA_TRACKING_ID, { page_path: pathname });
   };
-  return { gtagPageView };
+
+  const gtagError = (description: string, fatal = false) => {
+    // @ts-ignore
+    gtag("event", "exception", {
+      description,
+      fatal
+    });
+  };
+
+  return { gtagPageView, gtagError };
 };
 
 export default useGa;

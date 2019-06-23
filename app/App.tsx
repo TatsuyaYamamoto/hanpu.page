@@ -58,6 +58,12 @@ const requestErrorDetailContact = (errorDetail: any) => {
     location
   };
 
+  // @ts-ignore
+  gtag("event", "exception", {
+    description: JSON.stringify(info),
+    fatal: true
+  });
+
   if (
     confirm(
       "予期せぬエラーが発生してしまいました。\n\n恐れ入りますが、問い合わせフォームを起動してエラーの詳細を送信して頂けませんでしょうか？(エラーの情報は自動で入力されます。)"
