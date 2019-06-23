@@ -4,6 +4,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const htmlParams = {
   noIndex: true,
+  gaTrackingId: "UA-127664761-5",
   title: "DEVELOPMENT DLCode",
   keyword: "DLCode,ダウンロードコード",
   description:
