@@ -38,6 +38,16 @@ const { useState, useMemo, Fragment } = React;
 
 type SortType = "none" | "contentType" | "size";
 
+const sortWith = (a: string | number, b: string | number) => {
+  if (a < b) {
+    return -1;
+  }
+  if (b < a) {
+    return 1;
+  }
+  return 0;
+};
+
 interface SortSelectorProps {
   type: SortType;
   onChange: (e: React.ChangeEvent<{ name?: string; value: SortType }>) => void;
@@ -125,17 +135,30 @@ interface ProductFileDownloaderTableProps {
 const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   files
 }) => {
-  const data = Object.keys(files).map(id => {
-    const productFile = files[id];
-    return {
-      id,
-      name: productFile.displayName,
-      contentType: productFile.contentType,
-      size: formatFileSize(productFile.size),
-      // TODO!
-      canPlay: ["audio/mp3", "audio/x-m4a"].includes(productFile.contentType)
-    };
-  });
+  const data = Object.keys(files)
+    .map(id => {
+      return {
+        id,
+        file: files[id]
+      };
+    })
+    // TODO: そもそも並べ替えしなくて済むように、Firestore上で順番を持たせる
+    .sort((a, b) => {
+      const aName = a.file.originalName;
+      const bName = b.file.originalName;
+
+      return sortWith(aName, bName);
+    })
+    .map(({ id, file }) => {
+      return {
+        id,
+        name: file.displayName,
+        contentType: file.contentType,
+        size: formatFileSize(file.size),
+        // TODO!
+        canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
+      };
+    });
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { okAudit } = useAuditLogger();
 
@@ -206,16 +229,6 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     if (playableOnly) {
       d = d.filter(item => !!item.canPlay);
     }
-
-    const sortWith = (a: string | number, b: string | number) => {
-      if (a < b) {
-        return -1;
-      }
-      if (b < a) {
-        return 1;
-      }
-      return 0;
-    };
 
     if (sortType === "contentType") {
       d.sort(({ contentType: a }, { contentType: b }) => sortWith(a, b));
