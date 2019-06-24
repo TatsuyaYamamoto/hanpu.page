@@ -57,7 +57,10 @@ const DetailPage: React.FC<DetailPageProps> = ({
                 />
               </Grid>
               <Grid item={true}>
-                <ProductFileDownloaderTable files={product.productFiles} />
+                <ProductFileDownloaderTable
+                  files={product.productFiles}
+                  productId={product.id}
+                />
               </Grid>
             </Grid>
           </Container>
