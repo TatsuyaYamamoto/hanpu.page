@@ -11,7 +11,6 @@ import {
   MenuItem,
   Paper,
   Select,
-  Snackbar,
   Typography
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
@@ -32,6 +31,7 @@ import {
 import AudioWaveIcon from "../atoms/AudioWaveIcon";
 import LoadingIcon from "../atoms/LoadingIcon";
 import useAuditLogger from "../hooks/useAuditLogger";
+import useDownloadCodeVerifier from "../hooks/useDownloadCodeVerifier";
 import NativeAudioController from "./NativeAudioController";
 
 const { useState, useMemo, Fragment } = React;
@@ -130,9 +130,11 @@ type PlayerState =
   | "playing";
 
 interface ProductFileDownloaderTableProps {
+  productId: string;
   files: { [id: string]: ProductFile };
 }
 const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
+  productId,
   files
 }) => {
   const data = Object.keys(files)
@@ -159,6 +161,8 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
         canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
       };
     });
+
+  const { getByProductId } = useDownloadCodeVerifier();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { okAudit } = useAuditLogger();
 
@@ -178,8 +182,8 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     setSortType(e.target.value);
   };
 
-  const onDownloadClicked = (id: string) => async () => {
-    const { storageUrl, originalName } = files[id];
+  const onDownloadClicked = (fileId: string) => async () => {
+    const { storageUrl, originalName } = files[fileId];
 
     // TODO: show progress status
     const snackBarKey = enqueueSnackbar(`${originalName}をダウンロード中...`, {
@@ -189,24 +193,28 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     downloadFromFirebaseStorage(storageUrl, originalName).then(() => {
       closeSnackbar(snackBarKey);
 
-      okAudit({
-        type: LogType.DOWNLOAD_PRODUCT_FILE,
-        params: { storageUrl, originalName }
+      getByProductId(productId).then(({ downloadCode }) => {
+        okAudit({
+          type: LogType.DOWNLOAD_PRODUCT_FILE,
+          params: { storageUrl, originalName, downloadCode }
+        });
       });
     });
   };
 
-  const onStartWithList = (id: string) => async () => {
-    const { storageUrl } = files[id];
+  const onStartWithList = (fileId: string) => async () => {
+    const { storageUrl } = files[fileId];
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
 
-    okAudit({
-      type: LogType.PLAY_PRODUCT_FILE,
-      params: { productFileId: id, url }
+    getByProductId(productId).then(({ downloadCode }) => {
+      okAudit({
+        type: LogType.PLAY_PRODUCT_FILE,
+        params: { productFileId: fileId, downloadCode, url }
+      });
     });
 
-    setSelectedId(id);
+    setSelectedId(fileId);
     setAudioUrl(url);
   };
 

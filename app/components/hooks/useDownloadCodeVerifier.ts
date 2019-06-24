@@ -120,7 +120,15 @@ const useDownloadCodeVerifier = () => {
     });
   };
 
-  return { verifyDownloadCode, actives };
+  const getByProductId = async (id: string): Promise<ActiveProductSchema> => {
+    const db = new DlCodeDb();
+
+    return await db.activeProducts.get({
+      productId: id
+    });
+  };
+
+  return { actives, verifyDownloadCode, getByProductId };
 };
 
 export default useDownloadCodeVerifier;
