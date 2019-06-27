@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import {
-  Divider,
   Grid,
   IconButton,
   List,
@@ -81,6 +80,22 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
     onDownload();
   };
 
+  const action = canPlay ? (
+    state === "playing" ? (
+      <AudioWaveIcon animation={true} />
+    ) : state === "loading" ? (
+      <LoadingIcon animation={true} />
+    ) : (
+      <IconButton onClick={onPlayIconClicked}>
+        <PlayIcon />
+      </IconButton>
+    )
+  ) : (
+    <IconButton onClick={onDownloadIconClicked}>
+      <DownloadIcon />
+    </IconButton>
+  );
+
   return (
     <ListItem button={true}>
       {/* TODO: style ListItemText width not to overlap with action icons. とりあえず、 "君のこころは輝いているかい？	" では重ならないので、対応は後回し。 */}
@@ -88,21 +103,7 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
         primary={name}
         secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
       />
-      <ListItemSecondaryAction>
-        {canPlay &&
-          (state === "playing" ? (
-            <AudioWaveIcon animation={true} />
-          ) : state === "loading" ? (
-            <LoadingIcon animation={true} />
-          ) : (
-            <IconButton onClick={onPlayIconClicked}>
-              <PlayIcon />
-            </IconButton>
-          ))}
-        <IconButton onClick={onDownloadIconClicked}>
-          <DownloadIcon />
-        </IconButton>
-      </ListItemSecondaryAction>
+      <ListItemSecondaryAction>{action}</ListItemSecondaryAction>
     </ListItem>
   );
 };
