@@ -1,9 +1,19 @@
 import * as React from "react";
 const { useMemo, useCallback } = React;
 
-import MaterialTable, { Column, Options as TableOptions } from "material-table";
+import MaterialTable, {
+  Column,
+  Options as TableOptions,
+  MTableBody,
+  MTableBodyRow
+} from "material-table";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
+import {
+  SortableContainer,
+  SortableElement,
+  SortEnd
+} from "react-sortable-hoc";
 
 import {
   ProductFile,
@@ -14,6 +24,9 @@ import {
 
 import { formatFileSize } from "../../utils/format";
 import { downloadFromFirebaseStorage } from "../../utils/network";
+
+const SortableMTableBodyRow = SortableElement(MTableBodyRow);
+const SortableMTableBody = SortableContainer(MTableBody);
 
 const TABLE_OPTIONS: TableOptions = {
   addRowPosition: "first",
@@ -142,6 +155,10 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     }));
   }, [productFiles]);
 
+  const onSortEnd = ({ oldIndex, newIndex }: SortEnd) => {
+    //
+  };
+
   return (
     <>
       <MaterialTable
@@ -168,6 +185,14 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
         editable={{
           onRowUpdate: onProductFileUpdate,
           onRowDelete: onProductFileDelete
+        }}
+        components={{
+          Body: props => {
+            return <SortableMTableBody onSortEnd={onSortEnd} {...props} />;
+          },
+          Row: props => {
+            return <SortableMTableBodyRow {...props} />;
+          }
         }}
       />
 
