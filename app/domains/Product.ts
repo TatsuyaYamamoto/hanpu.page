@@ -48,6 +48,11 @@ interface ProductFile {
    * アップロードされたときのファイル名
    */
   originalName: ProductFileOriginalName;
+
+  /**
+   * リスト表示時の並び順
+   */
+  index: number;
 }
 
 interface ProductFileMap {
@@ -221,19 +226,21 @@ class Product implements ProductDocument {
         async () => {
           const docRef = Product.getDocRef(this.ref.id);
           const newProductFileId = Product.getAutoNewId();
+          const currentProductFilesSize = Object.keys(this.productFiles).length;
+
           const newProductFile: ProductFile = {
             displayName,
             storageUrl: storageRef.toString(),
             size: file.size,
             contentType: file.type,
-            originalName: originalFileName
+            originalName: originalFileName,
+            index: currentProductFilesSize
           };
 
           const partialNewDoc: Partial<ProductDocument> = {
             productFiles: {
-              // 後入れ先出しにするには、この順番である必要がある(FirestoreのMapの仕様上？)
-              [newProductFileId]: newProductFile,
-              ...this.productFiles
+              ...this.productFiles,
+              [newProductFileId]: newProductFile
             }
           };
           await docRef.update(partialNewDoc);
@@ -251,13 +258,29 @@ class Product implements ProductDocument {
 
   public deleteProductFile = async (deleteTargetId: string) => {
     const docRef = Product.getDocRef(this.ref.id);
-    const filteredFiles = {
-      ...this.productFiles
-    };
-    delete filteredFiles[deleteTargetId];
+    const newProductFileMap: ProductFileMap = {};
+    Object.keys(this.productFiles)
+      // filter
+      .filter(id => {
+        return id !== deleteTargetId;
+      })
+      // sort remaining elements
+      .sort((aId, bId) => {
+        const aIndex = this.productFiles[aId].index;
+        const bIndex = this.productFiles[bId].index;
+
+        return aIndex - bIndex;
+      })
+      // create new map
+      .forEach((id, index) => {
+        newProductFileMap[id] = {
+          ...this.productFiles[id],
+          index
+        };
+      });
 
     const deleteDoc: Partial<ProductDocument> = {
-      productFiles: filteredFiles
+      productFiles: newProductFileMap
     };
     await docRef.update(deleteDoc);
 
@@ -269,12 +292,12 @@ class Product implements ProductDocument {
       this.iconStorageUrl,
       this.description,
       this.ownerUid,
-      filteredFiles,
+      newProductFileMap,
       this.createdAt
     );
   };
 
-  public deleteProductFileFromStorage = async (
+  private deleteProductFileFromStorage = async (
     deleteTargetId: string
   ): Promise<void> => {
     const deleteTargetProductFile = this.productFiles[deleteTargetId];
@@ -366,13 +389,52 @@ class Product implements ProductDocument {
     });
   }
 
-  public async partialUpdateFile(id: string, edited: Partial<ProductFile>) {
+  public async partialUpdateFile(
+    updateId: string,
+    edited: Partial<ProductFile>
+  ) {
     const updateData: UpdateData = {};
     const productFilesKey: keyof Product = "productFiles";
 
     Object.keys(edited).forEach((key: keyof ProductFile) => {
-      updateData[`${productFilesKey}.${id}.${key}`] = edited[key];
+      updateData[`${productFilesKey}.${updateId}.${key}`] = edited[key];
     });
+
+    const newIndex = edited.index;
+
+    // Indexに更新がある場合、他のElementのIndexも更新する
+    if (typeof newIndex !== "undefined") {
+      const oldIndex = this.productFiles[updateId].index;
+
+      Object.keys(this.productFiles).forEach(sortTargetId => {
+        if (sortTargetId === updateId) {
+          return;
+        }
+
+        const sortTargetOldIndex = this.productFiles[sortTargetId].index;
+        const sortTargetIndexKey = `${productFilesKey}.${sortTargetId}.index`;
+
+        // Indexの値が大きくなった場合、降順方向に他のIndex値をつめる
+        if (oldIndex < newIndex) {
+          if (
+            oldIndex <= sortTargetOldIndex &&
+            sortTargetOldIndex <= newIndex
+          ) {
+            updateData[sortTargetIndexKey] = sortTargetOldIndex - 1;
+          }
+        }
+
+        // Indexの値が小さくなった場合、昇順方向に他のIndex値をつめる
+        if (newIndex < oldIndex) {
+          if (
+            newIndex <= sortTargetOldIndex &&
+            sortTargetOldIndex <= oldIndex
+          ) {
+            updateData[sortTargetIndexKey] = sortTargetOldIndex + 1;
+          }
+        }
+      });
+    }
 
     await this.ref.update(updateData);
   }
