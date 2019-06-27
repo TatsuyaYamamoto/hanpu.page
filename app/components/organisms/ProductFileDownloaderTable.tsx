@@ -8,9 +8,7 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  MenuItem,
   Paper,
-  Select,
   Typography
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
@@ -53,16 +51,6 @@ interface SortSelectorProps {
   onChange: (e: React.ChangeEvent<{ name?: string; value: SortType }>) => void;
 }
 
-const SortSelector: React.FC<SortSelectorProps> = ({ type, onChange }) => {
-  return (
-    <Select value={type} onChange={onChange}>
-      <MenuItem value="none">並べ替え</MenuItem>
-      <MenuItem value="contentType">ファイル形式</MenuItem>
-      <MenuItem value="size">ファイルサイズ</MenuItem>
-    </Select>
-  );
-};
-
 interface ListItemData {
   name: string;
   contentType: string;
@@ -94,7 +82,7 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
   };
 
   return (
-    <ListItem>
+    <ListItem button={true}>
       {/* TODO: style ListItemText width not to overlap with action icons. とりあえず、 "君のこころは輝いているかい？	" では重ならないので、対応は後回し。 */}
       <ListItemText
         primary={name}
@@ -141,16 +129,9 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { okAudit } = useAuditLogger();
 
-  const [sortType, setSortType] = useState<SortType>("none");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>("none");
-
-  const handleSortType = (
-    e: React.ChangeEvent<{ name?: string; value: SortType }>
-  ) => {
-    setSortType(e.target.value);
-  };
 
   const onDownloadClicked = (fileId: string) => async () => {
     const { storageUrl, originalName } = files[fileId];
@@ -229,38 +210,14 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     [files]
   );
 
-  const visibleData = useMemo(() => {
-    const d = [...data];
-
-    if (sortType === "contentType") {
-      d.sort(({ contentType: a }, { contentType: b }) => sortWith(a, b));
-    }
-
-    if (sortType === "size") {
-      d.sort(({ size: a }, { size: b }) => sortWith(a, b));
-    }
-
-    return d;
-  }, [data, sortType]);
-
   return (
     <>
       <Paper>
         <Grid container={true} direction="column">
-          <Grid
-            container={true}
-            item={true}
-            justify={"flex-end"}
-            style={{ padding: 8 }} // TODO set with theme
-          >
-            <SortSelector type={sortType} onChange={handleSortType} />
-          </Grid>
-
           <Grid item={true}>
             <List>
-              {visibleData.map(({ id, name, contentType, size, canPlay }) => (
+              {data.map(({ id, name, contentType, size, canPlay }) => (
                 <Fragment key={id}>
-                  <Divider />
                   <ProductFileListItem
                     state={id === selectedId ? playerState : null}
                     name={name}
