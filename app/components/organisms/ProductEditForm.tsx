@@ -81,6 +81,10 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     return addDownloadCodeSet(numberOfCodes, expiredAt);
   };
 
+  const onProductFileIndexChange = (id: string, newIndex: number) => {
+    return updateProductFile(id, { index: newIndex });
+  };
+
   return (
     <>
       {product && (
@@ -98,6 +102,7 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
               onAdd={onProductFileAdd}
               onUpdate={onProductFileUpdate}
               onDelete={onProductFileDelete}
+              onChangeIndex={onProductFileIndexChange}
             />
           </Section>
           <Section>

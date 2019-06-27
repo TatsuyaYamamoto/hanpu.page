@@ -93,13 +93,15 @@ interface ProductFileEditTableProps {
     edited: Partial<ProductFile>
   ) => Promise<void>;
   onDelete: (productFileId: string) => Promise<void>;
+  onChangeIndex: (id: string, newIndex: number) => Promise<void>;
 }
 
 const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   productFiles,
   onAdd,
   onUpdate,
-  onDelete
+  onDelete,
+  onChangeIndex
 }) => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
 
@@ -146,17 +148,33 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   };
 
   const data: RowData[] = useMemo(() => {
-    return Object.keys(productFiles).map(id => ({
-      id,
-      displayName: productFiles[id].displayName,
-      originalName: productFiles[id].originalName,
-      size: formatFileSize(productFiles[id].size),
-      contentType: productFiles[id].contentType
-    }));
+    return Object.keys(productFiles)
+      .sort((aId, bId) => {
+        const aIndex = productFiles[aId].index;
+        const bIndex = productFiles[bId].index;
+
+        return aIndex - bIndex;
+      })
+      .map(id => ({
+        id,
+        displayName: productFiles[id].displayName,
+        originalName: productFiles[id].originalName,
+        size: formatFileSize(productFiles[id].size),
+        contentType: productFiles[id].contentType
+      }));
   }, [productFiles]);
 
   const onSortEnd = ({ oldIndex, newIndex }: SortEnd) => {
-    //
+    if (oldIndex === newIndex) {
+      return;
+    }
+
+    const id = Object.keys(productFiles).find(key => {
+      return oldIndex === productFiles[key].index;
+    });
+
+    // TODO: affect list view before completing update to firestore
+    onChangeIndex(id, newIndex);
   };
 
   return (
