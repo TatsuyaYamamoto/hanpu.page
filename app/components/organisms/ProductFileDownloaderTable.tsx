@@ -137,44 +137,14 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   productId,
   files
 }) => {
-  const data = Object.keys(files)
-    .map(id => {
-      return {
-        id,
-        file: files[id]
-      };
-    })
-    // TODO: そもそも並べ替えしなくて済むように、Firestore上で順番を持たせる
-    .sort((a, b) => {
-      const aName = a.file.originalName;
-      const bName = b.file.originalName;
-
-      return sortWith(aName, bName);
-    })
-    .map(({ id, file }) => {
-      return {
-        id,
-        name: file.displayName,
-        contentType: file.contentType,
-        size: formatFileSize(file.size),
-        // TODO!
-        canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
-      };
-    });
-
   const { getByProductId } = useDownloadCodeVerifier();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { okAudit } = useAuditLogger();
 
-  const [playableOnly, setPlayableOnly] = useState(false);
   const [sortType, setSortType] = useState<SortType>("none");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>("none");
-
-  const handlePlayableOnly = () => {
-    setPlayableOnly(!playableOnly);
-  };
 
   const handleSortType = (
     e: React.ChangeEvent<{ name?: string; value: SortType }>
@@ -231,12 +201,36 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     setAudioUrl(null);
   };
 
-  const visibleData = useMemo(() => {
-    let d = [...data];
+  const data = useMemo(
+    () =>
+      Object.keys(files)
+        .map(id => {
+          return {
+            id,
+            file: files[id]
+          };
+        })
+        .sort((a, b) => {
+          const aIndex = a.file.index;
+          const bIndex = b.file.index;
 
-    if (playableOnly) {
-      d = d.filter(item => !!item.canPlay);
-    }
+          return aIndex - bIndex;
+        })
+        .map(({ id, file }) => {
+          return {
+            id,
+            name: file.displayName,
+            contentType: file.contentType,
+            size: formatFileSize(file.size),
+            // TODO!
+            canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
+          };
+        }),
+    [files]
+  );
+
+  const visibleData = useMemo(() => {
+    const d = [...data];
 
     if (sortType === "contentType") {
       d.sort(({ contentType: a }, { contentType: b }) => sortWith(a, b));
@@ -247,7 +241,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     }
 
     return d;
-  }, [playableOnly, sortType]);
+  }, [data, sortType]);
 
   return (
     <>
