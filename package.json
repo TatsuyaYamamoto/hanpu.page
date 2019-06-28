@@ -58,6 +58,7 @@
     "react-dropzone": "^10.1.5",
     "react-router-dom": "^5.0.0",
     "react-sortable-hoc": "^1.9.1",
+    "react-string-replace": "^0.4.4",
     "styled-components": "^4.2.0"
   },
   "devDependencies": {
