@@ -1,11 +1,16 @@
 import * as React from "react";
+const { useMemo } = React;
 
 import styled from "styled-components";
 
 import { Grid, Chip, Avatar } from "@material-ui/core";
 import Typography, { TypographyProps } from "@material-ui/core/Typography";
+// tslint:disable-next-line:no-var-requires
+const reactStringReplace = require("react-string-replace");
 
 import ProductThumbnail from "../atoms/ProductImageThumbnailImage";
+
+const URL_REGEXP = /(https?:\/\/\S+)/g;
 
 const ProductName: React.FC<TypographyProps> = styled(Typography)`
   text-overflow: ellipsis;
@@ -13,6 +18,10 @@ const ProductName: React.FC<TypographyProps> = styled(Typography)`
 const ProductDescription: React.FC<TypographyProps> = styled(Typography)`
   white-space: pre-wrap;
   word-wrap: break-word;
+`;
+
+const StyledA = styled.a`
+  word-break: break-all;
 `;
 
 // TODO 動的にwidth radiusを調整する
@@ -36,6 +45,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   iconUrl,
   downloadCodeExpiredAt
 }) => {
+  const linkifyDescription = useMemo(
+    () =>
+      reactStringReplace(description, URL_REGEXP, (match: string) => (
+        <StyledA href={match} key={match}>
+          {match}
+        </StyledA>
+      )),
+    [description]
+  );
+
   return (
     <Grid container={true}>
       <Grid item={true}>
@@ -43,7 +62,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       </Grid>
       <Grid item={true}>
         <ProductName variant="h4">{name}</ProductName>
-        <ProductDescription variant="body1">{description}</ProductDescription>
+        <ProductDescription variant="body1">
+          {linkifyDescription}
+        </ProductDescription>
         <Chip
           variant="outlined"
           avatar={<LetterAvatar>有効期限</LetterAvatar>}
