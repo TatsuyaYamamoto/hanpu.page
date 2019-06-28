@@ -1,4 +1,5 @@
 import * as React from "react";
+const { useMemo } = React;
 
 import styled from "styled-components";
 
@@ -17,6 +18,10 @@ const ProductName: React.FC<TypographyProps> = styled(Typography)`
 const ProductDescription: React.FC<TypographyProps> = styled(Typography)`
   white-space: pre-wrap;
   word-wrap: break-word;
+`;
+
+const StyledA = styled.a`
+  word-break: break-all;
 `;
 
 // TODO 動的にwidth radiusを調整する
@@ -40,6 +45,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   iconUrl,
   downloadCodeExpiredAt
 }) => {
+  const linkifyDescription = useMemo(
+    () =>
+      reactStringReplace(description, URL_REGEXP, (match: string) => (
+        <StyledA href={match} key={match}>
+          {match}
+        </StyledA>
+      )),
+    [description]
+  );
+
   return (
     <Grid container={true}>
       <Grid item={true}>
@@ -48,11 +63,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       <Grid item={true}>
         <ProductName variant="h4">{name}</ProductName>
         <ProductDescription variant="body1">
-          {reactStringReplace(description, URL_REGEXP, (match: string) => (
-            <a href={match} key={match}>
-              {match}
-            </a>
-          ))}
+          {linkifyDescription}
         </ProductDescription>
         <Chip
           variant="outlined"
