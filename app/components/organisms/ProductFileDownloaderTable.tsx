@@ -65,9 +65,13 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
 
   const action = canPlay ? (
     state === "playing" ? (
-      <AudioWaveIcon animation={true} />
+      <IconButton disabled={true}>
+        <AudioWaveIcon animation={true} />
+      </IconButton>
     ) : state === "loading" ? (
-      <LoadingIcon animation={true} />
+      <IconButton disabled={true}>
+        <LoadingIcon animation={true} />
+      </IconButton>
     ) : (
       <IconButton onClick={onPlayIconClicked}>
         <PlayIcon />
