@@ -41,7 +41,8 @@ class AuditLog {
     ok: boolean;
     error?: any;
   }): Promise<void> {
-    const userId = auth().currentUser ? auth().currentUser.uid : null;
+    const { currentUser } = auth();
+    const userId = currentUser ? currentUser.uid : null;
     const newLog: Partial<AuditLogDocument> = {
       userId,
       type: log.type,

@@ -1,6 +1,5 @@
 import * as React from "react";
 const { useState, useEffect, useMemo } = React;
-import { RouteComponentProps } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -34,7 +33,7 @@ const DetailPage: React.FC<DetailPageProps> = ({
     gtagPageView("/d/dashboard/detail");
 
     product.getIconUrl().then(url => {
-      setIconUrl(url);
+      setIconUrl(url || "");
     });
   }, []);
 
@@ -112,9 +111,7 @@ const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
 };
 
 // TODO: cache and reuse product thumbnail image.
-const DownloadDashboardPage: React.FC<
-  RouteComponentProps<{ code?: string }>
-> = props => {
+const DownloadDashboardPage: React.FC = () => {
   const { actives } = useDownloadCodeVerifier();
   const [selected, setSelected] = useState<{
     product: Product;
@@ -126,10 +123,12 @@ const DownloadDashboardPage: React.FC<
       ({ product }) => product.id === selectedId
     );
 
-    setSelected({
-      product: activeProduct.product,
-      expiredAt: activeProduct.expiredAt
-    });
+    if (activeProduct) {
+      setSelected({
+        product: activeProduct.product,
+        expiredAt: activeProduct.expiredAt
+      });
+    }
   };
 
   const products = useMemo(() => {

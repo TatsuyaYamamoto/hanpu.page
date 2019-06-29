@@ -7,10 +7,15 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 
+import { ProductFileDisplayName } from "../../domains/Product";
+
 interface ProductFileAddDialogProps {
   open: boolean;
   handleClose: () => void;
-  onSubmit: (displayFileName: string, file: File) => void;
+  onSubmit: (
+    displayFileName: ProductFileDisplayName,
+    file: File
+  ) => Promise<void>;
 }
 
 const ProductFileAddDialog: React.FC<ProductFileAddDialogProps> = ({
@@ -18,15 +23,17 @@ const ProductFileAddDialog: React.FC<ProductFileAddDialogProps> = ({
   handleClose,
   onSubmit
 }) => {
-  const [displayFileName, setDisplayFileName] = React.useState("");
-  const [file, setFile] = React.useState<File>(null);
+  const [displayFileName, setDisplayFileName] = React.useState<
+    ProductFileDisplayName | ""
+  >("");
+  const [file, setFile] = React.useState<File | null>(null);
 
   const canSubmit = React.useMemo(() => {
     return 1 <= displayFileName.length && file !== null;
   }, [displayFileName, file]);
 
   const onDisplayFileNameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplayFileName(e.target.value.trim());
+    setDisplayFileName(e.target.value.trim() as ProductFileDisplayName);
   };
 
   const onFileChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +47,14 @@ const ProductFileAddDialog: React.FC<ProductFileAddDialogProps> = ({
   };
 
   const onSubmitClicked = () => {
+    if (!file) {
+      throw new Error("unexpected error. submit no file.");
+    }
+
+    if (displayFileName === "") {
+      return;
+    }
+
     onSubmit(displayFileName, file);
   };
 

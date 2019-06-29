@@ -3,7 +3,6 @@ import * as React from "react";
 import styled, { ThemeProps } from "styled-components";
 import { Theme as MuiTheme } from "@material-ui/core/styles";
 
-import Grid from "@material-ui/core/Grid";
 import Paper, { PaperProps } from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -11,7 +10,7 @@ import TextField, { TextFieldProps } from "@material-ui/core/TextField";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Button from "@material-ui/core/Button";
 
-const StyledPaper: React.FC<PaperProps> = styled(Paper)`
+const StyledPaper = styled(Paper as React.FC<PaperProps>)`
   padding: ${({ theme }: ThemeProps<MuiTheme>) => {
     return theme.spacing(2);
   }}px;

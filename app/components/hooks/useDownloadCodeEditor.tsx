@@ -25,6 +25,10 @@ const useDownloadCodeEditor = (product: Product | null) => {
     numberOfCodes: number,
     expiredAt: Date
   ): Promise<void> => {
+    if (!product) {
+      return;
+    }
+
     await DownloadCodeSet.create(product.ref, numberOfCodes, expiredAt);
 
     const updatedSets = await DownloadCodeSet.getByProductRef(product.ref);

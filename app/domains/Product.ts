@@ -16,10 +16,6 @@ type ProductFileDisplayName = string & {
   _productFileDisplayNameBrand: never;
 };
 
-type ProductFileSize = number & {
-  _productFileDisplayNameBrand: never;
-};
-
 type ProductFileOriginalName = string & {
   _productFileOriginalName: never;
 };
@@ -101,8 +97,6 @@ class Product implements ProductDocument {
       .where("ownerUid", "==", owner.uid)
       .get();
 
-    const owns: { [id: string]: Product } = {};
-
     return ownProductsSnap.docs.map(docSnap => {
       const {
         name,
@@ -155,7 +149,7 @@ class Product implements ProductDocument {
 
   public static async createNew(params: {
     name: ProductName;
-    description?: ProductDescription;
+    description: ProductDescription;
   }): Promise<void> {
     const { name, description } = params;
 
@@ -197,8 +191,16 @@ class Product implements ProductDocument {
     displayName: ProductFileDisplayName,
     file: File
   ): { task: storage.UploadTask; promise: Promise<void> } => {
-    const { uid } = auth().currentUser;
+    const { currentUser } = auth();
+
+    if (!currentUser) {
+      throw new Error("unexpected error. logged-in user is null.");
+    }
+
+    const { uid } = currentUser;
     const originalFileName = file.name as ProductFileOriginalName;
+    // @ts-ignore
+    // TODO: handle file having no extension
     const extension = originalFileName
       .split(".")
       .pop()
@@ -325,12 +327,22 @@ class Product implements ProductDocument {
   public uploadIconToStorage(
     file: File
   ): { task: storage.UploadTask; promise: Promise<void> } {
-    const { uid } = auth().currentUser;
+    const { currentUser } = auth();
+
+    if (!currentUser) {
+      throw new Error("unexpected error. logged-in user is null.");
+    }
+
+    const { uid } = currentUser;
+
     // after success, delete an old icon.
     const oldIconRef =
       this.iconStorageUrl && storage().refFromURL(this.iconStorageUrl);
 
     const originalFileName = file.name;
+
+    // @ts-ignore
+    // TODO: handle file having no extension
     const extension = originalFileName
       .split(".")
       .pop()
@@ -396,7 +408,7 @@ class Product implements ProductDocument {
     const updateData: UpdateData = {};
     const productFilesKey: keyof Product = "productFiles";
 
-    Object.keys(edited).forEach((key: keyof ProductFile) => {
+    (Object.keys(edited) as (keyof ProductFile)[]).forEach(key => {
       updateData[`${productFilesKey}.${updateId}.${key}`] = edited[key];
     });
 

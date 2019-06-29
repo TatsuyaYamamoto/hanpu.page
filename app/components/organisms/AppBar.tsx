@@ -20,7 +20,7 @@ import Logo from "../atoms/Logo";
 
 import useAuthSession from "../hooks/useAuthSession";
 
-const StyledMuiAppBar: React.FC<MuiAppBarProps> = styled(MuiAppBar)`
+const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   && {
     background-color: transparent;
     color: grey;
@@ -28,6 +28,7 @@ const StyledMuiAppBar: React.FC<MuiAppBarProps> = styled(MuiAppBar)`
   }
 `;
 
+// @ts-ignore
 const AppBarMenu = withRouter(({ history }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);

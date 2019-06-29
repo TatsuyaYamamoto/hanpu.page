@@ -9,7 +9,6 @@ import {
   CardContent,
   Typography
 } from "@material-ui/core/";
-import { CardProps } from "@material-ui/core/Card";
 
 import ThumbnailImage from "../atoms/ProductImageThumbnailImage";
 import NoImage from "../atoms/ProductImageThumbnailNoImage";
@@ -18,7 +17,8 @@ import { Product } from "../../domains/Product";
 
 const CARD_WIDTH = 200;
 
-const StyledCard: React.FC<CardProps> = styled(Card)`
+// TODO: resolve types
+const StyledCard = styled<any>(Card)`
   width: ${CARD_WIDTH}px;
 `;
 
@@ -27,7 +27,7 @@ interface PanelItemProps {
   onClick: (id: string) => void;
 }
 const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
-  const [iconUrl, setIconUrl] = React.useState(null);
+  const [iconUrl, setIconUrl] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     product.getIconUrl().then(url => {

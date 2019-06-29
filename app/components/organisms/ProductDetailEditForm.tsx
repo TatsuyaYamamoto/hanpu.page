@@ -17,9 +17,8 @@ import {
   ProductDocument,
   ProductName
 } from "../../domains/Product";
-import TextField from "../molecules/TextField";
 
-const StyledPaper: React.FC<PaperProps> = styled(Paper)`
+const StyledPaper = styled(Paper as React.FC<PaperProps>)`
   // TODO: set padding value with theme
   padding: 24px;
 `;
@@ -51,15 +50,15 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
     });
   }, [product]);
 
-  const onNameSubmitted = (value: ProductName) => {
+  const onNameSubmitted = (value: string) => {
     return onUpdateFields({
-      name: value
+      name: value as ProductName
     });
   };
 
-  const onDescriptionSubmitted = async (value: ProductDescription) => {
+  const onDescriptionSubmitted = async (value: string) => {
     return onUpdateFields({
-      description: value
+      description: value as ProductDescription
     });
   };
 

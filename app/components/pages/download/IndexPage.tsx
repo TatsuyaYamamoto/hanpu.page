@@ -47,7 +47,7 @@ const DownloadPage: React.FC<IndexPageProps> = props => {
       .then(() => {
         props.history.push(`/d/dashboard`);
       })
-      .catch(e => {
+      .catch(_ => {
         handleNotFoundDialog();
       });
   };

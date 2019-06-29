@@ -15,7 +15,7 @@ import Footer from "../organisms/Footer";
 
 const Root = styled.div``;
 
-const LeftIcon: React.FC<IconProps> = styled(Icon)`
+const LeftIcon = styled(Icon as React.FC<IconProps>)`
   margin-right: ${({ theme }) => theme.spacing(1)}px;
 `;
 

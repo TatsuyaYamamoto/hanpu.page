@@ -1,5 +1,5 @@
 import * as React from "react";
-const { useMemo, useCallback } = React;
+const { useMemo } = React;
 
 import MaterialTable, {
   Column,
@@ -65,18 +65,6 @@ const TABLE_COLUMNS: Column[] = [
   }
 ];
 
-interface InnerTableProps {
-  productFiles: { [id: string]: ProductFile };
-  onAddButtonClicked: () => void;
-  onUpdateRequested: (
-    productFileId: string,
-    edited: Partial<ProductFile>,
-    resolve: () => void
-  ) => void;
-  onDeleteRequested: (productFileId: string, resolve: () => void) => void;
-  onDownloadClicked: (productFileId: string) => void;
-}
-
 interface RowData {
   id: string;
   displayName: ProductFileDisplayName;
@@ -121,10 +109,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     handleProductFileAddDialog();
   };
 
-  const onDownloadButtonClicked = (
-    event: any,
-    { id: productFileId }: RowData
-  ) => {
+  const onDownloadButtonClicked = (_: any, { id: productFileId }: RowData) => {
     const { storageUrl, originalName } = productFiles[productFileId];
     downloadFromFirebaseStorage(storageUrl, originalName);
   };
@@ -174,6 +159,10 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     });
 
     // TODO: affect list view before completing update to firestore
+    if (!id) {
+      throw new Error("unexpected error. counld not find ID of sorted.");
+    }
+
     onChangeIndex(id, newIndex);
   };
 

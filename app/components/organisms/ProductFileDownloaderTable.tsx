@@ -33,23 +33,6 @@ import NativeAudioController from "./NativeAudioController";
 
 const { useState, useMemo, Fragment } = React;
 
-type SortType = "none" | "contentType" | "size";
-
-const sortWith = (a: string | number, b: string | number) => {
-  if (a < b) {
-    return -1;
-  }
-  if (b < a) {
-    return 1;
-  }
-  return 0;
-};
-
-interface SortSelectorProps {
-  type: SortType;
-  onChange: (e: React.ChangeEvent<{ name?: string; value: SortType }>) => void;
-}
-
 interface ListItemData {
   name: string;
   contentType: string;
@@ -72,11 +55,11 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
   onStart,
   onDownload
 }) => {
-  const onPlayIconClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onPlayIconClicked = (_: React.MouseEvent<HTMLButtonElement>) => {
     onStart();
   };
 
-  const onDownloadIconClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onDownloadIconClicked = (_: React.MouseEvent<HTMLButtonElement>) => {
     onDownload();
   };
 
@@ -142,15 +125,34 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
       persist: true
     });
 
+    if (snackBarKey === null) {
+      // TODO: fail show snackbar. handling error.
+      return;
+    }
+
     downloadFromFirebaseStorage(storageUrl, originalName).then(() => {
       closeSnackbar(snackBarKey);
 
-      getByProductId(productId).then(({ downloadCode }) => {
-        okAudit({
-          type: LogType.DOWNLOAD_PRODUCT_FILE,
-          params: { storageUrl, originalName, downloadCode }
+      getByProductId(productId)
+        .then(product => {
+          if (!product) {
+            throw new Error(
+              "unexpected error. start product file was not found."
+            );
+          }
+
+          return product;
+        })
+        .then(({ downloadCode }) => {
+          okAudit({
+            type: LogType.DOWNLOAD_PRODUCT_FILE,
+            params: {
+              storageUrl,
+              originalName,
+              downloadCode
+            }
+          });
         });
-      });
     });
   };
 
@@ -159,12 +161,22 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
 
-    getByProductId(productId).then(({ downloadCode }) => {
-      okAudit({
-        type: LogType.PLAY_PRODUCT_FILE,
-        params: { productFileId: fileId, downloadCode, url }
+    getByProductId(productId)
+      .then(product => {
+        if (!product) {
+          throw new Error(
+            "unexpected error. start product file was not found."
+          );
+        }
+
+        return product;
+      })
+      .then(({ downloadCode }) => {
+        okAudit({
+          type: LogType.PLAY_PRODUCT_FILE,
+          params: { productFileId: fileId, downloadCode, url }
+        });
       });
-    });
 
     setSelectedId(fileId);
     setAudioUrl(url);
@@ -237,7 +249,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
       <NativeAudioController
         open={!!audioUrl}
-        src={audioUrl}
+        src={audioUrl as string}
         onPlay={onPlayWithPlayer}
         onPause={onPauseWithPlayer}
         onClose={onClosePlayer}

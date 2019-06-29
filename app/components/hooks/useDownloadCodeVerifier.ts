@@ -43,13 +43,10 @@ const useDownloadCodeVerifier = () => {
   }, []);
 
   const verifyDownloadCode = async (code: string) => {
-    const {
-      productId: verifiedProductId,
-      expiredAt
-    } = await DownloadCodeSet.verify(code);
+    const result = await DownloadCodeSet.verify(code);
 
     // TODO: check code is expired too!
-    if (!verifiedProductId) {
+    if (!result) {
       const e = new Error("provided code is not valid.");
 
       errorAudit({
@@ -59,6 +56,8 @@ const useDownloadCodeVerifier = () => {
       });
       throw e;
     }
+
+    const { productId: verifiedProductId, expiredAt } = result;
 
     const db = new DlCodeDb();
 
@@ -108,19 +107,25 @@ const useDownloadCodeVerifier = () => {
 
     const loadProductPromises = activeIds.map(({ productId, expiredAt }) => {
       return Product.getById(productId).then(product => {
-        return {
-          product,
-          expiredAt
-        };
+        const active: ActiveProduct | null = product
+          ? {
+              product,
+              expiredAt
+            }
+          : null;
+
+        return active;
       });
     });
 
     await Promise.all(loadProductPromises).then(resolveActives => {
-      setActives(resolveActives);
+      setActives(resolveActives.filter(a => a) as ActiveProduct[]);
     });
   };
 
-  const getByProductId = async (id: string): Promise<ActiveProductSchema> => {
+  const getByProductId = async (
+    id: string
+  ): Promise<ActiveProductSchema | undefined> => {
     const db = new DlCodeDb();
 
     return await db.activeProducts.get({

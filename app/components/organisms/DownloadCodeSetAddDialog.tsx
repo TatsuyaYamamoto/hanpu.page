@@ -10,7 +10,8 @@ import TextField from "@material-ui/core/TextField";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
+  MaterialUiPickersDate
 } from "@material-ui/pickers";
 
 interface DownloadCodeSetAddDialogProps {
@@ -32,8 +33,10 @@ const DownloadCodeSetAddDialog: React.FC<DownloadCodeSetAddDialogProps> = ({
     setNumberOfCodes(parseInt(e.target.value, 10));
   };
 
-  const onExpiredDateChanged = (date: Date) => {
-    setExpiredAt(date);
+  const onExpiredDateChanged = (date: MaterialUiPickersDate) => {
+    if (date) {
+      setExpiredAt(date);
+    }
   };
 
   const onSubmitClicked = () => {

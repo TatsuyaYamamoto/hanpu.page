@@ -12,10 +12,10 @@ import ProductThumbnail from "../atoms/ProductImageThumbnailImage";
 
 const URL_REGEXP = /(https?:\/\/\S+)/g;
 
-const ProductName: React.FC<TypographyProps> = styled(Typography)`
+const ProductName = styled(Typography as React.FC<TypographyProps>)`
   text-overflow: ellipsis;
 `;
-const ProductDescription: React.FC<TypographyProps> = styled(Typography)`
+const ProductDescription = styled(Typography as React.FC<TypographyProps>)`
   white-space: pre-wrap;
   word-wrap: break-word;
 `;

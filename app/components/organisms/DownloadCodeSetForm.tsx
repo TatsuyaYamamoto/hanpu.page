@@ -78,8 +78,13 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     handleAddDialog();
   };
 
-  const onDownloadButtonClicked = (event: any, selected: CodeData) => {
+  const onDownloadButtonClicked = (_: any, selected: CodeData) => {
     const codeSet = downloadCodeSets.find(({ id }) => id === selected.id);
+
+    if (!codeSet) {
+      throw new Error("unexpected error. could not find download code set.");
+    }
+
     saveDownloadCodeSetAsCsvFile(codeSet);
   };
 
