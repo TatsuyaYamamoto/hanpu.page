@@ -14,13 +14,6 @@ const exportCollections = ["auditLogs", "downloadCodeSets", "products"];
 export const backupFirestoreData = async (credentialBody: CredentialBody) => {
   const timestamp = dateFormat(new Date(), "yyyy-mm-dd_hh-MM");
 
-  console.log("credentialBody", credentialBody);
-
-  // const oauth = new google.auth.OAuth2();
-  // oauth.setCredentials({
-  //   access_token: accessToken.access_token
-  // });
-
   // https://cloud.google.com/functions/docs/concepts/services#using_services_with_cloud_functions
   const auth = await google.auth.getClient({
     projectId,

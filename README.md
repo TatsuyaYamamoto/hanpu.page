@@ -36,6 +36,26 @@ $ git push origin develop # deploy by CircleCI
 
 ## Settings
 
+### Service Account
+
+```bash
+$ PROJECT_ID=hoge
+$ SERVICE_ACCOUNT=hoge
+$ BUCKET_NAME=hoge
+
+$ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+      --member serviceAccount:${SERVICE_ACCOUNT} \
+      --role roles/datastore.importExportAdmin
+
+$ gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:storage.admin \
+      gs://${BUCKET_NAME}
+
+$ firebase functions:config:set service_account="$(cat path/to/service_account.json)"
+```
+
+Ref. [https://github.com/firebase/firebase-tools/issues/406]()
+Ref. [https://firebase.google.com/docs/firestore/solutions/schedule-export#configure_access_permissions]()
+
 ### storage cors
 
 ```bash
