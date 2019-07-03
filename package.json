@@ -14,15 +14,17 @@
     "clean": "rm -rf dist",
     "start": "webpack-dev-server --config webpack.config.client.js",
     "serve": "firebase serve",
-    "build-client": "   webpack --progress --config webpack.config.client.js",
-    "build-functions": "webpack --progress --config webpack.config.functions.js",
-    "build:dev": "cross-env NODE_ENV=development npm-run-all clean --parallel build-client build-functions copy-deps",
-    "build:pro": "cross-env NODE_ENV=production  npm-run-all clean --parallel build-client build-functions copy-deps",
-    "copy-deps": "cpx '*{package.json,yarn.lock}' 'dist/functions' && yarn install --cwd dist/functions",
+    "build:client": "   webpack --progress --config webpack.config.client.js",
+    "build:functions": "webpack --progress --config webpack.config.functions.js",
+    "build:copy-deps": "run-s build:copy-deps:*",
+    "build:copy-deps:cpx": "cpx '*{package.json,yarn.lock}' 'dist/functions'",
+    "build:copy-deps:yarn": "yarn install --cwd dist/functions",
+    "build-dev": "cross-env NODE_ENV=development npm-run-all --print-label clean --parallel build:*",
+    "build-pro": "cross-env NODE_ENV=production  npm-run-all --print-label clean --parallel build:*",
     "format": "prettier --write app/**/*.{ts,tsx,js,jsx,json,css}",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
-    "deploy:dev": "firebase deploy --project dl-code-dev",
-    "deploy:pro": "firebase deploy --project dl-code"
+    "deploy-dev": "firebase deploy --project dl-code-dev",
+    "deploy-pro": "firebase deploy --project dl-code"
   },
   "husky": {
     "hooks": {

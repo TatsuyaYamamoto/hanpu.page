@@ -27,8 +27,8 @@ $ yarn start
 
 // some commits...
 
-$ yarn build:dev
-$ yarn deploy:dev
+$ yarn build-dev
+$ yarn deploy-dev
 // or
 $ git push origin develop # deploy by CircleCI
 
