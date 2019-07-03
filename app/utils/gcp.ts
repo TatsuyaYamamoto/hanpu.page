@@ -1,4 +1,3 @@
-import { GoogleOAuthAccessToken } from "firebase-admin";
 import { firestore_v1, google } from "googleapis";
 import { CredentialBody } from "google-auth-library";
 
