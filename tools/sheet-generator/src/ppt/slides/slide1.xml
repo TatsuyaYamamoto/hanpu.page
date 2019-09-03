@@ -15,56 +15,6 @@
           <a:chExt cx="0" cy="0"/>
         </a:xfrm>
       </p:grpSpPr>
-      <p:sp>
-        <p:nvSpPr>
-          <p:cNvPr id="2" name="タイトル 1">
-            <a:extLst>
-              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
-                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{FA448920-11C2-AF47-A6DA-DB17387B1B12}"/>
-              </a:ext>
-            </a:extLst>
-          </p:cNvPr>
-          <p:cNvSpPr>
-            <a:spLocks noGrp="1"/>
-          </p:cNvSpPr>
-          <p:nvPr>
-            <p:ph type="ctrTitle"/>
-          </p:nvPr>
-        </p:nvSpPr>
-        <p:spPr/>
-        <p:txBody>
-          <a:bodyPr/>
-          <a:lstStyle/>
-          <a:p>
-            <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
-          </a:p>
-        </p:txBody>
-      </p:sp>
-      <p:sp>
-        <p:nvSpPr>
-          <p:cNvPr id="3" name="字幕 2">
-            <a:extLst>
-              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
-                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{669203AF-90AD-8D47-8430-35823ACF1F9E}"/>
-              </a:ext>
-            </a:extLst>
-          </p:cNvPr>
-          <p:cNvSpPr>
-            <a:spLocks noGrp="1"/>
-          </p:cNvSpPr>
-          <p:nvPr>
-            <p:ph type="subTitle" idx="1"/>
-          </p:nvPr>
-        </p:nvSpPr>
-        <p:spPr/>
-        <p:txBody>
-          <a:bodyPr/>
-          <a:lstStyle/>
-          <a:p>
-            <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
-          </a:p>
-        </p:txBody>
-      </p:sp>
     </p:spTree>
     <p:extLst>
       <p:ext uri="{BB962C8B-B14F-4D97-AF65-F5344CB8AC3E}">

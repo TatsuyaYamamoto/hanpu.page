@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office テーマ">
   <a:themeElements>
-    <a:clrScheme name="Office">
+    <a:clrScheme name="Office テーマ">
       <a:dk1>
         <a:sysClr val="windowText" lastClr="000000"/>
       </a:dk1>
@@ -39,9 +39,9 @@
         <a:srgbClr val="954F72"/>
       </a:folHlink>
     </a:clrScheme>
-    <a:fontScheme name="Office">
+    <a:fontScheme name="Office テーマ">
       <a:majorFont>
-        <a:latin typeface="游ゴシック Light" panose="020F0302020204030204"/>
+        <a:latin typeface="Calibri Light" panose="020F0302020204030204"/>
         <a:ea typeface=""/>
         <a:cs typeface=""/>
         <a:font script="Jpan" typeface="游ゴシック Light"/>
@@ -74,26 +74,9 @@
         <a:font script="Viet" typeface="Times New Roman"/>
         <a:font script="Uigh" typeface="Microsoft Uighur"/>
         <a:font script="Geor" typeface="Sylfaen"/>
-        <a:font script="Armn" typeface="Arial"/>
-        <a:font script="Bugi" typeface="Leelawadee UI"/>
-        <a:font script="Bopo" typeface="Microsoft JhengHei"/>
-        <a:font script="Java" typeface="Javanese Text"/>
-        <a:font script="Lisu" typeface="Segoe UI"/>
-        <a:font script="Mymr" typeface="Myanmar Text"/>
-        <a:font script="Nkoo" typeface="Ebrima"/>
-        <a:font script="Olck" typeface="Nirmala UI"/>
-        <a:font script="Osma" typeface="Ebrima"/>
-        <a:font script="Phag" typeface="Phagspa"/>
-        <a:font script="Syrn" typeface="Estrangelo Edessa"/>
-        <a:font script="Syrj" typeface="Estrangelo Edessa"/>
-        <a:font script="Syre" typeface="Estrangelo Edessa"/>
-        <a:font script="Sora" typeface="Nirmala UI"/>
-        <a:font script="Tale" typeface="Microsoft Tai Le"/>
-        <a:font script="Talu" typeface="Microsoft New Tai Lue"/>
-        <a:font script="Tfng" typeface="Ebrima"/>
       </a:majorFont>
       <a:minorFont>
-        <a:latin typeface="游ゴシック" panose="020F0502020204030204"/>
+        <a:latin typeface="Calibri" panose="020F0502020204030204"/>
         <a:ea typeface=""/>
         <a:cs typeface=""/>
         <a:font script="Jpan" typeface="游ゴシック"/>
@@ -126,26 +109,9 @@
         <a:font script="Viet" typeface="Arial"/>
         <a:font script="Uigh" typeface="Microsoft Uighur"/>
         <a:font script="Geor" typeface="Sylfaen"/>
-        <a:font script="Armn" typeface="Arial"/>
-        <a:font script="Bugi" typeface="Leelawadee UI"/>
-        <a:font script="Bopo" typeface="Microsoft JhengHei"/>
-        <a:font script="Java" typeface="Javanese Text"/>
-        <a:font script="Lisu" typeface="Segoe UI"/>
-        <a:font script="Mymr" typeface="Myanmar Text"/>
-        <a:font script="Nkoo" typeface="Ebrima"/>
-        <a:font script="Olck" typeface="Nirmala UI"/>
-        <a:font script="Osma" typeface="Ebrima"/>
-        <a:font script="Phag" typeface="Phagspa"/>
-        <a:font script="Syrn" typeface="Estrangelo Edessa"/>
-        <a:font script="Syrj" typeface="Estrangelo Edessa"/>
-        <a:font script="Syre" typeface="Estrangelo Edessa"/>
-        <a:font script="Sora" typeface="Nirmala UI"/>
-        <a:font script="Tale" typeface="Microsoft Tai Le"/>
-        <a:font script="Talu" typeface="Microsoft New Tai Lue"/>
-        <a:font script="Tfng" typeface="Ebrima"/>
       </a:minorFont>
     </a:fontScheme>
-    <a:fmtScheme name="Office">
+    <a:fmtScheme name="Office テーマ">
       <a:fillStyleLst>
         <a:solidFill>
           <a:schemeClr val="phClr"/>

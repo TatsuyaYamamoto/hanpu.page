@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <TotalTime>0</TotalTime>
+  <Template>Office Theme</Template>
+  <TotalTime>1</TotalTime>
   <Words>0</Words>
   <Application>Microsoft Macintosh PowerPoint</Application>
-  <PresentationFormat>ワイド画面</PresentationFormat>
+  <PresentationFormat>A4 210 x 297 mm</PresentationFormat>
   <Paragraphs>0</Paragraphs>
   <Slides>1</Slides>
   <Notes>0</Notes>
@@ -16,7 +17,7 @@
         <vt:lpstr>使用されているフォント</vt:lpstr>
       </vt:variant>
       <vt:variant>
-        <vt:i4>3</vt:i4>
+        <vt:i4>1</vt:i4>
       </vt:variant>
       <vt:variant>
         <vt:lpstr>テーマ</vt:lpstr>
@@ -33,9 +34,7 @@
     </vt:vector>
   </HeadingPairs>
   <TitlesOfParts>
-    <vt:vector size="5" baseType="lpstr">
-      <vt:lpstr>游ゴシック</vt:lpstr>
-      <vt:lpstr>游ゴシック Light</vt:lpstr>
+    <vt:vector size="3" baseType="lpstr">
       <vt:lpstr>Arial</vt:lpstr>
       <vt:lpstr>Office テーマ</vt:lpstr>
       <vt:lpstr>PowerPoint プレゼンテーション</vt:lpstr>
