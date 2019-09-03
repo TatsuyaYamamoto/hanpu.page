@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:sldLayout xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" type="obj" preserve="1">
+  <p:cSld name="タイトルとコンテンツ">
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr>
+        <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="0" cy="0"/>
+          <a:chOff x="0" y="0"/>
+          <a:chExt cx="0" cy="0"/>
+        </a:xfrm>
+      </p:grpSpPr>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="2" name="タイトル 1">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{544A404C-E178-3D41-B0B4-9FE621DFCE82}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="title"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>マスター タイトルの書式設定</a:t>
+            </a:r>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="3" name="コンテンツ プレースホルダー 2">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{A22708F1-7DCC-0743-82A5-CEF6CA659F4F}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph idx="1"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:pPr lvl="0"/>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>マスター テキストの書式設定</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr lvl="1"/>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>第 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP"/>
+              <a:t>2 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>レベル</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr lvl="2"/>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>第 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP"/>
+              <a:t>3 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>レベル</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr lvl="3"/>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>第 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP"/>
+              <a:t>4 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>レベル</a:t>
+            </a:r>
+          </a:p>
+          <a:p>
+            <a:pPr lvl="4"/>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>第 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP"/>
+              <a:t>5 </a:t>
+            </a:r>
+            <a:r>
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+              <a:t>レベル</a:t>
+            </a:r>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="4" name="日付プレースホルダー 3">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{44838BA6-2C4E-9D48-B202-DB8A7BF5DC2B}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="dt" sz="half" idx="10"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:fld id="{5FCDB1C5-66E6-4140-9A56-236D9C0EA821}" type="datetimeFigureOut">
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" smtClean="0"/>
+              <a:t>2019/9/3</a:t>
+            </a:fld>
+            <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="5" name="フッター プレースホルダー 4">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{2BC9B0B7-0E93-E247-B6B2-C28515E7E10C}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="ftr" sz="quarter" idx="11"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="6" name="スライド番号プレースホルダー 5">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{71239455-470C-1F48-967F-6055FB9E3936}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="sldNum" sz="quarter" idx="12"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr/>
+        <p:txBody>
+          <a:bodyPr/>
+          <a:lstStyle/>
+          <a:p>
+            <a:fld id="{A241BDEB-E4DF-814A-A6A7-469AE9E13804}" type="slidenum">
+              <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" smtClean="0"/>
+              <a:t>‹#›</a:t>
+            </a:fld>
+            <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US"/>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+    </p:spTree>
+    <p:extLst>
+      <p:ext uri="{BB962C8B-B14F-4D97-AF65-F5344CB8AC3E}">
+        <p14:creationId xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" val="3039486416"/>
+      </p:ext>
+    </p:extLst>
+  </p:cSld>
+  <p:clrMapOvr>
+    <a:masterClrMapping/>
+  </p:clrMapOvr>
+</p:sldLayout>
