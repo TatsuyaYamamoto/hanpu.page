@@ -642,7 +642,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_2</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -852,7 +852,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_3</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -1061,7 +1061,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_4</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -1270,7 +1270,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_5</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -1339,7 +1339,7 @@
         </p:nvGrpSpPr>
         <p:grpSpPr>
           <a:xfrm>
-            <a:off x="157911" y="2836085"/>
+            <a:off x="156498" y="2836085"/>
             <a:ext cx="2157131" cy="1187682"/>
             <a:chOff x="215062" y="1527986"/>
             <a:chExt cx="2157131" cy="1187682"/>
@@ -1479,7 +1479,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_6</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -1548,7 +1548,7 @@
         </p:nvGrpSpPr>
         <p:grpSpPr>
           <a:xfrm>
-            <a:off x="2634241" y="2845151"/>
+            <a:off x="2633297" y="2845151"/>
             <a:ext cx="2157131" cy="1187682"/>
             <a:chOff x="215062" y="1527986"/>
             <a:chExt cx="2157131" cy="1187682"/>
@@ -1688,7 +1688,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_7</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -1757,7 +1757,7 @@
         </p:nvGrpSpPr>
         <p:grpSpPr>
           <a:xfrm>
-            <a:off x="5110569" y="2854217"/>
+            <a:off x="5116771" y="2845151"/>
             <a:ext cx="2157131" cy="1187682"/>
             <a:chOff x="215062" y="1527986"/>
             <a:chExt cx="2157131" cy="1187682"/>
@@ -1897,7 +1897,7 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __DLCODE_8</a:t>
               </a:r>
             </a:p>
             <a:p>
@@ -2106,8 +2106,19 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __DLCODE_0</a:t>
+                <a:t>: __</a:t>
               </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>DLCODE_9</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
             </a:p>
             <a:p>
               <a:r>
@@ -2147,6 +2158,842 @@
           </p:nvPicPr>
           <p:blipFill>
             <a:blip r:embed="rId10"/>
+            <a:srcRect/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="1773219" y="2116694"/>
+              <a:ext cx="598974" cy="598974"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+      </p:grpSp>
+      <p:grpSp>
+        <p:nvGrpSpPr>
+          <p:cNvPr id="53" name="グループ化 52">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{BDADA23D-F7A3-964E-AE20-49375706A07A}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvGrpSpPr/>
+          <p:nvPr/>
+        </p:nvGrpSpPr>
+        <p:grpSpPr>
+          <a:xfrm>
+            <a:off x="163171" y="4207686"/>
+            <a:ext cx="2157131" cy="1187682"/>
+            <a:chOff x="215062" y="1527986"/>
+            <a:chExt cx="2157131" cy="1187682"/>
+          </a:xfrm>
+        </p:grpSpPr>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="54" name="図 53">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{0EB9BDA5-9637-CD43-B0B0-7F41C25178DE}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill rotWithShape="1">
+            <a:blip r:embed="rId2">
+              <a:extLst>
+                <a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
+                  <a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/>
+                </a:ext>
+              </a:extLst>
+            </a:blip>
+            <a:srcRect l="1623" t="5874" r="1423" b="5676"/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="215062" y="1527986"/>
+              <a:ext cx="2157131" cy="543600"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+        <p:sp>
+          <p:nvSpPr>
+            <p:cNvPr id="55" name="正方形/長方形 54">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{0F1EC8BD-9367-2143-97BB-DC3B2EC5AF06}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvSpPr/>
+            <p:nvPr/>
+          </p:nvSpPr>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="219118" y="2130893"/>
+              <a:ext cx="1554101" cy="584775"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+          <p:txBody>
+            <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0">
+              <a:spAutoFit/>
+            </a:bodyPr>
+            <a:lstStyle/>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>QR</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>コードからダウンロードページの</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>を読み取ることができます。</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="200" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL: https://dl-</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0" err="1">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>code.web.app</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>ダウンロードコード</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: __DLCODE_10</a:t>
+              </a:r>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>問い合わせ先</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: @T28_tatsuya</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+          </p:txBody>
+        </p:sp>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="56" name="図 55">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{21575ACB-0D96-0040-9AF9-8B34EC7CD09C}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill>
+            <a:blip r:embed="rId11"/>
+            <a:srcRect/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="1773219" y="2116694"/>
+              <a:ext cx="598974" cy="598974"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+      </p:grpSp>
+      <p:grpSp>
+        <p:nvGrpSpPr>
+          <p:cNvPr id="49" name="グループ化 48">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{0623C949-C7E4-D740-9129-DE51ACCF046F}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvGrpSpPr/>
+          <p:nvPr/>
+        </p:nvGrpSpPr>
+        <p:grpSpPr>
+          <a:xfrm>
+            <a:off x="2633297" y="4215008"/>
+            <a:ext cx="2157131" cy="1187682"/>
+            <a:chOff x="215062" y="1527986"/>
+            <a:chExt cx="2157131" cy="1187682"/>
+          </a:xfrm>
+        </p:grpSpPr>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="50" name="図 49">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{E761D0A2-AE2D-794D-A737-935B7E515F61}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill rotWithShape="1">
+            <a:blip r:embed="rId2">
+              <a:extLst>
+                <a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
+                  <a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/>
+                </a:ext>
+              </a:extLst>
+            </a:blip>
+            <a:srcRect l="1623" t="5874" r="1423" b="5676"/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="215062" y="1527986"/>
+              <a:ext cx="2157131" cy="543600"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+        <p:sp>
+          <p:nvSpPr>
+            <p:cNvPr id="51" name="正方形/長方形 50">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{7846BBE3-B287-6141-BA59-70E451462481}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvSpPr/>
+            <p:nvPr/>
+          </p:nvSpPr>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="219118" y="2130893"/>
+              <a:ext cx="1554101" cy="584775"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+          <p:txBody>
+            <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0">
+              <a:spAutoFit/>
+            </a:bodyPr>
+            <a:lstStyle/>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>QR</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>コードからダウンロードページの</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>を読み取ることができます。</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="200" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL: https://dl-</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0" err="1">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>code.web.app</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>ダウンロードコード</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: __DLCODE_11</a:t>
+              </a:r>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>問い合わせ先</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: @T28_tatsuya</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+          </p:txBody>
+        </p:sp>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="52" name="図 51">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{F4635CE6-CDB1-144E-A7B4-4E7A058EB16E}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill>
+            <a:blip r:embed="rId12"/>
+            <a:srcRect/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="1773219" y="2116694"/>
+              <a:ext cx="598974" cy="598974"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+      </p:grpSp>
+      <p:grpSp>
+        <p:nvGrpSpPr>
+          <p:cNvPr id="69" name="グループ化 68">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{43EA8441-734A-A440-94A7-8A07B2425146}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvGrpSpPr/>
+          <p:nvPr/>
+        </p:nvGrpSpPr>
+        <p:grpSpPr>
+          <a:xfrm>
+            <a:off x="5116771" y="4216752"/>
+            <a:ext cx="2157131" cy="1187682"/>
+            <a:chOff x="215062" y="1527986"/>
+            <a:chExt cx="2157131" cy="1187682"/>
+          </a:xfrm>
+        </p:grpSpPr>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="70" name="図 69">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{E2714A0E-290A-FD4A-95C8-086A8EA9D404}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill rotWithShape="1">
+            <a:blip r:embed="rId2">
+              <a:extLst>
+                <a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
+                  <a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/>
+                </a:ext>
+              </a:extLst>
+            </a:blip>
+            <a:srcRect l="1623" t="5874" r="1423" b="5676"/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="215062" y="1527986"/>
+              <a:ext cx="2157131" cy="543600"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+        <p:sp>
+          <p:nvSpPr>
+            <p:cNvPr id="71" name="正方形/長方形 70">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{EAFA9741-8F57-D34B-BC91-CC0E4F4F7FFE}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvSpPr/>
+            <p:nvPr/>
+          </p:nvSpPr>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="219118" y="2130893"/>
+              <a:ext cx="1554101" cy="584775"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+          <p:txBody>
+            <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0">
+              <a:spAutoFit/>
+            </a:bodyPr>
+            <a:lstStyle/>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>QR</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>コードからダウンロードページの</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>を読み取ることができます。</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="200" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL: https://dl-</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0" err="1">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>code.web.app</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>ダウンロードコード</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: __DLCODE_12</a:t>
+              </a:r>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>問い合わせ先</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: @T28_tatsuya</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+          </p:txBody>
+        </p:sp>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="72" name="図 71">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{A0372CF8-FA09-C74C-A6FE-2249ED6EB38B}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill>
+            <a:blip r:embed="rId13"/>
+            <a:srcRect/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="1773219" y="2116694"/>
+              <a:ext cx="598974" cy="598974"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+      </p:grpSp>
+      <p:grpSp>
+        <p:nvGrpSpPr>
+          <p:cNvPr id="73" name="グループ化 72">
+            <a:extLst>
+              <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{25F53E53-2D0E-0C42-A99A-07DBF75B7315}"/>
+              </a:ext>
+            </a:extLst>
+          </p:cNvPr>
+          <p:cNvGrpSpPr/>
+          <p:nvPr/>
+        </p:nvGrpSpPr>
+        <p:grpSpPr>
+          <a:xfrm>
+            <a:off x="7593570" y="4216752"/>
+            <a:ext cx="2157131" cy="1187682"/>
+            <a:chOff x="215062" y="1527986"/>
+            <a:chExt cx="2157131" cy="1187682"/>
+          </a:xfrm>
+        </p:grpSpPr>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="74" name="図 73">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{7B4AF687-3B5B-084D-BE19-CBDB30BD7D25}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill rotWithShape="1">
+            <a:blip r:embed="rId2">
+              <a:extLst>
+                <a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
+                  <a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/>
+                </a:ext>
+              </a:extLst>
+            </a:blip>
+            <a:srcRect l="1623" t="5874" r="1423" b="5676"/>
+            <a:stretch/>
+          </p:blipFill>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="215062" y="1527986"/>
+              <a:ext cx="2157131" cy="543600"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+        </p:pic>
+        <p:sp>
+          <p:nvSpPr>
+            <p:cNvPr id="75" name="正方形/長方形 74">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{31E8FBF6-2AA0-2549-80A5-1CADBFB331CC}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvSpPr/>
+            <p:nvPr/>
+          </p:nvSpPr>
+          <p:spPr>
+            <a:xfrm>
+              <a:off x="219118" y="2130893"/>
+              <a:ext cx="1554101" cy="584775"/>
+            </a:xfrm>
+            <a:prstGeom prst="rect">
+              <a:avLst/>
+            </a:prstGeom>
+          </p:spPr>
+          <p:txBody>
+            <a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0">
+              <a:spAutoFit/>
+            </a:bodyPr>
+            <a:lstStyle/>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>QR</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>コードからダウンロードページの</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>を読み取ることができます。</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="200" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>URL: https://dl-</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0" err="1">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>code.web.app</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>ダウンロードコード</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: __DLCODE_13</a:t>
+              </a:r>
+            </a:p>
+            <a:p>
+              <a:r>
+                <a:rPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>問い合わせ先</a:t>
+              </a:r>
+              <a:r>
+                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
+                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                </a:rPr>
+                <a:t>: @T28_tatsuya</a:t>
+              </a:r>
+              <a:endParaRPr kumimoji="1" lang="ja-JP" altLang="en-US" sz="700" dirty="0">
+                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
+              </a:endParaRPr>
+            </a:p>
+          </p:txBody>
+        </p:sp>
+        <p:pic>
+          <p:nvPicPr>
+            <p:cNvPr id="76" name="図 75">
+              <a:extLst>
+                <a:ext uri="{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}">
+                  <a16:creationId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" id="{E4A4497A-E8B5-AE4F-90B0-8B01BED4DCFD}"/>
+                </a:ext>
+              </a:extLst>
+            </p:cNvPr>
+            <p:cNvPicPr>
+              <a:picLocks noChangeAspect="1"/>
+            </p:cNvPicPr>
+            <p:nvPr/>
+          </p:nvPicPr>
+          <p:blipFill>
+            <a:blip r:embed="rId14"/>
             <a:srcRect/>
             <a:stretch/>
           </p:blipFill>
