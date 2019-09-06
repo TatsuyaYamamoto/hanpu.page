@@ -1966,7 +1966,7 @@
         </p:nvGrpSpPr>
         <p:grpSpPr>
           <a:xfrm>
-            <a:off x="7586898" y="2884474"/>
+            <a:off x="7593570" y="2845151"/>
             <a:ext cx="2157131" cy="1187682"/>
             <a:chOff x="215062" y="1527986"/>
             <a:chExt cx="2157131" cy="1187682"/>
@@ -2106,19 +2106,8 @@
                   <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                   <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
                 </a:rPr>
-                <a:t>: __</a:t>
+                <a:t>: __DLCODE_9</a:t>
               </a:r>
-              <a:r>
-                <a:rPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700">
-                  <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
-                  <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
-                </a:rPr>
-                <a:t>DLCODE_9</a:t>
-              </a:r>
-              <a:endParaRPr kumimoji="1" lang="en-US" altLang="ja-JP" sz="700" dirty="0">
-                <a:latin typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
-                <a:ea typeface="Hiragino Kaku Gothic Pro W3" panose="020B0300000000000000" pitchFamily="34" charset="-128"/>
-              </a:endParaRPr>
             </a:p>
             <a:p>
               <a:r>
