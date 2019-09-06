@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <p:viewPr xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
-  <p:normalViewPr>
+  <p:normalViewPr horzBarState="maximized">
     <p:restoredLeft sz="15611"/>
     <p:restoredTop sz="94694"/>
   </p:normalViewPr>
   <p:slideViewPr>
     <p:cSldViewPr snapToGrid="0" snapToObjects="1">
-      <p:cViewPr>
+      <p:cViewPr varScale="1">
         <p:scale>
-          <a:sx n="151" d="100"/>
-          <a:sy n="151" d="100"/>
+          <a:sx n="128" d="100"/>
+          <a:sy n="128" d="100"/>
         </p:scale>
-        <p:origin x="704" y="144"/>
+        <p:origin x="1400" y="176"/>
       </p:cViewPr>
       <p:guideLst/>
     </p:cSldViewPr>
