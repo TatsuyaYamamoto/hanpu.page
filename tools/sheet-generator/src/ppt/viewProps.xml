@@ -6,12 +6,12 @@
   </p:normalViewPr>
   <p:slideViewPr>
     <p:cSldViewPr snapToGrid="0" snapToObjects="1">
-      <p:cViewPr varScale="1">
+      <p:cViewPr>
         <p:scale>
-          <a:sx n="121" d="100"/>
-          <a:sy n="121" d="100"/>
+          <a:sx n="151" d="100"/>
+          <a:sy n="151" d="100"/>
         </p:scale>
-        <p:origin x="1616" y="176"/>
+        <p:origin x="704" y="144"/>
       </p:cViewPr>
       <p:guideLst/>
     </p:cSldViewPr>
