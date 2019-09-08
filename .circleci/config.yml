@@ -53,7 +53,7 @@ jobs:
     steps:
       - prepare_build
       - check_build_environment
-      - run: yarn build:dev
+      - run: yarn build-dev
       - save_workspace
 
   deploy-dev:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - restore_workspace
       - check_build_environment
-      - run: yarn --silent deploy:dev --token "$FIREBASE_TOKEN"
+      - run: yarn --silent deploy-dev --token "$FIREBASE_TOKEN"
 
   test-pro:
     executor:
@@ -70,7 +70,7 @@ jobs:
     steps:
       - prepare_build
       - check_build_environment
-      - run: yarn build:pro
+      - run: yarn build-pro
       - save_workspace
 
   deploy-pro:
@@ -79,7 +79,7 @@ jobs:
     steps:
       - restore_workspace
       - check_build_environment
-      - run: yarn --silent deploy:pro --token "$FIREBASE_TOKEN"
+      - run: yarn --silent deploy-pro --token "$FIREBASE_TOKEN"
 
 commands:
   check_build_environment:

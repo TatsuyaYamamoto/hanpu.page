@@ -1,9 +1,19 @@
 import * as React from "react";
-const { useMemo, useCallback } = React;
+const { useMemo } = React;
 
-import MaterialTable, { Column, Options as TableOptions } from "material-table";
+import MaterialTable, {
+  Column,
+  Options as TableOptions,
+  MTableBody,
+  MTableBodyRow
+} from "material-table";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
+import {
+  SortableContainer,
+  SortableElement,
+  SortEnd
+} from "react-sortable-hoc";
 
 import {
   ProductFile,
@@ -14,6 +24,9 @@ import {
 
 import { formatFileSize } from "../../utils/format";
 import { downloadFromFirebaseStorage } from "../../utils/network";
+
+const SortableMTableBodyRow = SortableElement(MTableBodyRow);
+const SortableMTableBody = SortableContainer(MTableBody);
 
 const TABLE_OPTIONS: TableOptions = {
   addRowPosition: "first",
@@ -52,18 +65,6 @@ const TABLE_COLUMNS: Column[] = [
   }
 ];
 
-interface InnerTableProps {
-  productFiles: { [id: string]: ProductFile };
-  onAddButtonClicked: () => void;
-  onUpdateRequested: (
-    productFileId: string,
-    edited: Partial<ProductFile>,
-    resolve: () => void
-  ) => void;
-  onDeleteRequested: (productFileId: string, resolve: () => void) => void;
-  onDownloadClicked: (productFileId: string) => void;
-}
-
 interface RowData {
   id: string;
   displayName: ProductFileDisplayName;
@@ -80,13 +81,15 @@ interface ProductFileEditTableProps {
     edited: Partial<ProductFile>
   ) => Promise<void>;
   onDelete: (productFileId: string) => Promise<void>;
+  onChangeIndex: (id: string, newIndex: number) => Promise<void>;
 }
 
 const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   productFiles,
   onAdd,
   onUpdate,
-  onDelete
+  onDelete,
+  onChangeIndex
 }) => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
 
@@ -106,10 +109,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     handleProductFileAddDialog();
   };
 
-  const onDownloadButtonClicked = (
-    event: any,
-    { id: productFileId }: RowData
-  ) => {
+  const onDownloadButtonClicked = (_: any, { id: productFileId }: RowData) => {
     const { storageUrl, originalName } = productFiles[productFileId];
     downloadFromFirebaseStorage(storageUrl, originalName);
   };
@@ -133,14 +133,38 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   };
 
   const data: RowData[] = useMemo(() => {
-    return Object.keys(productFiles).map(id => ({
-      id,
-      displayName: productFiles[id].displayName,
-      originalName: productFiles[id].originalName,
-      size: formatFileSize(productFiles[id].size),
-      contentType: productFiles[id].contentType
-    }));
+    return Object.keys(productFiles)
+      .sort((aId, bId) => {
+        const aIndex = productFiles[aId].index;
+        const bIndex = productFiles[bId].index;
+
+        return aIndex - bIndex;
+      })
+      .map(id => ({
+        id,
+        displayName: productFiles[id].displayName,
+        originalName: productFiles[id].originalName,
+        size: formatFileSize(productFiles[id].size),
+        contentType: productFiles[id].contentType
+      }));
   }, [productFiles]);
+
+  const onSortEnd = ({ oldIndex, newIndex }: SortEnd) => {
+    if (oldIndex === newIndex) {
+      return;
+    }
+
+    const id = Object.keys(productFiles).find(key => {
+      return oldIndex === productFiles[key].index;
+    });
+
+    // TODO: affect list view before completing update to firestore
+    if (!id) {
+      throw new Error("unexpected error. counld not find ID of sorted.");
+    }
+
+    onChangeIndex(id, newIndex);
+  };
 
   return (
     <>
@@ -168,6 +192,14 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
         editable={{
           onRowUpdate: onProductFileUpdate,
           onRowDelete: onProductFileDelete
+        }}
+        components={{
+          Body: props => {
+            return <SortableMTableBody onSortEnd={onSortEnd} {...props} />;
+          },
+          Row: props => {
+            return <SortableMTableBodyRow {...props} />;
+          }
         }}
       />
 

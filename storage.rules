@@ -1,16 +1,18 @@
 service firebase.storage {
-  match /b/{bucket}/o {
-		match /users/{userId} {
-    	match /products/{productId} {
-      	match /images/{allImages=**} {
-    	  	allow read;
-      		allow write: if request.auth.uid == userId;
+    match /b/{bucket}/o {
+        match /users/{userId} {
+    	    match /products/{productId} {
+
+      	        match /images/{allImages=**} {
+    	  	        allow read;
+      		        allow write: if request.auth.uid == userId;
+                }
+
+                match /files/{allFiles=**} {
+    	  	        allow read;
+      		        allow write: if request.auth.uid == userId;
+                }
+            }
         }
-        match /files/{allFiles=**} {
-    	  	allow read;
-      		allow write: if request.auth.uid == userId;
-        }
-      }
     }
-  }
 }

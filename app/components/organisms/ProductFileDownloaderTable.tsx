@@ -1,16 +1,13 @@
 import * as React from "react";
 
 import {
-  Divider,
   Grid,
   IconButton,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  MenuItem,
   Paper,
-  Select,
   Typography
 } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
@@ -36,33 +33,6 @@ import NativeAudioController from "./NativeAudioController";
 
 const { useState, useMemo, Fragment } = React;
 
-type SortType = "none" | "contentType" | "size";
-
-const sortWith = (a: string | number, b: string | number) => {
-  if (a < b) {
-    return -1;
-  }
-  if (b < a) {
-    return 1;
-  }
-  return 0;
-};
-
-interface SortSelectorProps {
-  type: SortType;
-  onChange: (e: React.ChangeEvent<{ name?: string; value: SortType }>) => void;
-}
-
-const SortSelector: React.FC<SortSelectorProps> = ({ type, onChange }) => {
-  return (
-    <Select value={type} onChange={onChange}>
-      <MenuItem value="none">並べ替え</MenuItem>
-      <MenuItem value="contentType">ファイル形式</MenuItem>
-      <MenuItem value="size">ファイルサイズ</MenuItem>
-    </Select>
-  );
-};
-
 interface ListItemData {
   name: string;
   contentType: string;
@@ -85,36 +55,42 @@ const ProductFileListItem: React.FC<ProductFileListItemProps> = ({
   onStart,
   onDownload
 }) => {
-  const onPlayIconClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onPlayIconClicked = (_: React.MouseEvent<HTMLButtonElement>) => {
     onStart();
   };
 
-  const onDownloadIconClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onDownloadIconClicked = (_: React.MouseEvent<HTMLButtonElement>) => {
     onDownload();
   };
 
+  const action = canPlay ? (
+    state === "playing" ? (
+      <IconButton disabled={true}>
+        <AudioWaveIcon animation={true} />
+      </IconButton>
+    ) : state === "loading" ? (
+      <IconButton disabled={true}>
+        <LoadingIcon animation={true} />
+      </IconButton>
+    ) : (
+      <IconButton onClick={onPlayIconClicked}>
+        <PlayIcon />
+      </IconButton>
+    )
+  ) : (
+    <IconButton onClick={onDownloadIconClicked}>
+      <DownloadIcon />
+    </IconButton>
+  );
+
   return (
-    <ListItem>
+    <ListItem button={true}>
       {/* TODO: style ListItemText width not to overlap with action icons. とりあえず、 "君のこころは輝いているかい？	" では重ならないので、対応は後回し。 */}
       <ListItemText
         primary={name}
         secondary={<Typography>{`${contentType}: ${size}`}</Typography>}
       />
-      <ListItemSecondaryAction>
-        {canPlay &&
-          (state === "playing" ? (
-            <AudioWaveIcon animation={true} />
-          ) : state === "loading" ? (
-            <LoadingIcon animation={true} />
-          ) : (
-            <IconButton onClick={onPlayIconClicked}>
-              <PlayIcon />
-            </IconButton>
-          ))}
-        <IconButton onClick={onDownloadIconClicked}>
-          <DownloadIcon />
-        </IconButton>
-      </ListItemSecondaryAction>
+      <ListItemSecondaryAction>{action}</ListItemSecondaryAction>
     </ListItem>
   );
 };
@@ -137,50 +113,13 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
   productId,
   files
 }) => {
-  const data = Object.keys(files)
-    .map(id => {
-      return {
-        id,
-        file: files[id]
-      };
-    })
-    // TODO: そもそも並べ替えしなくて済むように、Firestore上で順番を持たせる
-    .sort((a, b) => {
-      const aName = a.file.originalName;
-      const bName = b.file.originalName;
-
-      return sortWith(aName, bName);
-    })
-    .map(({ id, file }) => {
-      return {
-        id,
-        name: file.displayName,
-        contentType: file.contentType,
-        size: formatFileSize(file.size),
-        // TODO!
-        canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
-      };
-    });
-
   const { getByProductId } = useDownloadCodeVerifier();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { okAudit } = useAuditLogger();
 
-  const [playableOnly, setPlayableOnly] = useState(false);
-  const [sortType, setSortType] = useState<SortType>("none");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>("none");
-
-  const handlePlayableOnly = () => {
-    setPlayableOnly(!playableOnly);
-  };
-
-  const handleSortType = (
-    e: React.ChangeEvent<{ name?: string; value: SortType }>
-  ) => {
-    setSortType(e.target.value);
-  };
 
   const onDownloadClicked = (fileId: string) => async () => {
     const { storageUrl, originalName } = files[fileId];
@@ -190,15 +129,34 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
       persist: true
     });
 
+    if (snackBarKey === null) {
+      // TODO: fail show snackbar. handling error.
+      return;
+    }
+
     downloadFromFirebaseStorage(storageUrl, originalName).then(() => {
       closeSnackbar(snackBarKey);
 
-      getByProductId(productId).then(({ downloadCode }) => {
-        okAudit({
-          type: LogType.DOWNLOAD_PRODUCT_FILE,
-          params: { storageUrl, originalName, downloadCode }
+      getByProductId(productId)
+        .then(product => {
+          if (!product) {
+            throw new Error(
+              "unexpected error. start product file was not found."
+            );
+          }
+
+          return product;
+        })
+        .then(({ downloadCode }) => {
+          okAudit({
+            type: LogType.DOWNLOAD_PRODUCT_FILE,
+            params: {
+              storageUrl,
+              originalName,
+              downloadCode
+            }
+          });
         });
-      });
     });
   };
 
@@ -207,12 +165,22 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
     const url = await getStorageObjectDownloadUrl(storageUrl);
 
-    getByProductId(productId).then(({ downloadCode }) => {
-      okAudit({
-        type: LogType.PLAY_PRODUCT_FILE,
-        params: { productFileId: fileId, downloadCode, url }
+    getByProductId(productId)
+      .then(product => {
+        if (!product) {
+          throw new Error(
+            "unexpected error. start product file was not found."
+          );
+        }
+
+        return product;
+      })
+      .then(({ downloadCode }) => {
+        okAudit({
+          type: LogType.PLAY_PRODUCT_FILE,
+          params: { productFileId: fileId, downloadCode, url }
+        });
       });
-    });
 
     setSelectedId(fileId);
     setAudioUrl(url);
@@ -231,42 +199,42 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
     setAudioUrl(null);
   };
 
-  const visibleData = useMemo(() => {
-    let d = [...data];
+  const data = useMemo(
+    () =>
+      Object.keys(files)
+        .map(id => {
+          return {
+            id,
+            file: files[id]
+          };
+        })
+        .sort((a, b) => {
+          const aIndex = a.file.index;
+          const bIndex = b.file.index;
 
-    if (playableOnly) {
-      d = d.filter(item => !!item.canPlay);
-    }
-
-    if (sortType === "contentType") {
-      d.sort(({ contentType: a }, { contentType: b }) => sortWith(a, b));
-    }
-
-    if (sortType === "size") {
-      d.sort(({ size: a }, { size: b }) => sortWith(a, b));
-    }
-
-    return d;
-  }, [playableOnly, sortType]);
+          return aIndex - bIndex;
+        })
+        .map(({ id, file }) => {
+          return {
+            id,
+            name: file.displayName,
+            contentType: file.contentType,
+            size: formatFileSize(file.size),
+            // TODO!
+            canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
+          };
+        }),
+    [files]
+  );
 
   return (
     <>
       <Paper>
         <Grid container={true} direction="column">
-          <Grid
-            container={true}
-            item={true}
-            justify={"flex-end"}
-            style={{ padding: 8 }} // TODO set with theme
-          >
-            <SortSelector type={sortType} onChange={handleSortType} />
-          </Grid>
-
           <Grid item={true}>
             <List>
-              {visibleData.map(({ id, name, contentType, size, canPlay }) => (
+              {data.map(({ id, name, contentType, size, canPlay }) => (
                 <Fragment key={id}>
-                  <Divider />
                   <ProductFileListItem
                     state={id === selectedId ? playerState : null}
                     name={name}
@@ -285,7 +253,7 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
 
       <NativeAudioController
         open={!!audioUrl}
-        src={audioUrl}
+        src={audioUrl as string}
         onPlay={onPlayWithPlayer}
         onPause={onPauseWithPlayer}
         onClose={onClosePlayer}

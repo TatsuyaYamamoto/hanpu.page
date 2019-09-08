@@ -9,18 +9,6 @@ import ProductImageThumbnailImage from "../atoms/ProductImageThumbnailImage";
 const MB = 1000 * 1000;
 const THUMBNAIL_WIDTH = 200;
 
-const readAsDataURLWithReader = (file: File): Promise<string> => {
-  const reader = new FileReader();
-
-  const promise = new Promise<string>(resolve => {
-    reader.onload = () => resolve(reader.result as string);
-  });
-
-  reader.readAsDataURL(file);
-
-  return promise;
-};
-
 const ErrorMessage = styled.div`
   color: red;
 `;
@@ -37,7 +25,7 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
   const [
     selectedFileErrorMessage,
     setSelectedFileErrorMessage
-  ] = React.useState(null);
+  ] = React.useState<string | null>(null);
 
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     const acceptedFile = acceptedFiles[0];
@@ -46,9 +34,6 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
       setSelectedFileErrorMessage("file size should be less than 1MB.");
       return;
     }
-    readAsDataURLWithReader(acceptedFile).then(dataUrl => {
-      // setSrc(dataUrl);
-    });
 
     onChange(acceptedFile);
   }, []);

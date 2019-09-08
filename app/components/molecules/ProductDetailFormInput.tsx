@@ -7,8 +7,8 @@ import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 
 interface FormInputProps {
-  defaultValue?: string;
-  onSubmit?: (value: string) => void;
+  defaultValue: string;
+  onSubmit?: (value: string) => Promise<void>;
   readonly?: true;
   multiline?: boolean;
 }
@@ -36,8 +36,10 @@ const ProductDetailFormInput: React.FC<FormInputProps> = ({
   };
 
   const onCheckClicked = () => {
-    onSubmit(editValue);
-    setEditing(false);
+    if (onSubmit) {
+      onSubmit(editValue);
+      setEditing(false);
+    }
   };
 
   const readonlyInput = (

@@ -15,12 +15,16 @@ const useProductEditor = (productId: string) => {
 
   const addProduct = (
     name: ProductName,
-    description?: ProductDescription
+    description: ProductDescription
   ): Promise<void> => {
     return Product.createNew({ name, description });
   };
 
   const updateProduct = (values: Partial<ProductDocument>) => {
+    if (!product) {
+      throw new Error("unexpected error. no product is ready.");
+    }
+
     // TODO validate provided params
 
     return product
@@ -32,6 +36,10 @@ const useProductEditor = (productId: string) => {
   };
 
   const updateProductIcon = (icon: File): Promise<void> => {
+    if (!product) {
+      throw new Error("unexpected error. no product is ready.");
+    }
+
     // TODO validate provided params
 
     const { promise } = product.uploadIconToStorage(icon);
@@ -50,6 +58,10 @@ const useProductEditor = (productId: string) => {
     task: storage.UploadTask;
     promise: Promise<void>;
   } => {
+    if (!product) {
+      throw new Error("unexpected error. no product is ready.");
+    }
+
     const { task, promise } = product.addProductFile(displayName, file);
     const refreshPromise = promise
       .then(() => Product.getById(productId))
@@ -67,6 +79,10 @@ const useProductEditor = (productId: string) => {
     id: string,
     edited: Partial<ProductFile>
   ): Promise<void> => {
+    if (!product) {
+      throw new Error("unexpected error. no product is ready.");
+    }
+
     return product
       .partialUpdateFile(id, edited)
       .then(() => Product.getById(productId))
@@ -76,6 +92,10 @@ const useProductEditor = (productId: string) => {
   };
 
   const deleteProductFile = (productFileId: string): Promise<void> => {
+    if (!product) {
+      throw new Error("unexpected error. no product is ready.");
+    }
+
     return product
       .deleteProductFile(productFileId)
       .then(() => Product.getById(productId))

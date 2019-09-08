@@ -48,7 +48,7 @@ export const downloadFromFirebaseStorage = async (
       }
     };
 
-    const onLoad = (event: ProgressEvent) => {
+    const onLoad = (_: ProgressEvent) => {
       const blob = xhr.response;
       const a = document.createElement("a");
       a.download = originalName;
@@ -64,7 +64,7 @@ export const downloadFromFirebaseStorage = async (
       reject(event);
     };
 
-    const onAbort = (event: ProgressEvent) => {
+    const onAbort = (_: ProgressEvent) => {
       resolve();
     };
 

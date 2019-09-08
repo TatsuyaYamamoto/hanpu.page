@@ -13,7 +13,7 @@ interface NotFoundDialogProps {
 }
 
 const DownloadCodeErrorDialog: React.FC<NotFoundDialogProps> = props => {
-  const { open, message, handleClose } = props;
+  const { open, handleClose } = props;
 
   return (
     <Dialog open={open} onClose={handleClose}>

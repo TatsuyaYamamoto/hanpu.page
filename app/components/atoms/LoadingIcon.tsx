@@ -7,7 +7,8 @@ interface Props {
   animation?: boolean;
 }
 
-const AnimatedRefreshIcon: React.FC = styled(RefreshIcon)`
+// TODO: resolve types
+const AnimatedRefreshIcon = styled<any>(RefreshIcon)`
   animation: spin 1.5s linear infinite;
   @keyframes spin {
     0% {

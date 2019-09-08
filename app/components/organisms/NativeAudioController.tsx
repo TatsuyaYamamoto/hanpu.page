@@ -28,7 +28,7 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
   onPause,
   onClose
 }) => {
-  const audioEl = useRef<HTMLAudioElement>(null);
+  const audioEl = useRef<HTMLAudioElement | null>(null);
 
   const onAudioPlay = useCallback(() => {
     onPlay();
@@ -53,6 +53,10 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
   }, []);
 
   const onCloseClicked = useCallback(() => {
+    if (!audioEl.current) {
+      return;
+    }
+
     audioEl.current.pause();
     onClose();
   }, [onClose, audioEl]);

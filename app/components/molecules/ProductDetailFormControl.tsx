@@ -4,14 +4,14 @@ import Grid, { GridProps } from "@material-ui/core/Grid";
 
 import styled from "styled-components";
 
-const LabelArea: React.FC<GridProps> = styled(Grid)`
+const LabelArea = styled(Grid as React.FC<GridProps>)`
   flex-basis: 150px;
   // follow a style of InputBase
   // https://github.com/mui-org/material-ui/blob/master/packages/material-ui/src/InputBase/InputBase.js
   padding: ${8 - 2}px 0 ${8 - 1}px;
 `;
 
-const InputArea: React.FC<GridProps> = styled(Grid)``;
+const InputArea = styled(Grid as React.FC<GridProps>)``;
 
 interface TextFieldProps {
   label: string;
