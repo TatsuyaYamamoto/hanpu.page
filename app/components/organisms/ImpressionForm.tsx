@@ -49,6 +49,9 @@ const ImpressionForm: React.FC<ImpressionFormProps> = props => {
 
       postImpression(productId, text).then(() => {
         setSubmitState("success");
+
+        // 送信が成功したら、テキストボックスは空欄になるのが自然との意見もあるが、実際はどっちだろうか
+        setText("");
       });
     },
     [productId, text]
