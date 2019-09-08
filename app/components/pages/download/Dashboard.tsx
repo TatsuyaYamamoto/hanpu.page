@@ -8,6 +8,7 @@ import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
 import useGa from "../../hooks/useGa";
 import AppBar from "../../organisms/AppBar";
 import Footer from "../../organisms/Footer";
+import ImpressionForm from "../../organisms/ImpressionForm";
 import ProductDetail from "../../organisms/ProductDetail";
 import ProductFileDownloaderTable from "../../organisms/ProductFileDownloaderTable";
 import ActivatedProductList from "../../organisms/ActivatedProductList";
@@ -46,7 +47,7 @@ const DetailPage: React.FC<DetailPageProps> = ({
 
         <Grid item={true}>
           <Container style={{ marginTop: 30, marginBottom: 30 }}>
-            <Grid container={true} direction={"column"}>
+            <Grid container={true} direction={"column"} spacing={5}>
               <Grid item={true}>
                 <ProductDetail
                   name={product.name}
@@ -55,11 +56,16 @@ const DetailPage: React.FC<DetailPageProps> = ({
                   downloadCodeExpiredAt={downloadCodeExpiredAt}
                 />
               </Grid>
+
               <Grid item={true}>
                 <ProductFileDownloaderTable
                   files={product.productFiles}
                   productId={product.id}
                 />
+              </Grid>
+
+              <Grid item={true}>
+                <ImpressionForm productId={product.id} />
               </Grid>
             </Grid>
           </Container>
