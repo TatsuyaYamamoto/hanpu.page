@@ -53,7 +53,9 @@ sheetNumber=1
 codeNumber=${MIN_CODE_NUMBER}
 
 for code in ${download_code_list[@]}; do
-    codeWithoutLineFeedCode=`echo ${code} | awk '{printf "%s",$0}' `
+    # 改行をコードを取り除くために、先頭の8文字を抽出する。
+    # `echo ${code} | awk '{printf "%s",$0}'` やら、`echo ${code} | sed 's/:/\'$'\n/g'` では取り除くことができなかった。
+    codeWithoutLineFeedCode=${code:0:8}
 
     echo " == sheet number: ${sheetNumber}, code number:${codeNumber}, code: ${codeWithoutLineFeedCode} ====="
 
@@ -71,7 +73,6 @@ for code in ${download_code_list[@]}; do
     fi
 
     echo " == replace download code ====="
-    # TODO fix, 置き換え後、ダウンロードコードの行が改行される
     # macOS内のBSD版sedではバックアップファイルが作成されるため、明示的に拡張子を指定して、実行後に削除する
     sed -i '.bak' -e 's/__DLCODE_'${codeNumber}'</'${codeWithoutLineFeedCode}'</' "${slide_file_path}"
     rm "${slide_file_path}.bak"
