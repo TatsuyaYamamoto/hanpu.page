@@ -27,6 +27,9 @@ MIN_CODE_NUMBER=2
 MAX_CODE_NUMBER=13
 
 #
+TEMPLATE_BORDER_COLOR="00B050"
+
+#
 dlcode_csv_file_path=$1
 
 
@@ -84,6 +87,11 @@ for code in ${download_code_list[@]}; do
 
     if [[ ${codeNumber} -gt ${MAX_CODE_NUMBER} ]]; then
         echo " == last code for ${sheetNumber} sheet. ====="
+
+        echo " == whiten border color ===="
+        # macOS内のBSD版sedではバックアップファイルが作成されるため、明示的に拡張子を指定して、実行後に削除する
+        sed -i '.bak' -e 's/'${TEMPLATE_BORDER_COLOR}'/FFFFFF/' "${slide_file_path}"
+        rm "${slide_file_path}.bak"
 
         cd ${tmp_src_dir}
         zip --quiet --recurse-paths "${OUTPUT_DIR}/dlcode_${NOW}_${sheetNumber}.pptx" *
