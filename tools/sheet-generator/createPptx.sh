@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
@@ -45,6 +45,12 @@ done < ${dlcode_csv_file_path}
 
 download_code_length=${#download_code_list[@]}
 echo code size: ${download_code_length}
+
+# TODO: 全体で最後のコードか判定する。入力したcodeの数がMAX_CODE_NUMBERの倍数でない場合、pptx作成処理が走らない。
+if [[ $((${download_code_length} % 12)) -ne 0 ]]; then
+  echo "dl-code list length should be multiple of 12."
+  exit 1
+fi
 
 echo " == create dist dir ======================================================================="
 mkdir -p ${OUTPUT_DIR}
