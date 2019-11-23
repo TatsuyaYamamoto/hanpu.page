@@ -14,6 +14,7 @@ import {
   ProductFile,
   ProductFileDisplayName
 } from "../../domains/Product";
+import { DownloadCodeSetDocument } from "../../domains/DownloadCodeSet";
 
 const Section = styled.div`
   margin-bottom: 30px;
@@ -40,9 +41,11 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     updateProductFile,
     deleteProductFile
   } = useProductEditor(productId);
-  const { downloadCodeSets, addDownloadCodeSet } = useDownloadCodeEditor(
-    product
-  );
+  const {
+    downloadCodeSets,
+    addDownloadCodeSet,
+    updateDownloadCodeSet
+  } = useDownloadCodeEditor(product);
 
   const onProductFieldsUpdate = (
     values: Partial<ProductDocument>
@@ -81,6 +84,13 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     return addDownloadCodeSet(numberOfCodes, expiredAt);
   };
 
+  const onDownloadCodeSetUpdate = (
+    id: string,
+    edited: Partial<DownloadCodeSetDocument>
+  ): Promise<void> => {
+    return updateDownloadCodeSet(id, edited);
+  };
+
   const onProductFileIndexChange = (id: string, newIndex: number) => {
     return updateProductFile(id, { index: newIndex });
   };
@@ -109,6 +119,7 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
             <DownloadCodeSetForm
               downloadCodeSets={downloadCodeSets}
               onAdd={onDownloadCodeSetAdd}
+              onUpdate={onDownloadCodeSetUpdate}
             />
           </Section>
         </>
