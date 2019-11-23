@@ -4,14 +4,47 @@ const { useState, useMemo } = React;
 import MaterialTable, {
   Options as TableOptions,
   Localization as TableLocalization,
-  Column as TableColumn
+  Column as TableColumn,
+  Action,
+  EditComponentProps
 } from "material-table";
+import TextField from "@material-ui/core/TextField";
+import styled from "styled-components";
 
 import DownloadCodeSetAddDialog from "./DownloadCodeSetAddDialog";
 
 import { saveDownloadCodeSetAsCsvFile } from "../../utils/network";
 
-import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
+import {
+  DownloadCodeSet,
+  DownloadCodeSetDocument
+} from "../../domains/DownloadCodeSet";
+
+const DescriptionTextField = styled.div`
+  white-space: pre-wrap;
+  width: 250px;
+`;
+
+const PreviewComponentRender = (rowData: CodeData) => (
+  <DescriptionTextField>{rowData.description}</DescriptionTextField>
+);
+
+const EditComponent = (props: EditComponentProps) => {
+  const codeData: CodeData = props.rowData;
+
+  const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    props.onChange(e.target.value);
+  };
+
+  return (
+    <TextField
+      defaultValue={codeData.description}
+      multiline={true}
+      fullWidth={true}
+      onChange={onChangeValue}
+    />
+  );
+};
 
 const TABLE_OPTIONS: TableOptions = {
   addRowPosition: "first",
@@ -32,17 +65,39 @@ const TABLE_LOCALIZATION: TableLocalization = {
 };
 
 const TABLE_COLUMNS: TableColumn[] = [
-  { title: "ID", field: "id", type: "string" },
-  { title: "発行数", field: "length", type: "numeric" },
+  {
+    title: "ID",
+    field: "id",
+    type: "string",
+    editable: "never",
+    cellStyle: {
+      maxWidth: 200
+    }
+  },
+  {
+    title: "発行数",
+    field: "length",
+    type: "numeric",
+    editable: "never",
+    cellStyle: {}
+  },
   {
     title: "作成日",
     field: "createdAt",
-    type: "datetime"
+    type: "datetime",
+    editable: "never"
   },
   {
     title: "有効期限",
     field: "expiredAt",
-    type: "datetime"
+    type: "datetime",
+    editable: "never"
+  },
+  {
+    title: "Description",
+    field: "description",
+    render: PreviewComponentRender,
+    editComponent: EditComponent
   }
 ];
 
@@ -51,16 +106,22 @@ interface CodeData {
   length: number;
   createdAt: Date;
   expiredAt: Date;
+  description: string | null;
 }
 
 interface DownloadCodeSetFormProps {
   downloadCodeSets: DownloadCodeSet[];
   onAdd: (numberOfCodes: number, expiredAt: Date) => Promise<void>;
+  onUpdate: (
+    codeSetId: string,
+    edited: Partial<DownloadCodeSetDocument>
+  ) => Promise<void>;
 }
 
 const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
   downloadCodeSets,
-  onAdd
+  onAdd,
+  onUpdate
 }) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
@@ -88,16 +149,48 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     saveDownloadCodeSetAsCsvFile(codeSet);
   };
 
+  const onRowUpdate = async (newData: CodeData, oldData?: CodeData) => {
+    if (!oldData) {
+      return;
+    }
+
+    const { id } = newData;
+    const edited: Partial<DownloadCodeSetDocument> = {};
+
+    if (newData.description !== oldData.description) {
+      edited.description = newData.description;
+    }
+
+    return onUpdate(id, edited);
+  };
+
   const tableData: CodeData[] = useMemo(
     () =>
       downloadCodeSets.map(set => ({
         id: set.id,
         length: Object.keys(set.codes).length,
         createdAt: set.createdAt,
-        expiredAt: set.expiredAt
+        expiredAt: set.expiredAt,
+        description: set.description
       })),
     [downloadCodeSets]
   );
+
+  const actions: Action[] = [
+    // TODO ダウンロードアイコンの場所の調整。
+    // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。
+    {
+      icon: "arrow_downward",
+      tooltip: "Download",
+      onClick: onDownloadButtonClicked
+    },
+    {
+      icon: "add",
+      tooltip: "追加",
+      isFreeAction: true,
+      onClick: onAddButtonClicked
+    }
+  ];
 
   return (
     <>
@@ -107,21 +200,10 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
         columns={TABLE_COLUMNS}
         title={"ダウンロードコード一覧"}
         data={tableData}
-        actions={[
-          // TODO ダウンロードアイコンの場所の調整。
-          // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。
-          {
-            icon: "arrow_downward",
-            tooltip: "Download",
-            onClick: onDownloadButtonClicked
-          },
-          {
-            icon: "add",
-            tooltip: "追加",
-            isFreeAction: true,
-            onClick: onAddButtonClicked
-          }
-        ]}
+        actions={actions}
+        editable={{
+          onRowUpdate
+        }}
       />
       <DownloadCodeSetAddDialog
         open={addDialogOpen}

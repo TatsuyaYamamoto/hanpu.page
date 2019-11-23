@@ -9,13 +9,18 @@ interface DownloadCodeSetDocument {
   codes: {
     [value: string]: boolean;
   };
+  description: string | null;
   createdAt: Date | firestore.FieldValue;
   expiredAt: Date | firestore.FieldValue;
 }
 
-class DownloadCodeSet {
+class DownloadCodeSet implements DownloadCodeSetDocument {
   public static getColRef() {
     return firestore().collection(`downloadCodeSets`);
+  }
+
+  public static getDocRef(id: string) {
+    return DownloadCodeSet.getColRef().doc(id);
   }
 
   public static async getByProductRef(
@@ -33,6 +38,7 @@ class DownloadCodeSet {
         id,
         data.productRef,
         data.codes,
+        data.description,
         (data.createdAt as Timestamp).toDate(),
         (data.expiredAt as Timestamp).toDate()
       );
@@ -94,6 +100,7 @@ class DownloadCodeSet {
       productRef,
       codes: newCodes,
       createdAt: now,
+      description: null,
       expiredAt
     };
     await DownloadCodeSet.getColRef().add(newSetDocDate);
@@ -123,9 +130,14 @@ class DownloadCodeSet {
     readonly codes: {
       [value: string]: boolean;
     },
+    readonly description: string | null,
     readonly createdAt: Date,
     readonly expiredAt: Date
   ) {}
+
+  public get ref() {
+    return DownloadCodeSet.getDocRef(this.id);
+  }
 }
 
 export { DownloadCodeSet, DownloadCodeSetDocument };
