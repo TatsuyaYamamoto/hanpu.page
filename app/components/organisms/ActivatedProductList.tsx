@@ -10,6 +10,7 @@ import {
   Typography
 } from "@material-ui/core/";
 
+import LinkButton from "../atoms/LinkButton";
 import ThumbnailImage from "../atoms/ProductImageThumbnailImage";
 import NoImage from "../atoms/ProductImageThumbnailNoImage";
 
@@ -59,6 +60,11 @@ const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
   );
 };
 
+const EmptyInfo = styled.div`
+  margin-bottom: 30px;
+  white-space: pre;
+`;
+
 interface ActivatedProductListProps {
   products: Product[];
   onPanelClicked: (selectedId: string) => void;
@@ -71,6 +77,31 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
   const onClick = (id: string) => () => {
     onPanelClicked(id);
   };
+
+  if (products.length === 0) {
+    return (
+      <Grid
+        container={true}
+        justify="center"
+        alignItems="center"
+        spacing={2 /* TODO: get it from theme */}
+      >
+        <Grid item={true} justify="center">
+          <EmptyInfo>
+            {`ダウンロード可能なコンテンツがありません。以下の理由が考えられます。
+・ダウンロードコードを入力していない。
+・別のブラウザでダウンロードコードを入力した。
+
+現在お使いのブラウザからコンテンツをダウンロードするためには、
+ダウンロードコードを再入力する必要があります。`}
+          </EmptyInfo>
+          <LinkButton to="/d" variant="contained">
+            <span>ダウンロードコード入力ページへ</span>
+          </LinkButton>
+        </Grid>
+      </Grid>
+    );
+  }
 
   return (
     <Grid
