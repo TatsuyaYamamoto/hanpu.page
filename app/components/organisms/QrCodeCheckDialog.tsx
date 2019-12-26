@@ -15,11 +15,41 @@ import { format as dateFormat } from "date-fns";
 
 type CheckStatus = "progressing" | "valid" | "invalid" | "suspended";
 
-const CheckList = styled.ul``;
+const ProgressIcon = () => <CircularProgress size={24} />;
+
+const CheckList = styled.ul`
+  padding-left: 0;
+  list-style: none;
+`;
 
 const CheckItem = styled.li``;
 
-const LinkedProductDetail = styled.div``;
+const CheckStatusIcon = styled.span`
+  display: inline-block;
+  vertical-align: middle;
+`;
+
+const CheckDescription = styled.span`
+  margin-left: 10px;
+`;
+
+const LinkedProductDetail = styled.div`
+  display: table;
+`;
+
+const LinkedProductDetailItem = styled.div`
+  display: table-row;
+`;
+
+const DetailLabel = styled.span`
+  display: table-cell;
+  min-width: 120px;
+  padding: 5px 0;
+`;
+
+const DetailValue = styled.span`
+  display: table-cell;
+`;
 
 interface DecodeResult {
   checkList: {
@@ -48,7 +78,7 @@ const QrCodeCheckDialog: React.FC<CheckDialogProps> = props => {
 
   const icon = (checkStatus: CheckStatus) => (
     <>
-      {checkStatus === "progressing" && <CircularProgress />}
+      {checkStatus === "progressing" && <ProgressIcon />}
       {checkStatus === "valid" && <CheckIcon />}
       {checkStatus === "invalid" && <IncorrectIcon />}
       {checkStatus === "suspended" && <SuspendedIcon />}
@@ -74,24 +104,41 @@ const QrCodeCheckDialog: React.FC<CheckDialogProps> = props => {
       <DialogContent>
         <CheckList>
           <CheckItem>
-            {icon(decoding)}
-            {"QRCode is found."}
+            <CheckStatusIcon> {icon(decoding)}</CheckStatusIcon>
+            <CheckDescription>{"QRCode is found."}</CheckDescription>
           </CheckItem>
           <CheckItem>
-            {icon(format)}
-            {"Decoded text is expected URL format."}
+            <CheckStatusIcon>{icon(format)}</CheckStatusIcon>
+            <CheckDescription>{"URL format is expected."}</CheckDescription>
           </CheckItem>
           <CheckItem>
-            {icon(existing)}
-            {"Download Code is existed in DB."}
+            <CheckStatusIcon>{icon(existing)}</CheckStatusIcon>
+            <CheckDescription>
+              {"A download code Code is saved."}
+            </CheckDescription>
           </CheckItem>
         </CheckList>
         <LinkedProductDetail>
-          <div>{`Decoded Text: ${decodeResult.detail.decodedText}`}</div>
-          <div>{`Product ID:   ${decodeResult.detail.productId}`}</div>
-          <div>{`Product Name: ${decodeResult.detail.productName}`}</div>
-          <div>{`Code Created Date: ${createdDate}`}</div>
-          <div>{`Code Expire Date: ${expireDate}`}</div>
+          <LinkedProductDetailItem>
+            <DetailLabel>{`Decoded Text`}</DetailLabel>
+            <DetailValue>{`${decodeResult.detail.decodedText}`}</DetailValue>
+          </LinkedProductDetailItem>
+          <LinkedProductDetailItem>
+            <DetailLabel>{`Product ID`}</DetailLabel>
+            <DetailValue>{`${decodeResult.detail.productId}`}</DetailValue>
+          </LinkedProductDetailItem>
+          <LinkedProductDetailItem>
+            <DetailLabel>{`Product Name`}</DetailLabel>
+            <DetailValue>{`${decodeResult.detail.productName}`}</DetailValue>
+          </LinkedProductDetailItem>
+          <LinkedProductDetailItem>
+            <DetailLabel>{`Created Date`}</DetailLabel>
+            <DetailValue>{`${createdDate}`}</DetailValue>
+          </LinkedProductDetailItem>
+          <LinkedProductDetailItem>
+            <DetailLabel>{`Expire Date`}</DetailLabel>
+            <DetailValue>{`${expireDate}`}</DetailValue>
+          </LinkedProductDetailItem>
         </LinkedProductDetail>
       </DialogContent>
       <DialogActions>
@@ -103,5 +150,5 @@ const QrCodeCheckDialog: React.FC<CheckDialogProps> = props => {
   );
 };
 
-export { DecodeResult };
+export { DecodeResult, CheckStatus };
 export default QrCodeCheckDialog;
