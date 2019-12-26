@@ -9,6 +9,7 @@ import {
 import Root from "./components/pages/RootPage";
 import Login from "./components/pages/__loginpage__";
 import Settings from "./components/pages/SettingsPage";
+import Check from "./components/pages/CheckPage";
 
 import Download from "./components/pages/download/IndexPage";
 import DownloadDashboard from "./components/pages/download/Dashboard";
@@ -26,6 +27,7 @@ export default () => (
       <Route exact={true} path={`/`} component={Root} />
       <Route exact={true} path={`/__login__`} component={Login} />
       <Route exact={true} path={`/settings`} component={Settings} />
+      <Route exact={true} path={`/check`} component={Check} />
       <Route exact={true} path={`/d`} component={Download} />
       <Route exact={true} path={`/d/dashboard`} component={DownloadDashboard} />
       <Route exact={true} path={`/publish`} component={PublishIndex} />

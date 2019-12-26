@@ -1,6 +1,6 @@
 {
   "name": "dl-code",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "web app for product hositng and download code generating",
   "main": "index.js",
   "repository": "https://github.com/TatsuyaYamamoto/dl-code.git",
@@ -24,7 +24,9 @@
     "format": "prettier --write app/**/*.{ts,tsx,js,jsx,json,css}",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "deploy-dev": "firebase deploy --project dl-code-dev",
-    "deploy-pro": "firebase deploy --project dl-code"
+    "deploy-dev:hosting": "firebase deploy --project dl-code-dev --only hosting",
+    "deploy-pro": "firebase deploy --project dl-code",
+    "storybook": "start-storybook"
   },
   "husky": {
     "hooks": {
@@ -53,6 +55,7 @@
     "firebase-functions": "^2.3.1",
     "googleapis": "^40.0.0",
     "hi-base32": "^0.5.0",
+    "jsqr": "^1.2.0",
     "material-table": "^1.36.6",
     "notistack": "^0.8.6",
     "rc-slider": "^8.6.13",
@@ -65,12 +68,18 @@
     "styled-components": "^4.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@storybook/addon-actions": "^5.2.5",
+    "@storybook/addon-links": "^5.2.5",
+    "@storybook/addons": "^5.2.5",
+    "@storybook/react": "^5.2.5",
     "@types/dateformat": "^3.0.0",
     "@types/rc-slider": "^8.6.4",
     "@types/react": "^16.8.18",
     "@types/react-dom": "^16.8.4",
     "@types/react-router-dom": "^4.3.3",
     "@types/styled-components": "^4.1.15",
+    "babel-loader": "^8.0.6",
     "cpx": "^1.5.0",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",

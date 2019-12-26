@@ -10,10 +10,12 @@ const {
   service_account
 } = config();
 
-const appOptions = !!service_account /* false is for debug */ && {
-  ...JSON.parse(process.env.FIREBASE_CONFIG as string),
-  credential: credential.cert(service_account)
-};
+const appOptions = !!service_account
+  ? {
+      ...JSON.parse(process.env.FIREBASE_CONFIG as string),
+      credential: credential.cert(service_account)
+    }
+  : {};
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;

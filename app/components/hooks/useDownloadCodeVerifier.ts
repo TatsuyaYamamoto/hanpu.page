@@ -1,7 +1,15 @@
+// TODO
+// tslint:disable:no-console
 import Dexie from "dexie";
 import * as React from "react";
+
+import { firestore } from "firebase";
+
 import { LogType } from "../../domains/AuditLog";
-import { DownloadCodeSet } from "../../domains/DownloadCodeSet";
+import {
+  DownloadCodeSet,
+  DownloadCodeSetDocument
+} from "../../domains/DownloadCodeSet";
 
 import { Product } from "../../domains/Product";
 import useAuditLogger from "./useAuditLogger";
@@ -34,12 +42,14 @@ interface ActiveProduct {
   expiredAt: Date;
 }
 
-const useDownloadCodeVerifier = () => {
+const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
   const { okAudit, errorAudit } = useAuditLogger();
   const [actives, setActives] = useState<ActiveProduct[]>([]);
 
   useEffect(() => {
-    loadActives();
+    if (!preventLoadActives) {
+      loadActives();
+    }
   }, []);
 
   const verifyDownloadCode = async (code: string) => {
@@ -96,6 +106,76 @@ const useDownloadCodeVerifier = () => {
     });
   };
 
+  /**
+   * @public
+   */
+  const getByProductId = async (
+    id: string
+  ): Promise<ActiveProductSchema | undefined> => {
+    const db = new DlCodeDb();
+
+    return await db.activeProducts.get({
+      productId: id
+    });
+  };
+
+  /**
+   * @public
+   */
+  const checkFormat = (decoded: string) => {
+    console.log(`QRCode is found. decoded: ${decoded}`);
+
+    const validFormat = new RegExp(
+      "https://dl-code.web.app/d/\\?c=[A-Z2-9]{8}"
+    ).test(decoded);
+
+    if (!validFormat) {
+      console.log("unexpected qrcode.");
+      return;
+    }
+
+    const downloadCode = decoded.replace("https://dl-code.web.app/d/?c=", "");
+    console.log(
+      `Decoded text is expected URL format. download code: ${downloadCode}`
+    );
+
+    return downloadCode;
+  };
+
+  const checkLinkedResources = async (downloadCode: string) => {
+    console.log(
+      `Decoded text is expected URL format. download code: ${downloadCode}`
+    );
+
+    const snap = await DownloadCodeSet.getColRef()
+      .where(`codes.${downloadCode}`, "==", true)
+      .get();
+
+    if (snap.empty) {
+      console.log("non-existed download code.");
+      return;
+    }
+
+    const downloadCodeSetDoc = snap.docs[0].data() as DownloadCodeSetDocument;
+    const productId = downloadCodeSetDoc.productRef.id;
+
+    const product = await Product.getById(productId);
+
+    if (!product) {
+      return;
+    }
+
+    return {
+      productId: product.id,
+      productName: product.name,
+      downloadCodeCreatedAt: (downloadCodeSetDoc.createdAt as firestore.Timestamp).toDate(),
+      downloadCodeExpireAt: (downloadCodeSetDoc.expiredAt as firestore.Timestamp).toDate()
+    };
+  };
+
+  /**
+   * @private
+   */
   const loadActives = async () => {
     const db = new DlCodeDb();
 
@@ -123,17 +203,13 @@ const useDownloadCodeVerifier = () => {
     });
   };
 
-  const getByProductId = async (
-    id: string
-  ): Promise<ActiveProductSchema | undefined> => {
-    const db = new DlCodeDb();
-
-    return await db.activeProducts.get({
-      productId: id
-    });
+  return {
+    actives,
+    verifyDownloadCode,
+    getByProductId,
+    checkFormat,
+    checkLinkedResources
   };
-
-  return { actives, verifyDownloadCode, getByProductId };
 };
 
 export default useDownloadCodeVerifier;
