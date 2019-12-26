@@ -29,12 +29,16 @@ const DownloadCodeCheckCamera: React.FC = () => {
       format: "progressing",
       existing: "progressing"
     },
-    product: {
-      id: null
+    detail: {
+      decodedText: null,
+      productId: null,
+      productName: null,
+      downloadCodeCreatedAt: null,
+      downloadCodeExpireAt: null
     }
   });
 
-  const { checkFormat, checkLinkedProduct } = useDownloadCodeVerifier();
+  const { checkFormat, checkLinkedResources } = useDownloadCodeVerifier();
   const {
     startPreview,
     stopPreview,
@@ -61,6 +65,17 @@ const DownloadCodeCheckCamera: React.FC = () => {
        * Start verifying QRCode.
        */
       handleDialogOpen(true);
+      setDecodeResult(prev => ({
+        ...prev,
+        checkList: {
+          ...prev.checkList,
+          decoding: "valid"
+        },
+        detail: {
+          ...prev.detail,
+          decodedText: detectedQrcode.data
+        }
+      }));
 
       /**
        * Check format
@@ -80,7 +95,8 @@ const DownloadCodeCheckCamera: React.FC = () => {
           ...prev,
           checkList: {
             ...prev.checkList,
-            format: "invalid"
+            format: "invalid",
+            existing: "suspended"
           }
         }));
         return;
@@ -89,13 +105,27 @@ const DownloadCodeCheckCamera: React.FC = () => {
       /**
        * Check Linked Product.
        */
-      checkLinkedProduct(downloadCode).then(product => {
-        if (product) {
+      checkLinkedResources(downloadCode).then(data => {
+        if (data) {
+          const {
+            productId,
+            productName,
+            downloadCodeCreatedAt,
+            downloadCodeExpireAt
+          } = data;
+
           setDecodeResult(prev => ({
             ...prev,
             checkList: {
               ...prev.checkList,
               existing: "valid"
+            },
+            detail: {
+              ...prev.detail,
+              productId,
+              productName,
+              downloadCodeCreatedAt,
+              downloadCodeExpireAt
             }
           }));
         } else {
@@ -113,6 +143,20 @@ const DownloadCodeCheckCamera: React.FC = () => {
 
   const handleCloseDialog = () => {
     handleDialogOpen(false);
+    setDecodeResult({
+      checkList: {
+        decoding: "progressing",
+        format: "progressing",
+        existing: "progressing"
+      },
+      detail: {
+        decodedText: null,
+        productId: null,
+        productName: null,
+        downloadCodeCreatedAt: null,
+        downloadCodeExpireAt: null
+      }
+    });
     startLoopCapture();
   };
 

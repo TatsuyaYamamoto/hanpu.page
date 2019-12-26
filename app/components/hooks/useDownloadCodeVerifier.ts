@@ -1,5 +1,10 @@
+// TODO
+// tslint:disable:no-console
 import Dexie from "dexie";
 import * as React from "react";
+
+import { firestore } from "firebase";
+
 import { LogType } from "../../domains/AuditLog";
 import {
   DownloadCodeSet,
@@ -127,17 +132,17 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     if (!validFormat) {
       console.log("unexpected qrcode.");
       return;
-    } else {
-      const downloadCode = decoded.replace("https://dl-code.web.app/d/?c=", "");
-      console.log(
-        `Decoded text is expected URL format. download code: ${downloadCode}`
-      );
-
-      return downloadCode;
     }
+
+    const downloadCode = decoded.replace("https://dl-code.web.app/d/?c=", "");
+    console.log(
+      `Decoded text is expected URL format. download code: ${downloadCode}`
+    );
+
+    return downloadCode;
   };
 
-  const checkLinkedProduct = async (downloadCode: string) => {
+  const checkLinkedResources = async (downloadCode: string) => {
     console.log(
       `Decoded text is expected URL format. download code: ${downloadCode}`
     );
@@ -151,12 +156,21 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
       return;
     }
 
-    const doc = snap.docs[0].data() as DownloadCodeSetDocument;
-    const productId = doc.productRef.id;
+    const downloadCodeSetDoc = snap.docs[0].data() as DownloadCodeSetDocument;
+    const productId = downloadCodeSetDoc.productRef.id;
 
-    console.log("productId", productId);
+    const product = await Product.getById(productId);
 
-    return productId;
+    if (!product) {
+      return;
+    }
+
+    return {
+      productId: product.id,
+      productName: product.name,
+      downloadCodeCreatedAt: (downloadCodeSetDoc.createdAt as firestore.Timestamp).toDate(),
+      downloadCodeExpireAt: (downloadCodeSetDoc.expiredAt as firestore.Timestamp).toDate()
+    };
   };
 
   /**
@@ -194,7 +208,7 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     verifyDownloadCode,
     getByProductId,
     checkFormat,
-    checkLinkedProduct
+    checkLinkedResources
   };
 };
 

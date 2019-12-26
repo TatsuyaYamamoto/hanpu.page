@@ -6,6 +6,7 @@ import * as base32 from "hi-base32";
 
 interface DownloadCodeSetDocument {
   productRef: DocumentReference;
+  // TODO: check permission to handle code resources
   codes: {
     [value: string]: boolean;
   };

@@ -1,3 +1,5 @@
+// TODO
+// tslint:disable:no-console
 import { RefObject, useRef, useState } from "react";
 
 import jsQR, { QRCode } from "jsqr";
@@ -30,11 +32,11 @@ const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
 
     console.log("video devices", videoDevices);
 
-    // TODO: make handlable video inputs
     const mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
-        deviceId: videoDevices[0].deviceId
+        // TODO: make handlable video inputs
+        deviceId: videoDevices.reverse()[0].deviceId
       }
     });
 
