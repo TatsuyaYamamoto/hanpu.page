@@ -11,6 +11,7 @@ import {
 import CheckIcon from "@material-ui/icons/Check";
 import IncorrectIcon from "@material-ui/icons/Close";
 import SuspendedIcon from "@material-ui/icons/Block";
+import { format as dateFormat } from "date-fns";
 
 type CheckStatus = "progressing" | "valid" | "invalid" | "suspended";
 
@@ -54,6 +55,20 @@ const QrCodeCheckDialog: React.FC<CheckDialogProps> = props => {
     </>
   );
 
+  const createdDate = decodeResult.detail.downloadCodeCreatedAt
+    ? dateFormat(
+        decodeResult.detail.downloadCodeCreatedAt,
+        "yyyy/MM/dd hh:mm:ss xxx"
+      )
+    : null;
+
+  const expireDate = decodeResult.detail.downloadCodeExpireAt
+    ? dateFormat(
+        decodeResult.detail.downloadCodeExpireAt,
+        "yyyy/MM/dd hh:mm:ss xxx"
+      )
+    : null;
+
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogContent>
@@ -75,12 +90,8 @@ const QrCodeCheckDialog: React.FC<CheckDialogProps> = props => {
           <div>{`Decoded Text: ${decodeResult.detail.decodedText}`}</div>
           <div>{`Product ID:   ${decodeResult.detail.productId}`}</div>
           <div>{`Product Name: ${decodeResult.detail.productName}`}</div>
-          <div>{`Code Created Date: ${
-            decodeResult.detail.downloadCodeCreatedAt
-          }`}</div>
-          <div>{`Code Expire Date: ${
-            decodeResult.detail.downloadCodeExpireAt
-          }`}</div>
+          <div>{`Code Created Date: ${createdDate}`}</div>
+          <div>{`Code Expire Date: ${expireDate}`}</div>
         </LinkedProductDetail>
       </DialogContent>
       <DialogActions>
