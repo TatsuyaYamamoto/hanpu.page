@@ -87,6 +87,27 @@ const MyApp: React.FC<AppProps> = props => {
   return (
     <>
       <Head>
+        <meta charSet="UTF-8" />
+        {process.env.noIndex && <meta name="robots" content="noindex,follow" />}
+
+        <title>{process.env.title}</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+        <meta name="" content={process.env.keyword} />
+        <meta name="description" content={process.env.description} />
+        <meta name="author" content="https://github.com/TatsuyaYamamoto" />
+
+        <meta property="og:site_name" content={process.env.title} />
+        <meta property="og:description" content={process.env.description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={process.env.title} />
+        <meta
+          property="og:image"
+          content="https://dl-code.web.app/assets/og.jpg"
+        />
+        <meta property="og:locale" content="ja_JP" />
+        <meta property="og:url" content="https://dl-code.web.app" />
+
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
