@@ -8,8 +8,14 @@ import { useRouter } from "next/router";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 
+import "firebase/auth";
+import "firebase/firestore";
+import "firebase/storage";
+import { initializeApp } from "firebase/app";
+
 import useGa from "../components/hooks/useGa";
 import theme from "../theme";
+import configs from "../configs";
 
 const GlobalStyle = createGlobalStyle`
 @font-face{
@@ -59,10 +65,15 @@ const MyApp: React.FC<AppProps> = props => {
   );
 
   useEffect(() => {
+    // GA
     initGa();
     logPageView();
     router.events.on("routeChangeComplete", logPageView);
 
+    // Firebase
+    initializeApp(configs.firebaseConfigs);
+
+    // Fatal error handling
     window.onerror = (message, file, lineNo, colNo, error) => {
       const errorDetail = { message, file, lineNo, colNo, error };
       requestErrorDetailContact(errorDetail);
