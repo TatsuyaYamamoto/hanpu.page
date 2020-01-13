@@ -4,23 +4,23 @@ type UpdateData = firestore.UpdateData;
 
 // NominalTypings
 // @link https://basarat.gitbooks.io/typescript/docs/tips/nominalTyping.html
-type ProductName = string & {
+export type ProductName = string & {
   _productNameBrand: never;
 };
 
-type ProductDescription = string & {
+export type ProductDescription = string & {
   _productDescriptionBrand: never;
 };
 
-type ProductFileDisplayName = string & {
+export type ProductFileDisplayName = string & {
   _productFileDisplayNameBrand: never;
 };
 
-type ProductFileOriginalName = string & {
+export type ProductFileOriginalName = string & {
   _productFileOriginalName: never;
 };
 
-interface ProductFile {
+export interface ProductFile {
   /**
    * 一覧に表示する時にしようするファイル名
    */
@@ -51,11 +51,11 @@ interface ProductFile {
   index: number;
 }
 
-interface ProductFileMap {
+export interface ProductFileMap {
   [id: string]: ProductFile;
 }
 
-interface ProductDocument {
+export interface ProductDocument {
   name: ProductName;
   /**
    * @see storage#Reference#toString()
@@ -67,7 +67,7 @@ interface ProductDocument {
   createdAt: Date | firestore.FieldValue;
 }
 
-class Product implements ProductDocument {
+export class Product implements ProductDocument {
   public static getColRef() {
     return firestore().collection(`products`);
   }
@@ -462,14 +462,3 @@ class Product implements ProductDocument {
       .doc().id;
   }
 }
-
-export {
-  Product,
-  ProductDocument,
-  ProductName,
-  ProductDescription,
-  ProductFile,
-  ProductFileMap,
-  ProductFileDisplayName,
-  ProductFileOriginalName
-};

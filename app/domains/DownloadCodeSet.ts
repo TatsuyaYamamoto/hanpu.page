@@ -4,7 +4,7 @@ type Timestamp = firestore.Timestamp;
 
 import * as base32 from "hi-base32";
 
-interface DownloadCodeSetDocument {
+export interface DownloadCodeSetDocument {
   productRef: DocumentReference;
   // TODO: check permission to handle code resources
   codes: {
@@ -15,7 +15,7 @@ interface DownloadCodeSetDocument {
   expiredAt: Date | firestore.FieldValue;
 }
 
-class DownloadCodeSet implements DownloadCodeSetDocument {
+export class DownloadCodeSet implements DownloadCodeSetDocument {
   public static getColRef() {
     return firestore().collection(`downloadCodeSets`);
   }
@@ -140,5 +140,3 @@ class DownloadCodeSet implements DownloadCodeSetDocument {
     return DownloadCodeSet.getDocRef(this.id);
   }
 }
-
-export { DownloadCodeSet, DownloadCodeSetDocument };
