@@ -11,12 +11,10 @@
     "node": "10"
   },
   "scripts": {
-    "dev": "next dev app",
-    "build": "next build",
     "clean": "rm -rf dist",
-    "start": "webpack-dev-server --config webpack.config.client.js",
+    "start": "next dev app",
     "serve": "firebase serve",
-    "build:client": "   webpack --progress --config webpack.config.client.js",
+    "build:client": "   next build app",
     "build:functions": "webpack --progress --config webpack.config.functions.js",
     "build:copy-deps": "run-s build:copy-deps:*",
     "build:copy-deps:cpx": "cpx '*{package.json,yarn.lock}' 'dist/functions'",
@@ -24,7 +22,7 @@
     "build-dev": "cross-env NODE_ENV=development npm-run-all --print-label clean --parallel build:*",
     "build-pro": "cross-env NODE_ENV=production  npm-run-all --print-label clean --parallel build:*",
     "format": "prettier --write app/**/*.{ts,tsx,js,jsx,json,css}",
-    "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
+    "lint": "tslint --format stylish --project app/tsconfig.json --fix 'app/**/*.ts{,x}'",
     "deploy-dev": "firebase deploy --project dl-code-dev",
     "deploy-dev:hosting": "firebase deploy --project dl-code-dev --only hosting",
     "deploy-pro": "firebase deploy --project dl-code",
@@ -41,7 +39,7 @@
       "git add"
     ],
     "*.{ts,tsx}": [
-      "tslint --format stylish --project tsconfig.json --fix",
+      "tslint --format stylish --project app/tsconfig.json --fix",
       "git add"
     ]
   },
