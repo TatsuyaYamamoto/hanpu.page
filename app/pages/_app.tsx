@@ -1,11 +1,14 @@
 import * as React from "react";
+const { useEffect } = React;
 
 import { AppProps } from "next/app";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 
+import useGa from "../components/hooks/useGa";
 import theme from "../theme";
 
 const GlobalStyle = createGlobalStyle`
@@ -20,6 +23,14 @@ body {
 
 const MyApp: React.FC<AppProps> = props => {
   const { Component, pageProps } = props;
+  const router = useRouter();
+  const { init: initGa, logPageView } = useGa();
+
+  useEffect(() => {
+    initGa();
+    logPageView();
+    router.events.on("routeChangeComplete", logPageView);
+  }, []);
 
   return (
     <>
