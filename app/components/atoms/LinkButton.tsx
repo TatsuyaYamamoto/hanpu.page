@@ -7,14 +7,15 @@ import Button from "@material-ui/core/Button";
 interface LinkButtonProps {
   href: string;
   disabled?: boolean;
+  variant?: "text" | "outlined" | "contained";
 }
 const LinkButton: React.FC<LinkButtonProps> = props => {
-  const { children, disabled, href } = props;
+  const { children, href, ...others } = props;
 
   if (href.startsWith("http")) {
     // use a#href if provided url is absolute path with protocol
     return (
-      <Button href={href} disabled={disabled}>
+      <Button href={href} {...others}>
         {children}
       </Button>
     );
@@ -22,7 +23,7 @@ const LinkButton: React.FC<LinkButtonProps> = props => {
 
   return (
     <Link href={href}>
-      <Button disabled={disabled}>{children}</Button>
+      <Button {...others}>{children}</Button>
     </Link>
   );
 };

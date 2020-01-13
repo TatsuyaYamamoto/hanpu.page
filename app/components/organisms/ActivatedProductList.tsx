@@ -86,7 +86,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
         alignItems="center"
         spacing={2 /* TODO: get it from theme */}
       >
-        <Grid item={true} justify="center">
+        <Grid item={true} container={true} justify="center">
           <EmptyInfo>
             {`ダウンロード可能なコンテンツがありません。以下の理由が考えられます。
 ・ダウンロードコードを入力していない。
@@ -95,7 +95,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
 現在お使いのブラウザからコンテンツをダウンロードするためには、
 ダウンロードコードを再入力する必要があります。`}
           </EmptyInfo>
-          <LinkButton to="/d" variant="contained">
+          <LinkButton href="/d" variant="contained">
             <span>ダウンロードコード入力ページへ</span>
           </LinkButton>
         </Grid>
