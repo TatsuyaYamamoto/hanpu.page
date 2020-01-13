@@ -65,13 +65,13 @@ const MyApp: React.FC<AppProps> = props => {
   );
 
   useEffect(() => {
+    // Firebase
+    initializeApp(configs.firebaseConfigs);
+
     // GA
     initGa();
     logPageView();
     router.events.on("routeChangeComplete", logPageView);
-
-    // Firebase
-    initializeApp(configs.firebaseConfigs);
 
     // Fatal error handling
     window.onerror = (message, file, lineNo, colNo, error) => {
