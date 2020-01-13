@@ -1,6 +1,6 @@
 import { firestore, storage, auth } from "firebase/app";
-import Timestamp = firestore.Timestamp;
-import UpdateData = firebase.firestore.UpdateData;
+type Timestamp = firestore.Timestamp;
+type UpdateData = firestore.UpdateData;
 
 // NominalTypings
 // @link https://basarat.gitbooks.io/typescript/docs/tips/nominalTyping.html

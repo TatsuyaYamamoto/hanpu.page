@@ -1,6 +1,6 @@
 import { firestore } from "firebase/app";
-import DocumentReference = firestore.DocumentReference;
-import Timestamp = firestore.Timestamp;
+type DocumentReference = firestore.DocumentReference;
+type Timestamp = firestore.Timestamp;
 
 import * as base32 from "hi-base32";
 

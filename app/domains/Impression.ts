@@ -1,5 +1,5 @@
 import { firestore } from "firebase/app";
-import DocumentReference = firestore.DocumentReference;
+type DocumentReference = firestore.DocumentReference;
 
 interface ImpressionDocument {
   productRef: DocumentReference;

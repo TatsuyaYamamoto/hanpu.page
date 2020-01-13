@@ -1,6 +1,7 @@
 import * as React from "react";
 const { useState } = React;
-import { withRouter } from "react-router-dom";
+
+import { useRouter } from "next/router";
 
 import {
   default as MuiAppBar,
@@ -29,10 +30,11 @@ const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
 `;
 
 // @ts-ignore
-const AppBarMenu = withRouter(({ history }) => {
+const AppBarMenu = props => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
   const { logout, isLoggedIn } = useAuthSession();
+  const router = useRouter();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -43,7 +45,7 @@ const AppBarMenu = withRouter(({ history }) => {
   };
 
   const handleSettings = () => {
-    history.push(`/settings`);
+    router.push(`/settings`);
   };
 
   return (
@@ -75,7 +77,7 @@ const AppBarMenu = withRouter(({ history }) => {
       </Menu>
     </>
   );
-});
+};
 
 interface AppBarProps {
   onBack?: () => void;
