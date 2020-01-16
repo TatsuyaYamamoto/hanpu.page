@@ -17,7 +17,7 @@
     "build:client": "run-s build:client:*",
     "build:client:next": "next build app",
     "build:client:copy-dist": "cp -r app/.next dist/functions/next",
-    "build:functions": "webpack --progress --config webpack.config.functions.js",
+    "build:functions": "webpack --progress --config app/webpack.config.functions.js",
     "build:copy-deps": "run-s build:copy-deps:*",
     "build:copy-deps:cpx": "cpx '*{package.json,yarn.lock}' 'dist/functions'",
     "build:copy-deps:yarn": "yarn install --production --cwd dist/functions",
