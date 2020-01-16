@@ -2,13 +2,13 @@ import * as React from "react";
 import styled from "styled-components";
 
 import RefreshIcon from "@material-ui/icons/Refresh";
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
 
 interface Props {
   animation?: boolean;
 }
 
-// TODO: resolve types
-const AnimatedRefreshIcon = styled<any>(RefreshIcon)`
+const AnimatedRefreshIcon = styled(RefreshIcon as React.FC<SvgIconProps>)`
   animation: spin 1.5s linear infinite;
   @keyframes spin {
     0% {
