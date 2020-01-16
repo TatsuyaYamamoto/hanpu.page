@@ -38,10 +38,18 @@ const useDownloadCodeEditor = (product: Product | null) => {
     setCodeSets(updatedSets);
   };
 
+  /**
+   * DownloadCodeSetを更新する
+   *
+   * 更新可能param
+   *   - description
+   *
+   * @param id
+   * @param edited
+   */
   const updateDownloadCodeSet = async (
     id: string,
-    // TODO: 今の所、"description"以外は更新を許さないはずなので、それがわかる型定義を、、、、
-    edited: Partial<DownloadCodeSetDocument>
+    edited: Pick<DownloadCodeSetDocument, "description">
   ) => {
     if (!product) {
       return;

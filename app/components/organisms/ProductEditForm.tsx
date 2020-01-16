@@ -86,7 +86,7 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
 
   const onDownloadCodeSetUpdate = (
     id: string,
-    edited: Partial<DownloadCodeSetDocument>
+    edited: Pick<DownloadCodeSetDocument, "description">
   ): Promise<void> => {
     return updateDownloadCodeSet(id, edited);
   };

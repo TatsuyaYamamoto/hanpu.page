@@ -114,7 +114,7 @@ interface DownloadCodeSetFormProps {
   onAdd: (numberOfCodes: number, expiredAt: Date) => Promise<void>;
   onUpdate: (
     codeSetId: string,
-    edited: Partial<DownloadCodeSetDocument>
+    edited: Pick<DownloadCodeSetDocument, "description">
   ) => Promise<void>;
 }
 
@@ -154,12 +154,14 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
       return;
     }
 
-    const { id } = newData;
-    const edited: Partial<DownloadCodeSetDocument> = {};
-
-    if (newData.description !== oldData.description) {
-      edited.description = newData.description;
+    if (newData.description === oldData.description) {
+      return;
     }
+
+    const { id } = newData;
+    const edited: Pick<DownloadCodeSetDocument, "description"> = {
+      description: newData.description
+    };
 
     return onUpdate(id, edited);
   };
