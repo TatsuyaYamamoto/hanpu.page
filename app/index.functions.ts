@@ -1,6 +1,7 @@
 // tslint:disable:no-console
 import { https, config, region } from "firebase-functions";
 import { initializeApp, credential } from "firebase-admin";
+import next from "next";
 
 import { backupFirestoreData } from "./utils/gcp";
 
@@ -21,7 +22,15 @@ const appOptions = !!service_account
 const MAX_BACKUP_DATE_LENGTH = 30;
 
 // Initial Firebase App
-const app = initializeApp(appOptions);
+const firebaseApp = initializeApp(appOptions);
+
+const nextServer = next({ conf: { distDir: "next" } });
+const handle = nextServer.getRequestHandler();
+
+export const nextApp = https.onRequest((req, res) => {
+  // @ts-ignore
+  return nextServer.prepare().then(() => handle(req, res));
+});
 
 export const api = https.onRequest((_, response) => {
   response.json({
@@ -44,7 +53,7 @@ export const scheduledFirestoreBackup = region("asia-northeast1")
 
     // implement `[backupFiles]` according to document, but don't know why
     // https://cloud.google.com/nodejs/docs/reference/storage/2.5.x/Bucket#getFiles
-    const [backupFiles] = await app
+    const [backupFiles] = await firebaseApp
       .storage()
       .bucket()
       .getFiles({
