@@ -1,16 +1,19 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
+
+import { NextPage } from "next";
+import { useRouter } from "next/router";
 
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import AppBar from "../../organisms/AppBar";
-import Footer from "../../organisms/Footer";
+import AppBar from "../../../components/organisms/AppBar";
+import Footer from "../../../components/organisms/Footer";
 
 import { Product } from "../../../domains/Product";
 
-const ProductListPage: React.FC<RouteComponentProps> = props => {
+const ProductListPage: NextPage = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
+  const router = useRouter();
 
   React.useEffect(() => {
     // TODO delete this logic!!
@@ -25,7 +28,7 @@ const ProductListPage: React.FC<RouteComponentProps> = props => {
   }, []);
 
   const onSelected = (id: string) => () => {
-    props.history.push(`/publish/products/${id}`);
+    router.push(`/publish/products/${id}`);
   };
 
   return (

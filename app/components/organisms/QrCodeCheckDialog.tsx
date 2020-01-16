@@ -13,7 +13,7 @@ import IncorrectIcon from "@material-ui/icons/Close";
 import SuspendedIcon from "@material-ui/icons/Block";
 import { format as dateFormat } from "date-fns";
 
-type CheckStatus = "progressing" | "valid" | "invalid" | "suspended";
+export type CheckStatus = "progressing" | "valid" | "invalid" | "suspended";
 
 const ProgressIcon = () => <CircularProgress size={24} />;
 
@@ -51,7 +51,7 @@ const DetailValue = styled.span`
   display: table-cell;
 `;
 
-interface DecodeResult {
+export interface DecodeResult {
   checkList: {
     decoding: CheckStatus;
     format: CheckStatus;
@@ -150,5 +150,4 @@ const QrCodeCheckDialog: React.FC<CheckDialogProps> = props => {
   );
 };
 
-export { DecodeResult, CheckStatus };
 export default QrCodeCheckDialog;

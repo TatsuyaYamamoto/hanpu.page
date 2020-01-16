@@ -110,9 +110,12 @@ const useProductEditor = (productId: string) => {
       return;
     }
 
-    Product.getById(productId).then(p => {
-      setProduct(p);
-    });
+    // TODO DELETE THIS LOGIC!!
+    setTimeout(() => {
+      Product.getById(productId).then(p => {
+        setProduct(p);
+      });
+    }, 2000);
   }, [productId]);
 
   return {

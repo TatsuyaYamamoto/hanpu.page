@@ -4,16 +4,15 @@ const { useState, useEffect, useMemo } = React;
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
-import useGa from "../../hooks/useGa";
-import AppBar from "../../organisms/AppBar";
-import Footer from "../../organisms/Footer";
-import ImpressionForm from "../../organisms/ImpressionForm";
-import ProductDetail from "../../organisms/ProductDetail";
-import ProductFileDownloaderTable from "../../organisms/ProductFileDownloaderTable";
-import ActivatedProductList from "../../organisms/ActivatedProductList";
+import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
+import AppBar from "../../components/organisms/AppBar";
+import Footer from "../../components/organisms/Footer";
+import ImpressionForm from "../../components/organisms/ImpressionForm";
+import ProductDetail from "../../components/organisms/ProductDetail";
+import ProductFileDownloaderTable from "../../components/organisms/ProductFileDownloaderTable";
+import ActivatedProductList from "../../components/organisms/ActivatedProductList";
 
-import { Product } from "../../../domains/Product";
+import { Product } from "../../domains/Product";
 
 interface DetailPageProps {
   product: Product;
@@ -27,12 +26,8 @@ const DetailPage: React.FC<DetailPageProps> = ({
   onBack
 }) => {
   const [iconUrl, setIconUrl] = useState("");
-  const { gtagPageView } = useGa();
 
   useEffect(() => {
-    // TODO: handle with react-router-props
-    gtagPageView("/d/dashboard/detail");
-
     product.getIconUrl().then(url => {
       setIconUrl(url || "");
     });
@@ -85,13 +80,6 @@ interface PanelPageProps {
 }
 
 const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
-  const { gtagPageView } = useGa();
-
-  useEffect(() => {
-    // TODO: handle with react-router-props
-    gtagPageView("/d/dashboard/panel");
-  }, []);
-
   return (
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>

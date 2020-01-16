@@ -1,20 +1,20 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
+
+import { NextPage } from "next";
+import { useRouter } from "next/router";
 
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import AppBar from "../../organisms/AppBar";
-import Footer from "../../organisms/Footer";
-import ProductEditForm from "../../organisms/ProductEditForm";
+import AppBar from "../../../components/organisms/AppBar";
+import Footer from "../../../components/organisms/Footer";
+import ProductEditForm from "../../../components/organisms/ProductEditForm";
 
-const ProductDetailPage: React.FC<
-  RouteComponentProps<{ id: string }>
-> = props => {
-  const productId = props.match.params.id;
+const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
+  const router = useRouter();
 
   const onBack = () => {
-    props.history.goBack();
+    router.back();
   };
 
   return (
@@ -36,6 +36,14 @@ const ProductDetailPage: React.FC<
       </Grid>
     </>
   );
+};
+
+ProductDetailPage.getInitialProps = ({ query }) => {
+  const productId = query.productId as string;
+
+  return {
+    productId
+  };
 };
 
 export default ProductDetailPage;

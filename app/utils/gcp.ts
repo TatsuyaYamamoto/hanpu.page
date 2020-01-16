@@ -1,7 +1,7 @@
 import { firestore_v1, google } from "googleapis";
 import { CredentialBody } from "google-auth-library";
 
-import * as dateFormat from "dateformat";
+import { format as dateFormat } from "date-fns";
 
 import ExportDocuments = firestore_v1.Params$Resource$Projects$Databases$Exportdocuments;
 import Firestore = firestore_v1.Firestore;

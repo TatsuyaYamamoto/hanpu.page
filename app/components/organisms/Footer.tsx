@@ -26,17 +26,19 @@ const Root = styled.div`
 
 const Footer: React.FC = () => {
   const contact = (
-    <StyledLinkButton to={config.contactFormUrl}>お問い合わせ</StyledLinkButton>
+    <StyledLinkButton href={config.contactFormUrl}>
+      お問い合わせ
+    </StyledLinkButton>
   );
 
   const dlCode = (
-    <StyledLinkButton to={`/`}>
+    <StyledLinkButton href={`/`}>
       <Logo />
     </StyledLinkButton>
   );
 
   const twitter = (
-    <StyledLinkButton to={config.twitterUrl}>Twitter</StyledLinkButton>
+    <StyledLinkButton href={config.twitterUrl}>Twitter</StyledLinkButton>
   );
 
   const copyRight = <CopyRight>{copyRightSymbol} 2019 DBCode</CopyRight>;

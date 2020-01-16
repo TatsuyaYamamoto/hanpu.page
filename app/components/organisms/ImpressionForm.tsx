@@ -13,7 +13,7 @@ import {
 
 import useImpression from "../hooks/useImpression";
 
-interface ImpressionFormProps {
+export interface ImpressionFormProps {
   productId: string;
 }
 
@@ -94,4 +94,3 @@ const ImpressionForm: React.FC<ImpressionFormProps> = props => {
 };
 
 export default ImpressionForm;
-export { ImpressionFormProps };

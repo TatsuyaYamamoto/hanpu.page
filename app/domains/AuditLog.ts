@@ -1,12 +1,12 @@
 import { auth, firestore } from "firebase/app";
 
-enum LogType {
+export enum LogType {
   ACTIVATE_WITH_DOWNLOAD_CODE = "ACTIVATE_WITH_DOWNLOAD_CODE",
   DOWNLOAD_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE",
   PLAY_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE"
 }
 
-interface AuditLogDocument {
+export interface AuditLogDocument {
   // who
   userId:
     | string // login user
@@ -30,7 +30,7 @@ interface AuditLogDocument {
   error?: any;
 }
 
-class AuditLog {
+export class AuditLog {
   public static getColRef() {
     return firestore().collection(`auditLogs`);
   }
@@ -60,5 +60,3 @@ class AuditLog {
     await AuditLog.getColRef().add(newLog);
   }
 }
-
-export { LogType, AuditLog, AuditLogDocument };

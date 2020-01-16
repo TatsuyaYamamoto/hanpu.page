@@ -1,17 +1,16 @@
 import * as React from "react";
-const { useEffect } = React;
-import { Link, RouteComponentProps } from "react-router-dom";
+const { useMemo } = React;
 
 import { Container, Grid, Typography } from "@material-ui/core";
 import Icon, { IconProps } from "@material-ui/core/Icon";
 
 import styled from "styled-components";
 
-import useDate from "../hooks/useDate";
-import LinkButton from "../atoms/LinkButton";
-import Logo from "../atoms/Logo";
-import useGa from "../hooks/useGa";
-import Footer from "../organisms/Footer";
+import { format as dateFormat } from "date-fns";
+
+import LinkButton from "../components/atoms/LinkButton";
+import Logo from "../components/atoms/Logo";
+import Footer from "../components/organisms/Footer";
 
 const Root = styled.div``;
 
@@ -30,11 +29,11 @@ const Hero = () => {
         <Logo />
       </Typography>
 
-      <LinkButton to="/d">
+      <LinkButton href="/d">
         <LeftIcon>cloud_download</LeftIcon>
         <span>ダウンロードページへ</span>
       </LinkButton>
-      <LinkButton disabled={true} to="/">
+      <LinkButton disabled={true} href="/">
         <LeftIcon>publish</LeftIcon>
         <span>配信管理ページへ</span>
       </LinkButton>
@@ -46,11 +45,8 @@ const AboutAppSection = () => {
   const logo = <Logo />;
   const book = <Icon>book</Icon>;
   const disk = <Icon>album</Icon>;
-  const { formattedNow } = useDate();
-  const now = formattedNow("yyyy/mm/dd");
-  const t28Link = (
-    <Link to={`https://twitter.com/T28_tatsuya`}>@T28_tatsuya</Link>
-  );
+  const now = useMemo(() => dateFormat(new Date(), "yyyy/mm/dd"), []);
+  const t28Link = <a href={`https://twitter.com/T28_tatsuya`}>@T28_tatsuya</a>;
 
   return (
     <>
@@ -80,11 +76,12 @@ const AboutAppSection = () => {
   );
 };
 
-const RootPage = (props: RouteComponentProps) => {
-  const { gtagPageView } = useGa();
-  useEffect(() => {
-    gtagPageView(props.location.pathname);
-  }, []);
+const RootIndexPage = () => {
+  // TODO
+  // const { gtagPageView } = useGa();
+  // useEffect(() => {
+  //   gtagPageView(props.location.pathname);
+  // }, []);
 
   return (
     <Root>
@@ -109,4 +106,4 @@ const RootPage = (props: RouteComponentProps) => {
   );
 };
 
-export default RootPage;
+export default RootIndexPage;

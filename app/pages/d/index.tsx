@@ -1,20 +1,19 @@
 import * as React from "react";
-const { useState, useEffect } = React;
-import { RouteComponentProps } from "react-router-dom";
+const { useState } = React;
+
+import { NextPage } from "next";
+import { useRouter } from "next/router";
 
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 
-import LinkButton from "../../atoms/LinkButton";
-import useGa from "../../hooks/useGa";
-import DownloadCodeInputCard from "../../organisms/DownloadCodeInputCard";
-import DownloadCodeErrorDialog from "../../organisms/DownloadCodeErrorDialog";
-import AppBar from "../../organisms/AppBar";
-import Footer from "../../organisms/Footer";
+import LinkButton from "../../components/atoms/LinkButton";
+import DownloadCodeInputCard from "../../components/organisms/DownloadCodeInputCard";
+import DownloadCodeErrorDialog from "../../components/organisms/DownloadCodeErrorDialog";
+import AppBar from "../../components/organisms/AppBar";
+import Footer from "../../components/organisms/Footer";
 
-import useDownloadCodeVerifier from "../../hooks/useDownloadCodeVerifier";
-
-interface IndexPageProps extends RouteComponentProps<{ code?: string }> {}
+import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
 
 /**
  * QueryParameters:
@@ -24,17 +23,12 @@ interface IndexPageProps extends RouteComponentProps<{ code?: string }> {}
  * @param props
  * @constructor
  */
-const DownloadPage: React.FC<IndexPageProps> = props => {
-  const params = new URLSearchParams(props.location.search);
-  const [downloadCode, setDownloadCode] = useState(params.get("c") || "");
+const DownloadPage: NextPage<{ code: string }> = props => {
+  const router = useRouter();
+  const [downloadCode, setDownloadCode] = useState(props.code);
   const [openNotFoundDialog, setOpenNotFoundDialog] = useState(false);
 
   const { verifyDownloadCode } = useDownloadCodeVerifier();
-  const { gtagPageView } = useGa();
-
-  useEffect(() => {
-    gtagPageView(props.location.pathname);
-  }, []);
 
   const onChangeDownloadCodeValue = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -45,7 +39,7 @@ const DownloadPage: React.FC<IndexPageProps> = props => {
   const submit = () => {
     verifyDownloadCode(downloadCode)
       .then(() => {
-        props.history.push(`/d/dashboard`);
+        router.push(`/d/dashboard`);
       })
       .catch(_ => {
         handleNotFoundDialog();
@@ -76,7 +70,7 @@ const DownloadPage: React.FC<IndexPageProps> = props => {
               />
             </Grid>
             <Grid container={true} justify="center">
-              <LinkButton to={`/d/dashboard`}>
+              <LinkButton href={`/d/dashboard`}>
                 過去にコードを入力したコンテンツを見る
               </LinkButton>
             </Grid>
@@ -95,6 +89,13 @@ const DownloadPage: React.FC<IndexPageProps> = props => {
       />
     </>
   );
+};
+
+DownloadPage.getInitialProps = ({ query }) => {
+  const code = (query.c as string) || "";
+  return {
+    code
+  };
 };
 
 export default DownloadPage;
