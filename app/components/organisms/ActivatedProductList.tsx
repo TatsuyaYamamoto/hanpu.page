@@ -9,6 +9,7 @@ import {
   CardContent,
   Typography
 } from "@material-ui/core/";
+import { CardProps } from "@material-ui/core/Card";
 
 import LinkButton from "../atoms/LinkButton";
 import ThumbnailImage from "../atoms/ProductImageThumbnailImage";
@@ -18,8 +19,7 @@ import { Product } from "../../domains/Product";
 
 const CARD_WIDTH = 200;
 
-// TODO: resolve types
-const StyledCard = styled<any>(Card)`
+const StyledCard = styled(Card as React.FC<CardProps>)`
   width: ${CARD_WIDTH}px;
 `;
 
