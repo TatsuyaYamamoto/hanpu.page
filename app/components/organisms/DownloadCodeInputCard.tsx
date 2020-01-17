@@ -16,11 +16,9 @@ const StyledPaper = styled(Paper as React.FC<PaperProps>)`
   }}px;
 `;
 
-const StyledInputField = styled(TextField)`
-  padding-top: ${({ theme }: ThemeProps<MuiTheme>) => {
-    return theme.spacing(1);
-  }}px;
-` as React.FC<TextFieldProps>; // TODO: fix type check without casting.
+const StyledInputField = styled(TextField as React.FC<TextFieldProps>)`
+  padding-top: ${({ theme }: ThemeProps<MuiTheme>) => theme.spacing(1)}px;
+`;
 
 interface DownloadCodeInputCardProps {
   value: string;
