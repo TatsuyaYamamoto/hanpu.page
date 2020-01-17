@@ -77,12 +77,6 @@ const AboutAppSection = () => {
 };
 
 const RootIndexPage = () => {
-  // TODO
-  // const { gtagPageView } = useGa();
-  // useEffect(() => {
-  //   gtagPageView(props.location.pathname);
-  // }, []);
-
   return (
     <Root>
       <Grid

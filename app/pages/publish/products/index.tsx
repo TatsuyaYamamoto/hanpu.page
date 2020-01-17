@@ -19,9 +19,6 @@ const ProductListPage: NextPage = () => {
     // TODO delete this logic!!
     setTimeout(() => {
       Product.getOwns().then(owns => {
-        // TODO
-        // tslint:disable:no-console
-        console.log(owns);
         setProducts(owns);
       });
     }, 1000);
