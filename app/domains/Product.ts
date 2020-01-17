@@ -2,6 +2,8 @@ import { firestore, storage, auth } from "firebase/app";
 type Timestamp = firestore.Timestamp;
 type UpdateData = firestore.UpdateData;
 
+import { v4 as uuid } from "uuid";
+
 // NominalTypings
 // @link https://basarat.gitbooks.io/typescript/docs/tips/nominalTyping.html
 export type ProductName = string & {
@@ -87,8 +89,7 @@ export class Product implements ProductDocument {
   public static async getOwns(): Promise<Product[]> {
     const owner = auth().currentUser;
     if (!owner) {
-      // TODO
-      // tslint:disable:no-console
+      // tslint:disable:no-console TODO
       console.error("not logged-in");
       return [];
     }
@@ -206,10 +207,7 @@ export class Product implements ProductDocument {
       .pop()
       .toLowerCase();
 
-    // TODO replace secure random id.
-    const fileId = Math.random()
-      .toString(16)
-      .substring(2);
+    const fileId = Product.createNewFileName();
 
     const storageRef = Product.getProductFileStorageRef(uid, this.id).child(
       `${fileId}.${extension}`
@@ -348,10 +346,7 @@ export class Product implements ProductDocument {
       .pop()
       .toLowerCase();
 
-    // TODO replace secure random id.
-    const fileId = Math.random()
-      .toString(16)
-      .substring(2);
+    const fileId = Product.createNewFileName();
 
     const storageRef = Product.getImageStorageRef(uid, this.id).child(
       `${fileId}.${extension}`
@@ -449,6 +444,10 @@ export class Product implements ProductDocument {
     }
 
     await this.ref.update(updateData);
+  }
+
+  private static createNewFileName(): string {
+    return uuid();
   }
 
   /**
