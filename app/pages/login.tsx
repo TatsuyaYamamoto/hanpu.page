@@ -6,21 +6,21 @@ import { useRouter } from "next/router";
 
 import Button from "@material-ui/core/Button";
 
-import useAuthSession from "../components/hooks/useAuthSession";
+import useFirebase from "../components/hooks/useFirebase";
 
 /**
  * Temporary page having login function.
  * access to twitter idp server automatically
  */
 const LoginPage: NextPage = () => {
-  const { loginWithTwitter, loginUser } = useAuthSession();
+  const { loginWithTwitter, user } = useFirebase();
   const router = useRouter();
 
   useEffect(() => {
-    if (loginUser) {
+    if (user) {
       router.push(`/publish/products`);
     }
-  }, [loginUser]);
+  }, [user]);
 
   const login = () => {
     loginWithTwitter();
