@@ -11,9 +11,10 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
-import { initializeApp } from "firebase/app";
 
 import useGa from "../components/hooks/useGa";
+import { FirebaseContextProvider } from "../components/hooks/useFirebase";
+
 import theme from "../theme";
 import configs from "../configs";
 
@@ -65,9 +66,6 @@ const MyApp: React.FC<AppProps> = props => {
   );
 
   useEffect(() => {
-    // Firebase
-    initializeApp(configs.firebaseConfigs);
-
     // GA
     initGa();
     logPageView();
@@ -120,7 +118,11 @@ const MyApp: React.FC<AppProps> = props => {
       <GlobalStyle />
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
+        <FirebaseContextProvider
+          initParams={{ options: configs.firebaseConfigs }}
+        >
+          <Component {...pageProps} />
+        </FirebaseContextProvider>
       </ThemeProvider>
     </>
   );
