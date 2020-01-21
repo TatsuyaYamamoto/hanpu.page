@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
-import { storage } from "firebase";
+import { useEffect, useState, useCallback } from "react";
+import { firestore, storage, app as _app } from "firebase";
+type FirebaseApp = _app.App;
+type DocumentReference = firestore.DocumentReference;
 
+import useFirebase from "./useFirebase";
 import {
   Product,
   ProductDescription,
@@ -11,98 +14,137 @@ import {
 } from "../../domains/Product";
 
 const useProductEditor = (productId: string) => {
+  const { app: firebaseApp } = useFirebase();
   const [product, setProduct] = useState<Product | null>(null);
 
-  const addProduct = (
-    name: ProductName,
-    description: ProductDescription
-  ): Promise<void> => {
-    return Product.createNew({ name, description });
-  };
-
-  const updateProduct = (values: Partial<ProductDocument>) => {
-    if (!product) {
+  /**
+   * @param nullableProduct
+   * @private
+   */
+  const shouldProductRefLoaded = (nullableProduct: Product | null): Product => {
+    if (!nullableProduct) {
       throw new Error("unexpected error. no product is ready.");
     }
 
-    // TODO validate provided params
-
-    return product
-      .partialUpdateFields(values)
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
+    return nullableProduct;
   };
 
-  const updateProductIcon = (icon: File): Promise<void> => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
+  /**
+   * @param nullableApp
+   * @private
+   */
+  const shouldAppInitialized = (nullableApp?: FirebaseApp): FirebaseApp => {
+    if (!nullableApp) {
+      throw new Error("FirebaseApp has not been initialized yet.");
     }
 
-    // TODO validate provided params
-
-    const { promise } = product.uploadIconToStorage(icon);
-
-    return promise
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
+    return nullableApp;
   };
 
-  const addProductFile = (
-    displayName: ProductFileDisplayName,
-    file: File
-  ): {
-    task: storage.UploadTask;
-    promise: Promise<void>;
-  } => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
+  const addProduct = useCallback(
+    async (
+      name: ProductName,
+      description: ProductDescription
+    ): Promise<DocumentReference | void> => {
+      if (!firebaseApp) {
+        return;
+      }
 
-    const { task, promise } = product.addProductFile(displayName, file);
-    const refreshPromise = promise
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
+      return Product.createNew({ name, description }, firebaseApp.firestore());
+    },
+    [firebaseApp]
+  );
 
-    return {
-      task,
-      promise: refreshPromise
-    };
-  };
+  const updateProduct = useCallback(
+    async (values: Partial<ProductDocument>) => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      const initializedApp = shouldAppInitialized(firebaseApp);
 
-  const updateProductFile = (
-    id: string,
-    edited: Partial<ProductFile>
-  ): Promise<void> => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
+      // TODO validate provided params
 
-    return product
-      .partialUpdateFile(id, edited)
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
-  };
+      return loadedProduct
+        .partialUpdateFields(values)
+        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(newProduct => {
+          setProduct(newProduct);
+        });
+    },
+    [product, firebaseApp]
+  );
 
-  const deleteProductFile = (productFileId: string): Promise<void> => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
+  const updateProductIcon = useCallback(
+    async (icon: File) => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      const initializedApp = shouldAppInitialized(firebaseApp);
 
-    return product
-      .deleteProductFile(productFileId)
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
-  };
+      // TODO validate provided params
+
+      const { promise } = loadedProduct.uploadIconToStorage(icon);
+
+      return promise
+        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(newProduct => {
+          setProduct(newProduct);
+        });
+    },
+    [firebaseApp]
+  );
+
+  const addProductFile = useCallback(
+    (
+      displayName: ProductFileDisplayName,
+      file: File
+    ): {
+      task: storage.UploadTask;
+      promise: Promise<void>;
+    } => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      const initializedApp = shouldAppInitialized(firebaseApp);
+
+      const { task, promise } = loadedProduct.addProductFile(displayName, file);
+      const refreshPromise = promise
+        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(newProduct => {
+          setProduct(newProduct);
+        });
+
+      return {
+        task,
+        promise: refreshPromise
+      };
+    },
+    [firebaseApp]
+  );
+
+  const updateProductFile = useCallback(
+    (id: string, edited: Partial<ProductFile>): Promise<void> => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      const initializedApp = shouldAppInitialized(firebaseApp);
+
+      return loadedProduct
+        .partialUpdateFile(id, edited)
+        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(newProduct => {
+          setProduct(newProduct);
+        });
+    },
+    [firebaseApp]
+  );
+
+  const deleteProductFile = useCallback(
+    async (productFileId: string) => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      const initializedApp = shouldAppInitialized(firebaseApp);
+
+      return loadedProduct
+        .deleteProductFile(productFileId)
+        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(newProduct => {
+          setProduct(newProduct);
+        });
+    },
+    [firebaseApp]
+  );
 
   useEffect(() => {
     if (!productId) {
@@ -110,13 +152,19 @@ const useProductEditor = (productId: string) => {
       return;
     }
 
-    // TODO DELETE THIS LOGIC!!
-    setTimeout(() => {
-      Product.getById(productId).then(p => {
+    if (!firebaseApp) {
+      // TODO
+      // tslint:disable-next-line
+      console.info("firebase app has not been initialized.");
+      return;
+    }
+
+    Promise.resolve()
+      .then(() => Product.getById(productId, firebaseApp.firestore()))
+      .then(p => {
         setProduct(p);
       });
-    }, 2000);
-  }, [productId]);
+  }, [productId, firebaseApp]);
 
   return {
     product,

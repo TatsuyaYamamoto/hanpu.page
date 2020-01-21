@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
+import useFirebase from "../../../components/hooks/useFirebase";
 import AppBar from "../../../components/organisms/AppBar";
 import Footer from "../../../components/organisms/Footer";
 
@@ -14,15 +15,36 @@ import { Product } from "../../../domains/Product";
 const ProductListPage: NextPage = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
   const router = useRouter();
+  const {
+    app: firebaseApp,
+    user: firebaseUser,
+    authStateChecked
+  } = useFirebase();
 
   React.useEffect(() => {
-    // TODO delete this logic!!
-    setTimeout(() => {
-      Product.getOwns().then(owns => {
+    if (!firebaseApp) {
+      // firebase app has not been initialized.
+      return;
+    }
+
+    if (!authStateChecked) {
+      // first confirm of firebase auth login has not been initialized.
+      return;
+    }
+
+    if (!firebaseUser) {
+      // TODO
+      // tslint:disable-next-line
+      console.info("user is not logged-in.");
+      return;
+    }
+
+    Promise.resolve()
+      .then(() => Product.getOwns(firebaseApp.firestore()))
+      .then(owns => {
         setProducts(owns);
       });
-    }, 1000);
-  }, []);
+  }, [firebaseApp, firebaseUser, authStateChecked]);
 
   const onSelected = (id: string) => () => {
     router.push(`/publish/products/${id}`);
