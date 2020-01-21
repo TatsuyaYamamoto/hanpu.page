@@ -1,4 +1,5 @@
 import { firestore, storage, auth } from "firebase/app";
+type DocumentReference = firestore.DocumentReference;
 type Timestamp = firestore.Timestamp;
 type UpdateData = firestore.UpdateData;
 
@@ -67,15 +68,18 @@ export interface ProductDocument {
   productFiles: ProductFileMap;
   ownerUid: string;
   createdAt: Date | firestore.FieldValue;
+
+  //
+  firestoreInstance: firestore.Firestore;
 }
 
 export class Product implements ProductDocument {
-  public static getColRef() {
-    return firestore().collection(`products`);
+  public static getColRef(firestoreInstance: firestore.Firestore) {
+    return firestoreInstance.collection(`products`);
   }
 
-  public static getDocRef(id: string) {
-    return Product.getColRef().doc(id);
+  public static getDocRef(id: string, firestoreInstance: firestore.Firestore) {
+    return Product.getColRef(firestoreInstance).doc(id);
   }
 
   public static getProductFileStorageRef(uid: string, productId: string) {
@@ -86,7 +90,9 @@ export class Product implements ProductDocument {
     return storage().ref(`users/${uid}/products/${productId}/images`);
   }
 
-  public static async getOwns(): Promise<Product[]> {
+  public static async getOwns(
+    firestoreInstance: firestore.Firestore
+  ): Promise<Product[]> {
     const owner = auth().currentUser;
     if (!owner) {
       // tslint:disable:no-console TODO
@@ -94,7 +100,7 @@ export class Product implements ProductDocument {
       return [];
     }
 
-    const ownProductsSnap = await Product.getColRef()
+    const ownProductsSnap = await Product.getColRef(firestoreInstance)
       .where("ownerUid", "==", owner.uid)
       .get();
 
@@ -115,13 +121,17 @@ export class Product implements ProductDocument {
         description,
         ownerUid,
         productFiles,
-        (createdAt as Timestamp).toDate()
+        (createdAt as Timestamp).toDate(),
+        firestoreInstance
       );
     });
   }
 
-  public static async getById(id: string): Promise<Product | null> {
-    const snap = await Product.getColRef()
+  public static async getById(
+    id: string,
+    firestoreInstance: firestore.Firestore
+  ): Promise<Product | null> {
+    const snap = await Product.getColRef(firestoreInstance)
       .doc(id)
       .get();
 
@@ -144,14 +154,18 @@ export class Product implements ProductDocument {
       description,
       ownerUid,
       productFiles,
-      (createdAt as Timestamp).toDate()
+      (createdAt as Timestamp).toDate(),
+      firestoreInstance
     );
   }
 
-  public static async createNew(params: {
-    name: ProductName;
-    description: ProductDescription;
-  }): Promise<void> {
+  public static async createNew(
+    params: {
+      name: ProductName;
+      description: ProductDescription;
+    },
+    firestoreInstance: firestore.Firestore
+  ): Promise<DocumentReference | void> {
     const { name, description } = params;
 
     const owner = auth().currentUser;
@@ -165,10 +179,11 @@ export class Product implements ProductDocument {
       description,
       ownerUid: owner.uid,
       productFiles: {},
-      createdAt: firestore.FieldValue.serverTimestamp()
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      firestoreInstance
     };
 
-    await Product.getColRef().add(newProductDoc);
+    return await Product.getColRef(firestoreInstance).add(newProductDoc);
   }
 
   public constructor(
@@ -181,11 +196,14 @@ export class Product implements ProductDocument {
     readonly description: ProductDescription,
     readonly ownerUid: string,
     readonly productFiles: { [id: string]: ProductFile },
-    readonly createdAt: Date
+    readonly createdAt: Date,
+
+    // dependencies
+    readonly firestoreInstance: firestore.Firestore
   ) {}
 
   public get ref() {
-    return Product.getDocRef(this.id);
+    return Product.getDocRef(this.id, this.firestoreInstance);
   }
 
   public addProductFile = (
@@ -224,7 +242,6 @@ export class Product implements ProductDocument {
           console.error(e);
         },
         async () => {
-          const docRef = Product.getDocRef(this.ref.id);
           const newProductFileId = Product.getAutoNewId();
           const currentProductFilesSize = Object.keys(this.productFiles).length;
 
@@ -243,7 +260,7 @@ export class Product implements ProductDocument {
               [newProductFileId]: newProductFile
             }
           };
-          await docRef.update(partialNewDoc);
+          await this.ref.update(partialNewDoc);
 
           resolve();
         }
@@ -257,7 +274,6 @@ export class Product implements ProductDocument {
   };
 
   public deleteProductFile = async (deleteTargetId: string) => {
-    const docRef = Product.getDocRef(this.ref.id);
     const newProductFileMap: ProductFileMap = {};
     Object.keys(this.productFiles)
       // filter
@@ -282,7 +298,7 @@ export class Product implements ProductDocument {
     const deleteDoc: Partial<ProductDocument> = {
       productFiles: newProductFileMap
     };
-    await docRef.update(deleteDoc);
+    await this.ref.update(deleteDoc);
 
     await this.deleteProductFileFromStorage(deleteTargetId);
 
@@ -293,7 +309,8 @@ export class Product implements ProductDocument {
       this.description,
       this.ownerUid,
       newProductFileMap,
-      this.createdAt
+      this.createdAt,
+      this.firestoreInstance
     );
   };
 
@@ -366,11 +383,10 @@ export class Product implements ProductDocument {
         async () => {
           unsubscribe();
 
-          const docRef = Product.getDocRef(this.ref.id);
           const partialNewDoc: Partial<ProductDocument> = {
             iconStorageUrl: storageRef.toString()
           };
-          await docRef.update(partialNewDoc);
+          await this.ref.update(partialNewDoc);
 
           if (oldIconRef) {
             // it no longer be referred.

@@ -10,13 +10,13 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Button from "@material-ui/core/Button";
 
-const StyledPaper = styled(Paper as React.FC<PaperProps>)`
+const StyledPaper = styled(Paper)`
   padding: ${({ theme }: ThemeProps<MuiTheme>) => theme.spacing(2)}px;
-`;
+` as React.FC<PaperProps>;
 
-const StyledInputField = styled(TextField as React.FC<TextFieldProps>)`
+const StyledTextField = styled(TextField)`
   padding-top: ${({ theme }: ThemeProps<MuiTheme>) => theme.spacing(1)}px;
-`;
+` as React.FC<TextFieldProps>;
 
 interface DownloadCodeInputCardProps {
   value: string;
@@ -36,9 +36,7 @@ const DownloadCodeInputCard: React.FC<DownloadCodeInputCardProps> = ({
   return (
     <StyledPaper>
       <Typography>ダウンロードコードを入力してください</Typography>
-      <TextField />
-      <StyledInputField />
-      <StyledInputField
+      <StyledTextField
         value={value}
         onChange={onChange}
         InputProps={{
