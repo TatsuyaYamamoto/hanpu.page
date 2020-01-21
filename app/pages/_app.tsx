@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 
+import { SnackbarProvider } from "notistack";
+
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
@@ -121,7 +123,9 @@ const MyApp: React.FC<AppProps> = props => {
         <FirebaseContextProvider
           initParams={{ options: configs.firebaseConfigs }}
         >
-          <Component {...pageProps} />
+          <SnackbarProvider maxSnack={3}>
+            <Component {...pageProps} />
+          </SnackbarProvider>
         </FirebaseContextProvider>
       </ThemeProvider>
     </>
