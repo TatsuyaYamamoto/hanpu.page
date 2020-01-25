@@ -33,9 +33,8 @@ const ProductListPage: NextPage = () => {
     }
 
     if (!firebaseUser) {
-      // TODO
-      // tslint:disable-next-line
-      console.info("user is not logged-in.");
+      // TODO move redirect logic as common module.
+      router.push(`/login?redirectTo=${router.pathname}`);
       return;
     }
 

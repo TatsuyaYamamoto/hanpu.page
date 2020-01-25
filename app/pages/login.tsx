@@ -21,7 +21,13 @@ const LoginPage: NextPage = () => {
 
   useEffect(() => {
     if (user) {
-      router.push(`/publish/products`);
+      const redirectPath = router.query.redirectTo;
+
+      if (redirectPath && typeof redirectPath === "string") {
+        router.push(redirectPath);
+      } else {
+        router.push(`/publish`);
+      }
     }
   }, [user]);
 

@@ -6,16 +6,41 @@ import { useRouter } from "next/router";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
+import useFirebase from "../../../components/hooks/useFirebase";
+
 import AppBar from "../../../components/organisms/AppBar";
 import Footer from "../../../components/organisms/Footer";
 import ProductEditForm from "../../../components/organisms/ProductEditForm";
 
 const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
+  const {
+    app: firebaseApp,
+    user: firebaseUser,
+    authStateChecked
+  } = useFirebase();
   const router = useRouter();
 
   const onBack = () => {
     router.back();
   };
+
+  React.useEffect(() => {
+    if (!firebaseApp) {
+      // firebase app has not been initialized.
+      return;
+    }
+
+    if (!authStateChecked) {
+      // first confirm of firebase auth login has not been initialized.
+      return;
+    }
+
+    if (!firebaseUser) {
+      // TODO move redirect logic as common module.
+      router.push(`/login?redirectTo=${router.pathname}`);
+      return;
+    }
+  }, [firebaseApp, firebaseUser, authStateChecked]);
 
   return (
     <>
