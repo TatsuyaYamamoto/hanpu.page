@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 
 import {
   default as MuiAppBar,
@@ -11,6 +12,11 @@ import Icon from "@material-ui/core/Icon";
 import Avatar from "@material-ui/core/Avatar";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import Divider from "@material-ui/core/Divider";
+import PersonIcon from "@material-ui/icons/Person";
+import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 import styled from "styled-components";
 
@@ -32,6 +38,8 @@ interface AppBarProps {
 
 const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
   const { user, logout } = useFirebase();
+  const router = useRouter();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -50,15 +58,14 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
     setAnchorEl(open ? null : event.currentTarget);
   };
 
-  const menus = [
-    {
-      label: "ログアウト",
-      onClick: () => {
-        handleMenu();
-        logout();
-      }
-    }
-  ];
+  const onClickAccount = () => {
+    router.push(`/publish`);
+  };
+
+  const onClickLogout = () => {
+    handleMenu();
+    logout();
+  };
 
   const userIcon = user ? (
     <>
@@ -80,11 +87,19 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
           horizontal: "center"
         }}
       >
-        {menus.map(menu => (
-          <MenuItem key={menu.label} onClick={menu.onClick}>
-            {menu.label}
-          </MenuItem>
-        ))}
+        <MenuItem onClick={onClickAccount}>
+          <ListItemIcon>
+            <PersonIcon />
+          </ListItemIcon>
+          <ListItemText primary={`アカウント`} />
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={onClickLogout}>
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary={`ログアウト`} />
+        </MenuItem>
       </Menu>
     </>
   ) : (
