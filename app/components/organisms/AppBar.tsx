@@ -14,8 +14,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import PersonIcon from "@material-ui/icons/Person";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 import styled from "styled-components";
@@ -23,6 +23,7 @@ import styled from "styled-components";
 import FlexSpace from "../atoms/FlexSpace";
 import Logo from "../atoms/Logo";
 import useFirebase from "../hooks/useFirebase";
+import useAuth from "../hooks/useAuth";
 
 const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   && {
@@ -32,15 +33,25 @@ const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   }
 `;
 
+type TabValue = "home" | "product";
+
 interface AppBarProps {
   onBack?: () => void;
 }
 
 const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
-  const { user, logout } = useFirebase();
+  const { logout } = useFirebase();
+  const { user } = useAuth();
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [tabValue, setTabValue] = React.useState<TabValue>(() => {
+    if (router.pathname.startsWith(`/publish/products`)) {
+      return "product";
+    }
+    return "home";
+  });
+
   const open = Boolean(anchorEl);
 
   const back = (
@@ -58,19 +69,33 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
     setAnchorEl(open ? null : event.currentTarget);
   };
 
-  const onClickAccount = () => {
-    router.push(`/publish`);
-  };
-
   const onClickLogout = () => {
     handleMenu();
     logout();
   };
 
+  const onTabMenuChanged = (_: React.ChangeEvent<{}>, newValue: TabValue) => {
+    setTabValue(newValue);
+    switch (newValue) {
+      case "home":
+        router.push(`/publish`);
+        break;
+      case "product":
+        router.push(`/publish/products`);
+        break;
+    }
+  };
+
+  const menuTabs = (
+    <Tabs value={tabValue} onChange={onTabMenuChanged}>
+      <Tab label="ホーム" value={"home"} />
+      <Tab label="プロダクト" value={"product"} />
+    </Tabs>
+  );
   const userIcon = user ? (
     <>
       <IconButton onClick={handleMenu}>
-        <Avatar src={user && user.photoURL ? user.photoURL : ""} />
+        <Avatar src={user && user.iconUrl} />
       </IconButton>
       <Menu
         keepMounted={true}
@@ -87,13 +112,6 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
           horizontal: "center"
         }}
       >
-        <MenuItem onClick={onClickAccount}>
-          <ListItemIcon>
-            <PersonIcon />
-          </ListItemIcon>
-          <ListItemText primary={`アカウント`} />
-        </MenuItem>
-        <Divider />
         <MenuItem onClick={onClickLogout}>
           <ListItemIcon>
             <LogoutIcon />
@@ -112,6 +130,7 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
         <Toolbar>
           {onBack ? back : logo}
           <FlexSpace />
+          {menuTabs}
           {userIcon}
         </Toolbar>
       </StyledMuiAppBar>

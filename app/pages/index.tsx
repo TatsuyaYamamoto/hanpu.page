@@ -33,7 +33,7 @@ const Hero = () => {
         <LeftIcon>cloud_download</LeftIcon>
         <span>ダウンロードページへ</span>
       </LinkButton>
-      <LinkButton disabled={true} href="/">
+      <LinkButton href="/publish">
         <LeftIcon>publish</LeftIcon>
         <span>配信管理ページへ</span>
       </LinkButton>
