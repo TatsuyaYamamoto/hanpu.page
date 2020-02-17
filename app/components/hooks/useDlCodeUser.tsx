@@ -12,10 +12,15 @@ import useFirebase from "./useFirebase";
 
 export type SessionState = "processing" | "loggedIn" | "loggedOut";
 
+interface Counter {
+  limit: number;
+  current: number;
+}
+
+type CounterType = "product" | "downloadCode" | "totalFileSizeByte";
+
 interface DlCodeUserDocument {
-  limit: {
-    issuableDownloadCodeCount: number;
-  };
+  counters: { [type in CounterType]: Counter };
 }
 
 export class DlCodeUser {
@@ -24,7 +29,14 @@ export class DlCodeUser {
     readonly firebaseUser: FirebaseUser
   ) {}
 
-  public get name(): string {
+  public get uid(): string {
+    return this.firebaseUser.uid;
+  }
+
+  /**
+   * twitter api上のscreen_nameを返却する
+   */
+  public get twitterUserName(): string {
     const displayName = this.firebaseUser.displayName;
 
     if (!displayName) {
@@ -47,8 +59,30 @@ export class DlCodeUser {
     return url.replace("normal", "bigger");
   }
 
-  public get maxIssuableDownloadCodeCount() {
-    return this.user.limit.issuableDownloadCodeCount;
+  public async editCounter(
+    counter: CounterType,
+    newValue: number,
+    firestoreInstance: firestore.Firestore
+  ) {
+    const { limit } = this.user.counters[counter];
+
+    if (limit < newValue) {
+      throw new Error(`Exceeded limit. limit: ${limit}, new : ${newValue}`);
+    }
+
+    const colRef = DlCodeUser.getColRef(firestoreInstance);
+    const { uid } = this.firebaseUser;
+
+    // (100%ではないが)型安全にネストされたオブジェクトのkeyを宣言する
+    const keyElements: (
+      | (keyof DlCodeUserDocument)
+      | CounterType
+      | (keyof Counter))[] = ["counters", counter, "limit"];
+    const nestedUpdateOjectKey = keyElements.join();
+
+    await colRef.doc(uid).update({
+      [nestedUpdateOjectKey]: newValue
+    });
   }
 
   public static getColRef(firestoreInstance: firestore.Firestore) {
@@ -71,8 +105,10 @@ export class DlCodeUser {
 
     // TODO avoid hard coding of initial params
     const userDoc: DlCodeUserDocument = {
-      limit: {
-        issuableDownloadCodeCount: 10
+      counters: {
+        product: { limit: 1, current: 0 },
+        downloadCode: { limit: 10, current: 0 },
+        totalFileSizeByte: { limit: 10, current: 0 }
       }
     };
     await colRef.doc(uid).set(userDoc);
