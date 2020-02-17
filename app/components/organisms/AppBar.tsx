@@ -23,7 +23,7 @@ import styled from "styled-components";
 import FlexSpace from "../atoms/FlexSpace";
 import Logo from "../atoms/Logo";
 import useFirebase from "../hooks/useFirebase";
-import useAuth from "../hooks/useAuth";
+import useDlCodeUser from "../hooks/useDlCodeUser";
 
 const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   && {
@@ -41,7 +41,7 @@ interface AppBarProps {
 
 const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
   const { logout } = useFirebase();
-  const { user } = useAuth();
+  const { user } = useDlCodeUser();
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = React.useState(null);

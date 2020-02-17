@@ -7,6 +7,8 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 import useFirebase from "../../../components/hooks/useFirebase";
+import useDlCodeUser from "../../../components/hooks/useDlCodeUser";
+
 import AppBar from "../../../components/organisms/AppBar";
 import Footer from "../../../components/organisms/Footer";
 
@@ -15,11 +17,8 @@ import { Product } from "../../../domains/Product";
 const ProductListPage: NextPage = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
   const router = useRouter();
-  const {
-    app: firebaseApp,
-    user: firebaseUser,
-    authStateChecked
-  } = useFirebase();
+  const { app: firebaseApp } = useFirebase();
+  const { sessionState } = useDlCodeUser();
 
   React.useEffect(() => {
     if (!firebaseApp) {
@@ -27,12 +26,7 @@ const ProductListPage: NextPage = () => {
       return;
     }
 
-    if (!authStateChecked) {
-      // first confirm of firebase auth login has not been initialized.
-      return;
-    }
-
-    if (!firebaseUser) {
+    if (sessionState === "loggedOut") {
       // TODO move redirect logic as common module.
       router.push(`/login?redirectTo=${router.pathname}`);
       return;
@@ -43,7 +37,7 @@ const ProductListPage: NextPage = () => {
       .then(owns => {
         setProducts(owns);
       });
-  }, [firebaseApp, firebaseUser, authStateChecked]);
+  }, [firebaseApp, sessionState]);
 
   const onSelected = (id: string) => () => {
     router.push(`/publish/products/${id}`);

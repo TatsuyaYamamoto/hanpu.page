@@ -1,4 +1,4 @@
-import * as React from "react";
+import { default as React, useEffect } from "react";
 
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -7,40 +7,33 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 import useFirebase from "../../../components/hooks/useFirebase";
+import useDlCodeUser from "../../../components/hooks/useDlCodeUser";
 
 import AppBar from "../../../components/organisms/AppBar";
 import Footer from "../../../components/organisms/Footer";
 import ProductEditForm from "../../../components/organisms/ProductEditForm";
 
 const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
-  const {
-    app: firebaseApp,
-    user: firebaseUser,
-    authStateChecked
-  } = useFirebase();
+  const { app: firebaseApp } = useFirebase();
+  const { sessionState } = useDlCodeUser();
   const router = useRouter();
 
   const onBack = () => {
     router.back();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!firebaseApp) {
       // firebase app has not been initialized.
       return;
     }
 
-    if (!authStateChecked) {
-      // first confirm of firebase auth login has not been initialized.
-      return;
-    }
-
-    if (!firebaseUser) {
+    if (sessionState === "loggedOut") {
       // TODO move redirect logic as common module.
       router.push(`/login?redirectTo=${router.pathname}`);
       return;
     }
-  }, [firebaseApp, firebaseUser, authStateChecked]);
+  }, [firebaseApp, sessionState]);
 
   return (
     <>

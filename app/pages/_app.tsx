@@ -19,6 +19,7 @@ import { FirebaseContextProvider } from "../components/hooks/useFirebase";
 
 import theme from "../theme";
 import configs from "../configs";
+import { DlCodeUserContextProvider } from "../components/hooks/useDlCodeUser";
 
 const GlobalStyle = createGlobalStyle`
 @font-face{
@@ -123,9 +124,11 @@ const MyApp: React.FC<AppProps> = props => {
         <FirebaseContextProvider
           initParams={{ options: configs.firebaseConfigs }}
         >
-          <SnackbarProvider maxSnack={3}>
-            <Component {...pageProps} />
-          </SnackbarProvider>
+          <DlCodeUserContextProvider>
+            <SnackbarProvider maxSnack={3}>
+              <Component {...pageProps} />
+            </SnackbarProvider>
+          </DlCodeUserContextProvider>
         </FirebaseContextProvider>
       </ThemeProvider>
     </>
