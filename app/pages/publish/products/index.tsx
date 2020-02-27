@@ -1,47 +1,34 @@
-import * as React from "react";
+import { default as React, useEffect } from "react";
 
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import useFirebase from "../../../components/hooks/useFirebase";
-import useDlCodeUser from "../../../components/hooks/useDlCodeUser";
+import useAuth0 from "../../../components/hooks/useAuth0";
 
 import AppBar from "../../../components/organisms/AppBar";
 import Footer from "../../../components/organisms/Footer";
-
-import { Product } from "../../../domains/Product";
+import ProductList from "../../../components/organisms/ProductList";
 
 const ProductListPage: NextPage = () => {
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const router = useRouter();
-  const { app: firebaseApp } = useFirebase();
-  const { sessionState } = useDlCodeUser();
+  const {
+    idToken,
+    initialized: isAuth0Initialized,
+    loginWithRedirect
+  } = useAuth0();
 
-  React.useEffect(() => {
-    if (!firebaseApp) {
-      // firebase app has not been initialized.
+  useEffect(() => {
+    if (!isAuth0Initialized) {
       return;
     }
 
-    if (sessionState === "loggedOut") {
-      // TODO move redirect logic as common module.
-      router.push(`/login?redirectTo=${router.pathname}`);
-      return;
-    }
-
-    Promise.resolve()
-      .then(() => Product.getOwns(firebaseApp.firestore()))
-      .then(owns => {
-        setProducts(owns);
+    if (!idToken) {
+      loginWithRedirect({
+        redirect_uri: `${location.href}`
       });
-  }, [firebaseApp, sessionState]);
-
-  const onSelected = (id: string) => () => {
-    router.push(`/publish/products/${id}`);
-  };
+    }
+  }, [idToken, isAuth0Initialized, loginWithRedirect]);
 
   return (
     <>
@@ -52,17 +39,7 @@ const ProductListPage: NextPage = () => {
 
         <Grid item={true}>
           <Container style={{ marginTop: 30, marginBottom: 30 }}>
-            <ul>
-              {products.map(p => {
-                return (
-                  <li key={p.name} onClick={onSelected(p.id)}>
-                    name: <div>{p.name}</div>
-                    desc: <div>{p.description}</div>
-                    created: <div>{p.createdAt.toDateString()}</div>
-                  </li>
-                );
-              })}
-            </ul>
+            <ProductList />
           </Container>
         </Grid>
 
