@@ -6,9 +6,10 @@ import {
   useContext
 } from "react";
 
-import { User as FirebaseUser, firestore } from "firebase/app";
+import { firestore } from "firebase/app";
 
 import useFirebase from "./useFirebase";
+import useAuth0, { Auth0User } from "./useAuth0";
 
 export type SessionState = "processing" | "loggedIn" | "loggedOut";
 
@@ -26,18 +27,18 @@ interface DlCodeUserDocument {
 export class DlCodeUser {
   public constructor(
     readonly user: DlCodeUserDocument,
-    readonly firebaseUser: FirebaseUser
+    readonly auth0User: Auth0User
   ) {}
 
   public get uid(): string {
-    return this.firebaseUser.uid;
+    return this.auth0User.sub;
   }
 
   /**
    * twitter api上のscreen_nameを返却する
    */
-  public get twitterUserName(): string {
-    const displayName = this.firebaseUser.displayName;
+  public get displayName(): string {
+    const displayName = this.auth0User.nickname;
 
     if (!displayName) {
       // TODO Twitterアカウントに表示名がない想定は無いが、デフォルト文字列を返却するようにする
@@ -48,7 +49,7 @@ export class DlCodeUser {
   }
 
   public get iconUrl(): string {
-    const url = this.firebaseUser.photoURL;
+    const url = this.auth0User.picture;
 
     if (!url) {
       // TODO Twitterアカウントにアイコンがない想定は無いが、デフォルト画像のURLを返却するようにする
@@ -71,7 +72,6 @@ export class DlCodeUser {
     }
 
     const colRef = DlCodeUser.getColRef(firestoreInstance);
-    const { uid } = this.firebaseUser;
 
     // (100%ではないが)型安全にネストされたオブジェクトのkeyを宣言する
     const keyElements: (
@@ -80,7 +80,7 @@ export class DlCodeUser {
       | (keyof Counter))[] = ["counters", counter, "limit"];
     const nestedUpdateOjectKey = keyElements.join();
 
-    await colRef.doc(uid).update({
+    await colRef.doc(this.uid).update({
       [nestedUpdateOjectKey]: newValue
     });
   }
@@ -90,17 +90,17 @@ export class DlCodeUser {
   }
 
   public static async load(
-    firebaseUser: FirebaseUser,
+    auth0User: Auth0User,
     firestoreInstance: firestore.Firestore
   ): Promise<DlCodeUser> {
-    const { uid } = firebaseUser;
+    const uid = auth0User.sub;
     const colRef = DlCodeUser.getColRef(firestoreInstance);
 
     const snap = await colRef.doc(uid).get();
 
     if (snap.exists) {
       const doc = snap.data() as DlCodeUserDocument;
-      return new DlCodeUser(doc, firebaseUser);
+      return new DlCodeUser(doc, auth0User);
     }
 
     // TODO avoid hard coding of initial params
@@ -113,7 +113,7 @@ export class DlCodeUser {
     };
     await colRef.doc(uid).set(userDoc);
 
-    return new DlCodeUser(userDoc, firebaseUser);
+    return new DlCodeUser(userDoc, auth0User);
   }
 }
 
@@ -122,31 +122,28 @@ interface IDlCodeUserContext {
   sessionState: SessionState;
 }
 
-export const dlCodeUserContext = createContext<IDlCodeUserContext>(null as any);
+export const dlCodeUserContext = createContext<IDlCodeUserContext>({} as any);
 
 export const DlCodeUserContextProvider: React.FC<{}> = props => {
   const [contextValue, setContextValue] = useState<IDlCodeUserContext>({
     sessionState: "processing"
   });
-  const {
-    user: firebaseUser,
-    app: firebaseApp,
-    authStateChecked
-  } = useFirebase();
+  const { app: firebaseApp } = useFirebase();
+  const { initialized: isAuth0Initialized, user: auth0User } = useAuth0();
 
   useEffect(() => {
     if (!firebaseApp) {
-      // firebase app has not been initialized.
+      // suspend. if firebase app has not been initialized.
       return;
     }
 
-    if (!authStateChecked) {
-      // first confirm of firebase auth login has not been initialized.
+    if (!isAuth0Initialized) {
+      // suspend. if auth0 has not been initialized
       return;
     }
 
-    if (!firebaseUser) {
-      // currently, user is not logged-in.
+    if (!auth0User) {
+      // currently, user is not logged-in as auth0 user.
       setContextValue(prev => ({
         ...prev,
         sessionState: "loggedOut",
@@ -155,14 +152,14 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
       return;
     }
 
-    DlCodeUser.load(firebaseUser, firebaseApp.firestore()).then(dlCodeUser => {
+    DlCodeUser.load(auth0User, firebaseApp.firestore()).then(dlCodeUser => {
       setContextValue(prev => ({
         ...prev,
         sessionState: "loggedIn",
         user: dlCodeUser
       }));
     });
-  }, [firebaseApp, authStateChecked, firebaseUser]);
+  }, [firebaseApp, isAuth0Initialized, auth0User]);
 
   return (
     <dlCodeUserContext.Provider value={contextValue}>

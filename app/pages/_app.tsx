@@ -16,10 +16,11 @@ import "firebase/storage";
 
 import useGa from "../components/hooks/useGa";
 import { FirebaseContextProvider } from "../components/hooks/useFirebase";
+import { DlCodeUserContextProvider } from "../components/hooks/useDlCodeUser";
+import { Auth0Provider } from "../components/hooks/useAuth0";
 
 import theme from "../theme";
 import configs from "../configs";
-import { DlCodeUserContextProvider } from "../components/hooks/useDlCodeUser";
 
 const GlobalStyle = createGlobalStyle`
 @font-face{
@@ -121,15 +122,22 @@ const MyApp: React.FC<AppProps> = props => {
       <GlobalStyle />
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <FirebaseContextProvider
-          initParams={{ options: configs.firebaseConfigs }}
+        <Auth0Provider
+          auth0ClientOptions={{
+            domain: configs.auth0.domain,
+            client_id: configs.auth0.clientId
+          }}
         >
-          <DlCodeUserContextProvider>
-            <SnackbarProvider maxSnack={3}>
-              <Component {...pageProps} />
-            </SnackbarProvider>
-          </DlCodeUserContextProvider>
-        </FirebaseContextProvider>
+          <FirebaseContextProvider
+            initParams={{ options: configs.firebaseConfigs }}
+          >
+            <DlCodeUserContextProvider>
+              <SnackbarProvider maxSnack={3}>
+                <Component {...pageProps} />
+              </SnackbarProvider>
+            </DlCodeUserContextProvider>
+          </FirebaseContextProvider>
+        </Auth0Provider>
       </ThemeProvider>
     </>
   );

@@ -1,35 +1,33 @@
 import { default as React, useEffect } from "react";
 
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import useFirebase from "../../components/hooks/useFirebase";
-import useDlCodeUser from "../../components/hooks/useDlCodeUser";
-
 import AppBar from "../../components/organisms/AppBar";
 import Footer from "../../components/organisms/Footer";
 import PublishUserProfile from "../../components/organisms/PublishUserProfile";
+import useAuth0 from "../../components/hooks/useAuth0";
 
 const PublishIndexPage: NextPage = () => {
-  const { app: firebaseApp } = useFirebase();
-  const { sessionState } = useDlCodeUser();
-  const router = useRouter();
+  const {
+    idToken,
+    initialized: isAuth0Initialized,
+    loginWithRedirect
+  } = useAuth0();
 
   useEffect(() => {
-    if (!firebaseApp) {
-      // firebase app has not been initialized.
+    if (!isAuth0Initialized) {
       return;
     }
 
-    if (sessionState === "loggedOut") {
-      // TODO move redirect logic as common module.
-      router.push(`/login?redirectTo=${router.pathname}`);
-      return;
+    if (!idToken) {
+      loginWithRedirect({
+        redirect_uri: `${location.href}`
+      });
     }
-  }, [firebaseApp, sessionState]);
+  }, [idToken, isAuth0Initialized, loginWithRedirect]);
 
   return (
     <>

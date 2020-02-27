@@ -1,18 +1,21 @@
 import * as React from "react";
-const { useEffect, useState, createContext, useContext } = React;
+const { useEffect, createContext, useContext } = React;
 
 import {
   initializeApp,
   app as firebaseApp,
-  auth as firebaseAuth,
   User as FirebaseUser
 } from "firebase/app";
+
+import useAuth0 from "./useAuth0";
+import configs from "../../configs";
+import { useAssignableState } from "../../utils/hooks";
+
 type FirebaseApp = firebaseApp.App;
 
 interface IFirebaseContext {
   app?: FirebaseApp;
   user?: FirebaseUser;
-  initialized: boolean;
   authStateChecked: boolean;
 }
 
@@ -25,29 +28,50 @@ const firebaseContext = createContext<IFirebaseContext>(null as any);
 const FirebaseContextProvider: React.FC<
   FirebaseContextProviderProps
 > = props => {
-  const [contextValue, setContextValue] = useState<IFirebaseContext>({
-    initialized: false,
+  const [contextValue, assignContextValue] = useAssignableState<
+    IFirebaseContext
+  >({
     authStateChecked: false
   });
+  const { initialized: isAuth0Initialized, idToken: auth0IdToken } = useAuth0();
 
   useEffect(() => {
     const { options, name } = props.initParams;
+
     const app = initializeApp(options, name);
+    assignContextValue({ app });
 
-    setContextValue(prev => ({
-      ...prev,
-      app,
-      initialized: true
-    }));
+    app.auth().onAuthStateChanged((changedUser: any) => {
+      log("auth state is changed.", changedUser);
 
-    app.auth().onAuthStateChanged(changedUser => {
-      setContextValue(prev => ({
-        ...prev,
+      assignContextValue({
         user: changedUser ? changedUser : undefined,
         authStateChecked: true
-      }));
+      });
     });
   }, []);
+
+  useEffect(() => {
+    const { app: firebaseAppInstance } = contextValue;
+    if (!firebaseAppInstance) {
+      return;
+    }
+
+    if (!isAuth0Initialized) {
+      return;
+    }
+
+    (async () => {
+      if (auth0IdToken) {
+        log("sign-in to firebase app with custom token.");
+        const token = await getFirebaseCustomToken(auth0IdToken);
+        await firebaseAppInstance.auth().signInWithCustomToken(token);
+      } else {
+        log("no auth0 idToken is hold. sign out from firebase app.");
+        await firebaseAppInstance.auth().signOut();
+      }
+    })();
+  }, [contextValue, isAuth0Initialized, auth0IdToken]);
 
   return (
     <firebaseContext.Provider value={contextValue}>
@@ -57,43 +81,45 @@ const FirebaseContextProvider: React.FC<
 };
 
 const useFirebase = () => {
-  const { app, user, initialized, authStateChecked } = useContext(
-    firebaseContext
-  );
-
-  const loginWithTwitter = async () => {
-    if (!app) {
-      // TODO
-      // prettier-ignore
-      // tslint:disable-next-line
-      console.info("login processing was interrupted because FirebaseApp has not been initialized.");
-      return;
-    }
-
-    const provider = new firebaseAuth.TwitterAuthProvider();
-    await app.auth().signInWithRedirect(provider);
-  };
-
-  const logout = async () => {
-    if (!app) {
-      // TODO
-      // prettier-ignore
-      // tslint:disable-next-line
-      console.info("logout processing was interrupted because FirebaseApp has not been initialized.");
-      return;
-    }
-
-    return app.auth().signOut();
-  };
+  const { app, user, authStateChecked } = useContext(firebaseContext);
 
   return {
-    initialized,
     authStateChecked,
     app,
-    user,
-    loginWithTwitter,
-    logout
+    user
   };
+};
+
+/**
+ * @private
+ * @param message
+ * @param optionalParams
+ */
+const log = (message?: any, ...optionalParams: any[]): void => {
+  // tslint:disable-next-line
+  console.log(`[useFirebase] ${message}`, ...optionalParams);
+};
+
+/**
+ * @private
+ * @param bearerToken
+ */
+const getFirebaseCustomToken = async (bearerToken: string) => {
+  const response = await fetch(`${configs.apiServerOrigin}/auth/token`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      scope: "dl-code.web.app"
+    })
+  });
+  if (response.ok) {
+    const json = await response.json();
+    return json.token;
+  }
+  throw new Error(await response.text());
 };
 
 export default useFirebase;

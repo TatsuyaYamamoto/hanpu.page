@@ -21,5 +21,19 @@ export default {
           storageBucket: "dl-code-dev.appspot.com",
           messagingSenderId: "170382784624",
           appId: "1:170382784624:web:42b794526ad81a74"
+        },
+  apiServerOrigin:
+    process.env.NODE_ENV === "production"
+      ? "https://api.sokontokoro-factory.net"
+      : "https://api-dev.sokontokoro-factory.net",
+  auth0:
+    process.env.NODE_ENV === "production"
+      ? {
+          domain: "",
+          clientId: ""
+        }
+      : {
+          domain: "sokontokoro-factory-dev.auth0.com",
+          clientId: "iJXXm5eUjZuGX0AOITjyWGPgtbpjZnjk"
         }
 };

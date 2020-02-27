@@ -68,11 +68,7 @@ const PublishUserProfile: React.FC = () => {
       data.push({
         key: "user.twitterUserName",
         displayLabel: "Twitterユーザー名",
-        value: (
-          <a href={`https://twitter.com/${user.twitterUserName}`}>
-            {user.twitterUserName}
-          </a>
-        )
+        value: user.displayName
       });
     }
 
