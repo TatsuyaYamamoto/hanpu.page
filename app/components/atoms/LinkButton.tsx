@@ -15,7 +15,7 @@ const LinkButton: React.FC<LinkButtonProps> = props => {
   if (href.startsWith("http")) {
     // use a#href if provided url is absolute path with protocol
     return (
-      <Button href={href} {...others}>
+      <Button href={href} style={{ textTransform: "none" }} {...others}>
         {children}
       </Button>
     );
@@ -23,7 +23,9 @@ const LinkButton: React.FC<LinkButtonProps> = props => {
 
   return (
     <Link href={href}>
-      <Button {...others}>{children}</Button>
+      <Button style={{ textTransform: "none" }} {...others}>
+        {children}
+      </Button>
     </Link>
   );
 };
