@@ -6,16 +6,17 @@ import { useRouter } from "next/router";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import useFirebase from "../../../components/hooks/useFirebase";
-import useDlCodeUser from "../../../components/hooks/useDlCodeUser";
-
 import AppBar from "../../../components/organisms/AppBar";
 import Footer from "../../../components/organisms/Footer";
 import ProductEditForm from "../../../components/organisms/ProductEditForm";
+import useAuth0 from "../../../components/hooks/useAuth0";
 
 const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
-  const { app: firebaseApp } = useFirebase();
-  const { sessionState } = useDlCodeUser();
+  const {
+    idToken,
+    initialized: isAuth0Initialized,
+    loginWithRedirect
+  } = useAuth0();
   const router = useRouter();
 
   const onBack = () => {
@@ -23,17 +24,17 @@ const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
   };
 
   useEffect(() => {
-    if (!firebaseApp) {
-      // firebase app has not been initialized.
+    if (!isAuth0Initialized) {
       return;
     }
 
-    if (sessionState === "loggedOut") {
-      // TODO move redirect logic as common module.
-      router.push(`/login?redirectTo=${router.pathname}`);
-      return;
+    if (!idToken) {
+      const { origin, href } = location;
+      loginWithRedirect({
+        redirect_uri: `${origin}/callback?to=${href}`
+      });
     }
-  }, [firebaseApp, sessionState]);
+  }, [idToken, isAuth0Initialized, loginWithRedirect]);
 
   return (
     <>
