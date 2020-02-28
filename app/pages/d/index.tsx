@@ -59,7 +59,7 @@ const DownloadPage: NextPage<{ code: string }> = props => {
           justify="space-between"
           style={{ height: "100vh" }}
         >
-          <AppBar />
+          <AppBar showTabs={false} />
 
           <Container>
             <Grid container={true} justify="center">

@@ -35,7 +35,7 @@ const ProductListPage: NextPage = () => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar />
+          <AppBar showTabs={true} />
         </Grid>
 
         <Grid item={true}>

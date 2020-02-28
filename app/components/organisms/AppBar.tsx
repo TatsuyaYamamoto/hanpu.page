@@ -36,10 +36,12 @@ const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
 type TabValue = "home" | "product";
 
 interface AppBarProps {
+  showTabs: boolean;
   onBack?: () => void;
 }
 
-const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
+const AppBar: React.FC<AppBarProps> = props => {
+  const { showTabs, onBack } = props;
   const { logout } = useAuth0();
   const { user } = useDlCodeUser();
   const router = useRouter();
@@ -129,9 +131,13 @@ const AppBar: React.FC<AppBarProps> = ({ onBack }) => {
       <StyledMuiAppBar position="static">
         <Toolbar>
           {onBack ? back : logo}
-          <FlexSpace />
-          {menuTabs}
-          {userIcon}
+          {showTabs && (
+            <>
+              <FlexSpace />
+              {menuTabs}
+              {userIcon}
+            </>
+          )}
         </Toolbar>
       </StyledMuiAppBar>
     </>
