@@ -68,9 +68,6 @@ export interface ProductDocument {
   productFiles: ProductFileMap;
   ownerUid: string;
   createdAt: Date | firestore.FieldValue;
-
-  //
-  firestoreInstance: firestore.Firestore;
 }
 
 export class Product implements ProductDocument {
@@ -179,11 +176,21 @@ export class Product implements ProductDocument {
       description,
       ownerUid: owner.uid,
       productFiles: {},
-      createdAt: firestore.FieldValue.serverTimestamp(),
-      firestoreInstance
+      createdAt: firestore.FieldValue.serverTimestamp()
     };
 
     return await Product.getColRef(firestoreInstance).add(newProductDoc);
+  }
+
+  public static async getCount(
+    uid: string,
+    firestoreInstance: firestore.Firestore
+  ): Promise<number> {
+    const querySnap = await Product.getColRef(firestoreInstance)
+      .where("ownerUid", "==", uid)
+      .get();
+
+    return querySnap.size;
   }
 
   public constructor(

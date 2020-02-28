@@ -13,14 +13,14 @@ import useAuth0, { Auth0User } from "./useAuth0";
 
 export type SessionState = "processing" | "loggedIn" | "loggedOut";
 
-interface Counter {
+export interface Counter {
   limit: number;
   current: number;
 }
 
-type CounterType = "product" | "downloadCode" | "totalFileSizeByte";
+export type CounterType = "product" | "downloadCode" | "totalFileSizeByte";
 
-interface DlCodeUserDocument {
+export interface DlCodeUserDocument {
   counters: { [type in CounterType]: Counter };
 }
 
@@ -77,11 +77,11 @@ export class DlCodeUser {
     const keyElements: (
       | (keyof DlCodeUserDocument)
       | CounterType
-      | (keyof Counter))[] = ["counters", counter, "limit"];
-    const nestedUpdateOjectKey = keyElements.join();
+      | (keyof Counter))[] = ["counters", counter, "current"];
+    const nestedUpdateObjectKey = keyElements.join(".");
 
-    await colRef.doc(this.uid).update({
-      [nestedUpdateOjectKey]: newValue
+    return colRef.doc(this.uid).update({
+      [nestedUpdateObjectKey]: newValue
     });
   }
 

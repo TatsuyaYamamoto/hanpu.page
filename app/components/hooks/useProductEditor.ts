@@ -12,9 +12,11 @@ import {
   ProductFileDisplayName,
   ProductName
 } from "../../domains/Product";
+import useDlCodeUser from "./useDlCodeUser";
 
-const useProductEditor = (productId: string) => {
+const useProductEditor = (productId?: string) => {
   const { app: firebaseApp } = useFirebase();
+  const { user } = useDlCodeUser();
   const [product, setProduct] = useState<Product | null>(null);
 
   /**
@@ -45,14 +47,34 @@ const useProductEditor = (productId: string) => {
     async (
       name: ProductName,
       description: ProductDescription
-    ): Promise<DocumentReference | void> => {
-      if (!firebaseApp) {
-        return;
+    ): Promise<[void, (DocumentReference | void)]> => {
+      if (!firebaseApp || !user) {
+        throw new Error(
+          "unexpected. firebase and user haven't benn initialized."
+        );
       }
 
-      return Product.createNew({ name, description }, firebaseApp.firestore());
+      const {
+        current: currentRegisteredCount,
+        limit: maxRegisteredCount
+      } = user.user.counters.product;
+
+      if (maxRegisteredCount <= currentRegisteredCount) {
+        throw new Error(
+          `exceeded. max count. current: ${currentRegisteredCount}, limit: ${maxRegisteredCount}`
+        );
+      }
+
+      // current countを改めて計算する、冗長だけれど、、
+      const current = await Product.getCount(user.uid, firebaseApp.firestore());
+
+      // TODO アトミックな処理に実装を変更する
+      return Promise.all([
+        user.editCounter("product", current + 1, firebaseApp.firestore()),
+        Product.createNew({ name, description }, firebaseApp.firestore())
+      ]);
     },
-    [firebaseApp]
+    [firebaseApp, user]
   );
 
   const updateProduct = useCallback(
@@ -64,7 +86,9 @@ const useProductEditor = (productId: string) => {
 
       return loadedProduct
         .partialUpdateFields(values)
-        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(() =>
+          Product.getById(loadedProduct.id, initializedApp.firestore())
+        )
         .then(newProduct => {
           setProduct(newProduct);
         });
@@ -82,12 +106,14 @@ const useProductEditor = (productId: string) => {
       const { promise } = loadedProduct.uploadIconToStorage(icon);
 
       return promise
-        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(() =>
+          Product.getById(loadedProduct.id, initializedApp.firestore())
+        )
         .then(newProduct => {
           setProduct(newProduct);
         });
     },
-    [firebaseApp]
+    [product, firebaseApp]
   );
 
   const addProductFile = useCallback(
@@ -103,7 +129,9 @@ const useProductEditor = (productId: string) => {
 
       const { task, promise } = loadedProduct.addProductFile(displayName, file);
       const refreshPromise = promise
-        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(() =>
+          Product.getById(loadedProduct.id, initializedApp.firestore())
+        )
         .then(newProduct => {
           setProduct(newProduct);
         });
@@ -113,7 +141,7 @@ const useProductEditor = (productId: string) => {
         promise: refreshPromise
       };
     },
-    [firebaseApp]
+    [product, firebaseApp]
   );
 
   const updateProductFile = useCallback(
@@ -123,12 +151,14 @@ const useProductEditor = (productId: string) => {
 
       return loadedProduct
         .partialUpdateFile(id, edited)
-        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(() =>
+          Product.getById(loadedProduct.id, initializedApp.firestore())
+        )
         .then(newProduct => {
           setProduct(newProduct);
         });
     },
-    [firebaseApp]
+    [firebaseApp, product]
   );
 
   const deleteProductFile = useCallback(
@@ -138,12 +168,14 @@ const useProductEditor = (productId: string) => {
 
       return loadedProduct
         .deleteProductFile(productFileId)
-        .then(() => Product.getById(productId, initializedApp.firestore()))
+        .then(() =>
+          Product.getById(loadedProduct.id, initializedApp.firestore())
+        )
         .then(newProduct => {
           setProduct(newProduct);
         });
     },
-    [firebaseApp]
+    [firebaseApp, product]
   );
 
   useEffect(() => {
