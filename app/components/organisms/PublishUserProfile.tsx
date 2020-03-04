@@ -9,12 +9,13 @@ import {
 } from "@material-ui/core";
 
 import useDlCodeUser from "../../components/hooks/useDlCodeUser";
+import { formatFileSize } from "../../utils/format";
 
 interface ResourceCounter {
   key: string;
   displayLabel: string;
-  limit: number;
-  current: number;
+  limit: string | number;
+  current: string | number;
 }
 
 interface AccountData {
@@ -47,8 +48,8 @@ const PublishUserProfile: React.FC = () => {
       counters.push({
         key: "counters.totalFileSizeByte",
         displayLabel: "アップロード済みファイルサイズ",
-        limit: user.user.counters.totalFileSizeByte.limit,
-        current: user.user.counters.totalFileSizeByte.current
+        limit: formatFileSize(user.user.counters.totalFileSizeByte.limit),
+        current: formatFileSize(user.user.counters.totalFileSizeByte.current)
       });
     }
 

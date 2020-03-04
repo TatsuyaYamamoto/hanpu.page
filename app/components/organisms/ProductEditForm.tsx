@@ -73,8 +73,8 @@ const ProductEditForm: React.FC<ProductDetailEditFormProps> = ({
     return updateProductFile(productFileId, edited);
   };
 
-  const onProductFileDelete = (id: string): Promise<void> => {
-    return deleteProductFile(id);
+  const onProductFileDelete = async (id: string): Promise<void> => {
+    await deleteProductFile(id);
   };
 
   const onDownloadCodeSetAdd = (

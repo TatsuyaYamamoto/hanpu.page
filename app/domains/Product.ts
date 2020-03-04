@@ -87,6 +87,43 @@ export class Product implements ProductDocument {
     return storage().ref(`users/${uid}/products/${productId}/images`);
   }
 
+  public static watchOne(
+    productId: string,
+    firestoreInstance: firestore.Firestore,
+    callback: (product: Product | null) => void
+  ): () => void {
+    const query = Product.getColRef(firestoreInstance).doc(productId);
+
+    return query.onSnapshot(querySnap => {
+      if (!querySnap.exists) {
+        callback(null);
+        return;
+      }
+
+      const {
+        name,
+        iconStorageUrl,
+        description,
+        ownerUid,
+        productFiles,
+        createdAt
+      } = querySnap.data({ serverTimestamps: "estimate" }) as ProductDocument;
+
+      callback(
+        new Product(
+          querySnap.id,
+          name,
+          iconStorageUrl,
+          description,
+          ownerUid,
+          productFiles,
+          (createdAt as Timestamp).toDate(),
+          firestoreInstance
+        )
+      );
+    });
+  }
+
   public static watchList(
     uid: string,
     firestoreInstance: firestore.Firestore,
@@ -215,16 +252,10 @@ export class Product implements ProductDocument {
   }
 
   public addProductFile = (
+    uid: string,
     displayName: ProductFileDisplayName,
     file: File
   ): { task: storage.UploadTask; promise: Promise<void> } => {
-    const { currentUser } = auth();
-
-    if (!currentUser) {
-      throw new Error("unexpected error. logged-in user is null.");
-    }
-
-    const { uid } = currentUser;
     const originalFileName = file.name as ProductFileOriginalName;
     // @ts-ignore
     // TODO: handle file having no extension
