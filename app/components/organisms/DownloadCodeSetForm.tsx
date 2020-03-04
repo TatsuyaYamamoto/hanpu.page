@@ -22,7 +22,7 @@ import {
 
 const DescriptionTextField = styled.div`
   white-space: pre-wrap;
-  width: 250px;
+  max-width: 250px;
 `;
 
 const PreviewComponentRender = (rowData: CodeData) => (

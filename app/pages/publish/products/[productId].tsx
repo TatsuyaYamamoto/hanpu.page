@@ -40,7 +40,7 @@ const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar showTabs={true} />
+          <AppBar showTabs={true} onBack={onBack} />
         </Grid>
 
         <Grid item={true}>
