@@ -251,6 +251,10 @@ export class Product implements ProductDocument {
     return Product.getDocRef(this.id, this.firestoreInstance);
   }
 
+  public get productFileCount(): number {
+    return Object.keys(this.productFiles).length;
+  }
+
   public addProductFile = (
     uid: string,
     displayName: ProductFileDisplayName,
