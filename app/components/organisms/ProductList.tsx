@@ -11,23 +11,29 @@ const ProductList: FC = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
   const router = useRouter();
   const { app: firebaseApp } = useFirebase();
-  const { sessionState } = useDlCodeUser();
+  const { user: dlCodeUser } = useDlCodeUser();
 
   useEffect(() => {
     if (!firebaseApp) {
       return;
     }
 
-    if (sessionState === "loggedOut") {
+    if (!dlCodeUser) {
       return;
     }
 
-    Promise.resolve()
-      .then(() => Product.getOwns(firebaseApp.firestore()))
-      .then(owns => {
+    const unsubscribe = Product.watchList(
+      dlCodeUser.uid,
+      firebaseApp.firestore(),
+      owns => {
         setProducts(owns);
-      });
-  }, [firebaseApp, sessionState]);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [firebaseApp, dlCodeUser]);
 
   const onSelected = (id: string) => () => {
     router.push(`/publish/products/${id}`);

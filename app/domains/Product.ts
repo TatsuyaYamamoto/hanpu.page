@@ -87,40 +87,41 @@ export class Product implements ProductDocument {
     return storage().ref(`users/${uid}/products/${productId}/images`);
   }
 
-  public static async getOwns(
-    firestoreInstance: firestore.Firestore
-  ): Promise<Product[]> {
-    const owner = auth().currentUser;
-    if (!owner) {
-      // tslint:disable:no-console TODO
-      console.error("not logged-in");
-      return [];
-    }
+  public static watchList(
+    uid: string,
+    firestoreInstance: firestore.Firestore,
+    callback: (products: Product[]) => void
+  ): () => void {
+    const query = Product.getColRef(firestoreInstance).where(
+      "ownerUid",
+      "==",
+      uid
+    );
 
-    const ownProductsSnap = await Product.getColRef(firestoreInstance)
-      .where("ownerUid", "==", owner.uid)
-      .get();
+    return query.onSnapshot(querySnap => {
+      const products = querySnap.docs.map(docSnap => {
+        const {
+          name,
+          iconStorageUrl,
+          description,
+          ownerUid,
+          productFiles,
+          createdAt
+        } = docSnap.data({ serverTimestamps: "estimate" }) as ProductDocument;
 
-    return ownProductsSnap.docs.map(docSnap => {
-      const {
-        name,
-        iconStorageUrl,
-        description,
-        ownerUid,
-        productFiles,
-        createdAt
-      } = docSnap.data() as ProductDocument;
+        return new Product(
+          docSnap.id,
+          name,
+          iconStorageUrl,
+          description,
+          ownerUid,
+          productFiles,
+          (createdAt as Timestamp).toDate(),
+          firestoreInstance
+        );
+      });
 
-      return new Product(
-        docSnap.id,
-        name,
-        iconStorageUrl,
-        description,
-        ownerUid,
-        productFiles,
-        (createdAt as Timestamp).toDate(),
-        firestoreInstance
-      );
+      callback(products);
     });
   }
 
@@ -246,6 +247,8 @@ export class Product implements ProductDocument {
           //
         },
         e => {
+          // TODO
+          // tslint:disable-next-line
           console.error(e);
         },
         async () => {
@@ -385,6 +388,8 @@ export class Product implements ProductDocument {
           //
         },
         e => {
+          // TODO
+          // tslint:disable-next-line
           console.error(e);
         },
         async () => {

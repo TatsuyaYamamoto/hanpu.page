@@ -152,13 +152,24 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
       return;
     }
 
-    DlCodeUser.load(auth0User, firebaseApp.firestore()).then(dlCodeUser => {
-      setContextValue(prev => ({
-        ...prev,
-        sessionState: "loggedIn",
-        user: dlCodeUser
-      }));
-    });
+    const uid = auth0User.sub;
+    const unsubscribe = DlCodeUser.getColRef(firebaseApp.firestore())
+      .doc(uid)
+      .onSnapshot(snap => {
+        if (snap.exists) {
+          const dlCodeUserDoc = snap.data() as DlCodeUserDocument;
+
+          setContextValue(prev => ({
+            ...prev,
+            sessionState: "loggedIn",
+            user: new DlCodeUser(dlCodeUserDoc, auth0User)
+          }));
+        }
+      });
+
+    return () => {
+      unsubscribe();
+    };
   }, [firebaseApp, isAuth0Initialized, auth0User]);
 
   return (
