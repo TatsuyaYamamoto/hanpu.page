@@ -11,7 +11,8 @@ workflows:
             - dependencies
           filters:
             branches:
-              only: develop
+              ignore: master
+
       - deploy-dev:
           requires:
             - test-dev
@@ -25,6 +26,7 @@ workflows:
           filters:
             branches:
               only: master
+
       - deploy-pro:
           requires:
             - test-pro
@@ -34,7 +36,7 @@ workflows:
 executors:
   default:
     docker:
-      - image: circleci/node:8.15.0-browsers
+      - image: circleci/node:10.13.0-browsers
 
 jobs:
   dependencies:
