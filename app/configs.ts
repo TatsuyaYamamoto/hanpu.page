@@ -28,11 +28,11 @@ export default {
     : "https://api-dev.sokontokoro-factory.net",
   auth0: isProduction
     ? {
-        domain: "",
-        clientId: ""
+        domain: "sokontokoro-factory.auth0.com",
+        clientId: "WAOD4VnlKF6koFjtdi6sK2mIBKuCGkZK"
       }
     : {
-        domain: "sokontokoro-factory-dev.auth0.com",
-        clientId: "iJXXm5eUjZuGX0AOITjyWGPgtbpjZnjk"
+        domain: "sokontokoro-factory-develop.auth0.com",
+        clientId: "0Eq2eNT2Orybe2B24TvBKdsqnHQDYHJo"
       }
 };
