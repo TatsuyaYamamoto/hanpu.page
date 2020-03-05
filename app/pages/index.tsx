@@ -45,7 +45,7 @@ const AboutAppSection = () => {
   const logo = <Logo />;
   const book = <Icon>book</Icon>;
   const disk = <Icon>album</Icon>;
-  const now = useMemo(() => dateFormat(new Date(), "yyyy/mm/dd"), []);
+  const now = useMemo(() => dateFormat(new Date(), "yyyy/MM/dd"), []);
   const t28Link = <a href={`https://twitter.com/T28_tatsuya`}>@T28_tatsuya</a>;
 
   return (
@@ -69,7 +69,9 @@ const AboutAppSection = () => {
         </Typography>
         <Typography variant="h6">ファイル配信</Typography>
         <Typography variant="body1">
-          >> {now}時点では、{t28Link}のみです。
+          {`>> ${now}時点では誰でも管理ページを使用することが出来ますが、無保証(`}
+          {t28Link}
+          {`が使用する品質まで)です。`}
         </Typography>
       </Grid>
     </>
