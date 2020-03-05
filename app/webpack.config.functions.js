@@ -1,18 +1,20 @@
+const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 
 const plugins = [];
 const externals = [nodeExternals()];
+const production = process.env.NODE_ENV === "production";
 
 module.exports = {
   target: "node",
 
-  mode: "development",
+  mode: production ? "production" : "development",
 
   entry: "./app/index.functions.ts",
 
   output: {
     filename: "index.js",
-    path: __dirname + "/dist/functions",
+    path: path.resolve(__dirname, "../dist/functions"),
     libraryTarget: "this"
   },
 

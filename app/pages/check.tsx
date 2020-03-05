@@ -12,7 +12,7 @@ const CheckPage: NextPage = () => {
   return (
     <>
       <Root>
-        <AppBar />
+        <AppBar showTabs={false} />
         <DownloadCodeCheckCamera />
       </Root>
     </>

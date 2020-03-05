@@ -1,10 +1,12 @@
 import * as React from "react";
-const { useEffect } = React;
+const { useEffect, useMemo } = React;
 
 import { Paper } from "@material-ui/core";
 import { PaperProps } from "@material-ui/core/Paper";
 
 import styled from "styled-components";
+
+import { format as dateFormat } from "date-fns";
 
 import FormControl from "../molecules/ProductDetailFormControl";
 import FormInput from "../molecules/ProductDetailFormInput";
@@ -50,6 +52,11 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
     });
   }, [product]);
 
+  const createdDate = useMemo(
+    () => dateFormat(product.createdAt, "yyyy/MM/dd"),
+    [product]
+  );
+
   const onNameSubmitted = (value: string) => {
     return onUpdateFields({
       name: value as ProductName
@@ -74,18 +81,18 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
       />
 
       <FormControl
-        label={"Thumbnail"}
+        label={"サムネイル画像"}
         input={<ProductImageThumbnail src={iconUrl} onChange={onIconChanged} />}
       />
 
       <FormControl
-        label={"Name"}
+        label={"プロダクト名"}
         input={
           <FormInput defaultValue={product.name} onSubmit={onNameSubmitted} />
         }
       />
       <FormControl
-        label={"Description"}
+        label={"説明"}
         input={
           <FormInput
             defaultValue={product.description}
@@ -96,13 +103,8 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
       />
 
       <FormControl
-        label={"Created Date"}
-        input={
-          <FormInput
-            readonly={true}
-            defaultValue={product.createdAt.toDateString()}
-          />
-        }
+        label={"作成日"}
+        input={<FormInput readonly={true} defaultValue={createdDate} />}
       />
     </StyledPaper>
   );

@@ -16,6 +16,7 @@ export interface DownloadCodeSetDocument {
 }
 
 export class DownloadCodeSet implements DownloadCodeSetDocument {
+  // TODO: remove dependency of firestore instance.
   public static getColRef() {
     return firestore().collection(`downloadCodeSets`);
   }
@@ -24,25 +25,30 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
     return DownloadCodeSet.getColRef().doc(id);
   }
 
-  public static async getByProductRef(
-    ref: DocumentReference
-  ): Promise<DownloadCodeSet[]> {
-    const querySnap = await DownloadCodeSet.getColRef()
-      .where("productRef", "==", ref)
-      .get();
+  public static watchListByProductRef(
+    ref: DocumentReference,
+    callback: (downloadCodeSets: DownloadCodeSet[]) => void
+  ): () => void {
+    const query = DownloadCodeSet.getColRef().where("productRef", "==", ref);
 
-    return querySnap.docs.map(snap => {
-      const id = snap.id;
-      const data = snap.data() as DownloadCodeSetDocument;
+    return query.onSnapshot(querySnap => {
+      const downloadCodeSets = querySnap.docs.map(snap => {
+        const id = snap.id;
+        const data = snap.data({
+          serverTimestamps: "estimate"
+        }) as DownloadCodeSetDocument;
 
-      return new DownloadCodeSet(
-        id,
-        data.productRef,
-        data.codes,
-        data.description,
-        (data.createdAt as Timestamp).toDate(),
-        (data.expiredAt as Timestamp).toDate()
-      );
+        return new DownloadCodeSet(
+          id,
+          data.productRef,
+          data.codes,
+          data.description,
+          (data.createdAt as Timestamp).toDate(),
+          (data.expiredAt as Timestamp).toDate()
+        );
+      });
+
+      callback(downloadCodeSets);
     });
   }
 

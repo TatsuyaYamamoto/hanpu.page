@@ -1,30 +1,32 @@
 // tslint:disable:no-console
-import { https, config, region } from "firebase-functions";
-import { initializeApp, credential } from "firebase-admin";
+import { https, region } from "firebase-functions";
+import * as firebaseAdmin from "firebase-admin";
+
+// Initial Firebase App
+const firebaseApp = firebaseAdmin.initializeApp();
+
 import next from "next";
 
 import { backupFirestoreData } from "./utils/gcp";
 
-// Load Environment Variables on Functions
-const {
-  // text of serviceAccount.json
-  service_account
-} = config();
-
-const appOptions = !!service_account
-  ? {
-      ...JSON.parse(process.env.FIREBASE_CONFIG as string),
-      credential: credential.cert(service_account)
-    }
-  : {};
-
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
 
-// Initial Firebase App
-const firebaseApp = initializeApp(appOptions);
+// https://blog.katsubemakito.net/firebase/functions-environmentvariable
+const isUnderFirebaseFunction =
+  process.env.PWD && process.env.PWD.startsWith("/srv");
 
-const nextServer = next({ conf: { distDir: "next" } });
+const nextServer = next({
+  dir: isUnderFirebaseFunction
+    ? // default value
+      "."
+    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")が、nextの実装を読み込むルートパスがproject rootなのでエラーが発生する。
+      // local実行時のみ、ビルド済みnext dirの相対パスを教える。
+      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokontokoro/apps/dl-code_web_app/next' directory! Try building your app with 'next build' before starting the server.
+      "dist/functions",
+
+  conf: { distDir: "next" }
+});
 const handle = nextServer.getRequestHandler();
 
 export const nextApp = https.onRequest((req, res) => {
@@ -32,8 +34,10 @@ export const nextApp = https.onRequest((req, res) => {
   return nextServer.prepare().then(() => handle(req, res));
 });
 
-export const api = https.onRequest((_, response) => {
-  response.json({
+export const api = https.onRequest((_, res) => {
+  // TODO
+  // @ts-ignore
+  res.json({
     message: "api!"
   });
 });
@@ -103,10 +107,7 @@ export const scheduledFirestoreBackup = region("asia-northeast1")
     );
 
     try {
-      const result = await backupFirestoreData({
-        client_email: service_account.client_email,
-        private_key: service_account.private_key
-      });
+      const result = await backupFirestoreData();
       console.log("success to backup-export.", result);
     } catch (error) {
       console.error("fail to backup-export.", error);

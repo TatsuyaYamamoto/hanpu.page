@@ -8,12 +8,17 @@ import { useRouter } from "next/router";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 
+import { SnackbarProvider } from "notistack";
+
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
-import { initializeApp } from "firebase/app";
 
 import useGa from "../components/hooks/useGa";
+import { FirebaseContextProvider } from "../components/hooks/useFirebase";
+import { DlCodeUserContextProvider } from "../components/hooks/useDlCodeUser";
+import { Auth0Provider } from "../components/hooks/useAuth0";
+
 import theme from "../theme";
 import configs from "../configs";
 
@@ -65,9 +70,6 @@ const MyApp: React.FC<AppProps> = props => {
   );
 
   useEffect(() => {
-    // Firebase
-    initializeApp(configs.firebaseConfigs);
-
     // GA
     initGa();
     logPageView();
@@ -120,7 +122,22 @@ const MyApp: React.FC<AppProps> = props => {
       <GlobalStyle />
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
+        <Auth0Provider
+          auth0ClientOptions={{
+            domain: configs.auth0.domain,
+            client_id: configs.auth0.clientId
+          }}
+        >
+          <FirebaseContextProvider
+            initParams={{ options: configs.firebaseConfigs }}
+          >
+            <DlCodeUserContextProvider>
+              <SnackbarProvider maxSnack={3}>
+                <Component {...pageProps} />
+              </SnackbarProvider>
+            </DlCodeUserContextProvider>
+          </FirebaseContextProvider>
+        </Auth0Provider>
       </ThemeProvider>
     </>
   );

@@ -1,27 +1,21 @@
 import { default as React, useEffect } from "react";
 
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import AppBar from "../../../components/organisms/AppBar";
-import Footer from "../../../components/organisms/Footer";
-import ProductEditForm from "../../../components/organisms/ProductEditForm";
-import useAuth0 from "../../../components/hooks/useAuth0";
+import AppBar from "../../components/organisms/AppBar";
+import Footer from "../../components/organisms/Footer";
+import PublishUserProfile from "../../components/organisms/PublishUserProfile";
+import useAuth0 from "../../components/hooks/useAuth0";
 
-const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
+const PublishIndexPage: NextPage = () => {
   const {
     idToken,
     initialized: isAuth0Initialized,
     loginWithRedirect
   } = useAuth0();
-  const router = useRouter();
-
-  const onBack = () => {
-    router.back();
-  };
 
   useEffect(() => {
     if (!isAuth0Initialized) {
@@ -40,12 +34,14 @@ const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar showTabs={true} onBack={onBack} />
+          <AppBar showTabs={true} />
         </Grid>
 
         <Grid item={true}>
           <Container style={{ marginTop: 30, marginBottom: 30 }}>
-            <ProductEditForm productId={productId} />
+            <Grid container={true}>
+              <PublishUserProfile />
+            </Grid>
           </Container>
         </Grid>
 
@@ -57,12 +53,4 @@ const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
   );
 };
 
-ProductDetailPage.getInitialProps = ({ query }) => {
-  const productId = query.productId as string;
-
-  return {
-    productId
-  };
-};
-
-export default ProductDetailPage;
+export default PublishIndexPage;

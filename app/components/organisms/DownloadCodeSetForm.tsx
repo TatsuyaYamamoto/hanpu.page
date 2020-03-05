@@ -22,7 +22,7 @@ import {
 
 const DescriptionTextField = styled.div`
   white-space: pre-wrap;
-  width: 250px;
+  max-width: 250px;
 `;
 
 const PreviewComponentRender = (rowData: CodeData) => (
@@ -94,7 +94,7 @@ const TABLE_COLUMNS: TableColumn[] = [
     editable: "never"
   },
   {
-    title: "Description",
+    title: "説明",
     field: "description",
     render: PreviewComponentRender,
     editComponent: EditComponent

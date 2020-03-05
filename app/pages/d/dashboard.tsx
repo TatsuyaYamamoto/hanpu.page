@@ -37,7 +37,7 @@ const DetailPage: React.FC<DetailPageProps> = ({
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar onBack={onBack} />
+          <AppBar showTabs={false} onBack={onBack} />
         </Grid>
 
         <Grid item={true}>
@@ -84,7 +84,7 @@ const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar />
+          <AppBar showTabs={false} />
         </Grid>
 
         <Grid item={true}>

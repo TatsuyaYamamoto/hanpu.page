@@ -1,4 +1,5 @@
 import { firestore, storage, auth } from "firebase/app";
+type DocumentReference = firestore.DocumentReference;
 type Timestamp = firestore.Timestamp;
 type UpdateData = firestore.UpdateData;
 
@@ -70,12 +71,12 @@ export interface ProductDocument {
 }
 
 export class Product implements ProductDocument {
-  public static getColRef() {
-    return firestore().collection(`products`);
+  public static getColRef(firestoreInstance: firestore.Firestore) {
+    return firestoreInstance.collection(`products`);
   }
 
-  public static getDocRef(id: string) {
-    return Product.getColRef().doc(id);
+  public static getDocRef(id: string, firestoreInstance: firestore.Firestore) {
+    return Product.getColRef(firestoreInstance).doc(id);
   }
 
   public static getProductFileStorageRef(uid: string, productId: string) {
@@ -86,19 +87,19 @@ export class Product implements ProductDocument {
     return storage().ref(`users/${uid}/products/${productId}/images`);
   }
 
-  public static async getOwns(): Promise<Product[]> {
-    const owner = auth().currentUser;
-    if (!owner) {
-      // tslint:disable:no-console TODO
-      console.error("not logged-in");
-      return [];
-    }
+  public static watchOne(
+    productId: string,
+    firestoreInstance: firestore.Firestore,
+    callback: (product: Product | null) => void
+  ): () => void {
+    const query = Product.getColRef(firestoreInstance).doc(productId);
 
-    const ownProductsSnap = await Product.getColRef()
-      .where("ownerUid", "==", owner.uid)
-      .get();
+    return query.onSnapshot(querySnap => {
+      if (!querySnap.exists) {
+        callback(null);
+        return;
+      }
 
-    return ownProductsSnap.docs.map(docSnap => {
       const {
         name,
         iconStorageUrl,
@@ -106,22 +107,66 @@ export class Product implements ProductDocument {
         ownerUid,
         productFiles,
         createdAt
-      } = docSnap.data() as ProductDocument;
+      } = querySnap.data({ serverTimestamps: "estimate" }) as ProductDocument;
 
-      return new Product(
-        docSnap.id,
-        name,
-        iconStorageUrl,
-        description,
-        ownerUid,
-        productFiles,
-        (createdAt as Timestamp).toDate()
+      callback(
+        new Product(
+          querySnap.id,
+          name,
+          iconStorageUrl,
+          description,
+          ownerUid,
+          productFiles,
+          (createdAt as Timestamp).toDate(),
+          firestoreInstance
+        )
       );
     });
   }
 
-  public static async getById(id: string): Promise<Product | null> {
-    const snap = await Product.getColRef()
+  public static watchList(
+    uid: string,
+    firestoreInstance: firestore.Firestore,
+    callback: (products: Product[]) => void
+  ): () => void {
+    const query = Product.getColRef(firestoreInstance).where(
+      "ownerUid",
+      "==",
+      uid
+    );
+
+    return query.onSnapshot(querySnap => {
+      const products = querySnap.docs.map(docSnap => {
+        const {
+          name,
+          iconStorageUrl,
+          description,
+          ownerUid,
+          productFiles,
+          createdAt
+        } = docSnap.data({ serverTimestamps: "estimate" }) as ProductDocument;
+
+        return new Product(
+          docSnap.id,
+          name,
+          iconStorageUrl,
+          description,
+          ownerUid,
+          productFiles,
+          (createdAt as Timestamp).toDate(),
+          firestoreInstance
+        );
+      });
+
+      callback(products);
+    });
+  }
+
+  public static async getById(
+    id: string,
+    firestoreInstance: firestore.Firestore
+  ): Promise<Product | null> {
+    const snap = await Product.getColRef(firestoreInstance)
       .doc(id)
       .get();
 
@@ -144,14 +189,18 @@ export class Product implements ProductDocument {
       description,
       ownerUid,
       productFiles,
-      (createdAt as Timestamp).toDate()
+      (createdAt as Timestamp).toDate(),
+      firestoreInstance
     );
   }
 
-  public static async createNew(params: {
-    name: ProductName;
-    description: ProductDescription;
-  }): Promise<void> {
+  public static async createNew(
+    params: {
+      name: ProductName;
+      description: ProductDescription;
+    },
+    firestoreInstance: firestore.Firestore
+  ): Promise<DocumentReference | void> {
     const { name, description } = params;
 
     const owner = auth().currentUser;
@@ -168,7 +217,18 @@ export class Product implements ProductDocument {
       createdAt: firestore.FieldValue.serverTimestamp()
     };
 
-    await Product.getColRef().add(newProductDoc);
+    return await Product.getColRef(firestoreInstance).add(newProductDoc);
+  }
+
+  public static async getCount(
+    uid: string,
+    firestoreInstance: firestore.Firestore
+  ): Promise<number> {
+    const querySnap = await Product.getColRef(firestoreInstance)
+      .where("ownerUid", "==", uid)
+      .get();
+
+    return querySnap.size;
   }
 
   public constructor(
@@ -181,24 +241,25 @@ export class Product implements ProductDocument {
     readonly description: ProductDescription,
     readonly ownerUid: string,
     readonly productFiles: { [id: string]: ProductFile },
-    readonly createdAt: Date
+    readonly createdAt: Date,
+
+    // dependencies
+    readonly firestoreInstance: firestore.Firestore
   ) {}
 
   public get ref() {
-    return Product.getDocRef(this.id);
+    return Product.getDocRef(this.id, this.firestoreInstance);
+  }
+
+  public get productFileCount(): number {
+    return Object.keys(this.productFiles).length;
   }
 
   public addProductFile = (
+    uid: string,
     displayName: ProductFileDisplayName,
     file: File
   ): { task: storage.UploadTask; promise: Promise<void> } => {
-    const { currentUser } = auth();
-
-    if (!currentUser) {
-      throw new Error("unexpected error. logged-in user is null.");
-    }
-
-    const { uid } = currentUser;
     const originalFileName = file.name as ProductFileOriginalName;
     // @ts-ignore
     // TODO: handle file having no extension
@@ -221,10 +282,11 @@ export class Product implements ProductDocument {
           //
         },
         e => {
+          // TODO
+          // tslint:disable-next-line
           console.error(e);
         },
         async () => {
-          const docRef = Product.getDocRef(this.ref.id);
           const newProductFileId = Product.getAutoNewId();
           const currentProductFilesSize = Object.keys(this.productFiles).length;
 
@@ -243,7 +305,7 @@ export class Product implements ProductDocument {
               [newProductFileId]: newProductFile
             }
           };
-          await docRef.update(partialNewDoc);
+          await this.ref.update(partialNewDoc);
 
           resolve();
         }
@@ -257,7 +319,6 @@ export class Product implements ProductDocument {
   };
 
   public deleteProductFile = async (deleteTargetId: string) => {
-    const docRef = Product.getDocRef(this.ref.id);
     const newProductFileMap: ProductFileMap = {};
     Object.keys(this.productFiles)
       // filter
@@ -282,7 +343,7 @@ export class Product implements ProductDocument {
     const deleteDoc: Partial<ProductDocument> = {
       productFiles: newProductFileMap
     };
-    await docRef.update(deleteDoc);
+    await this.ref.update(deleteDoc);
 
     await this.deleteProductFileFromStorage(deleteTargetId);
 
@@ -293,7 +354,8 @@ export class Product implements ProductDocument {
       this.description,
       this.ownerUid,
       newProductFileMap,
-      this.createdAt
+      this.createdAt,
+      this.firestoreInstance
     );
   };
 
@@ -361,16 +423,17 @@ export class Product implements ProductDocument {
           //
         },
         e => {
+          // TODO
+          // tslint:disable-next-line
           console.error(e);
         },
         async () => {
           unsubscribe();
 
-          const docRef = Product.getDocRef(this.ref.id);
           const partialNewDoc: Partial<ProductDocument> = {
             iconStorageUrl: storageRef.toString()
           };
-          await docRef.update(partialNewDoc);
+          await this.ref.update(partialNewDoc);
 
           if (oldIconRef) {
             // it no longer be referred.
