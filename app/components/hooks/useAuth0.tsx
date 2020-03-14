@@ -71,7 +71,7 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
         const result = await auth0Client.handleRedirectCallback();
         log("this access is redirect. handle redirect callback.", result);
 
-        router.push(
+        router.replace(
           result.appState && result.appState.targetUrl
             ? result.appState.targetUrl
             : window.location.pathname
@@ -92,7 +92,11 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
 
       assignContextValue({ initialized: true });
       log(`client is initialized.`);
-    })();
+    })().catch(e => {
+      // TODO
+      // tslint:disable-next-line
+      console.error("fail initializing auth0", e);
+    });
   }, []);
 
   return (
