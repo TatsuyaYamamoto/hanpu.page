@@ -11,13 +11,14 @@ import Footer from "../../../components/organisms/Footer";
 import ProductEditForm from "../../../components/organisms/ProductEditForm";
 import useAuth0 from "../../../components/hooks/useAuth0";
 
-const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
+const ProductEditPage: NextPage = () => {
   const {
     idToken,
     initialized: isAuth0Initialized,
     loginWithRedirect
   } = useAuth0();
   const router = useRouter();
+  const productId = router.query.id as string;
 
   const onBack = () => {
     router.back();
@@ -57,12 +58,4 @@ const ProductDetailPage: NextPage<{ productId: string }> = ({ productId }) => {
   );
 };
 
-ProductDetailPage.getInitialProps = ({ query }) => {
-  const productId = query.productId as string;
-
-  return {
-    productId
-  };
-};
-
-export default ProductDetailPage;
+export default ProductEditPage;

@@ -11,6 +11,7 @@ import ProductListItem, {
 } from "../organisms/ProductListItem";
 
 import { Product } from "../../domains/Product";
+import useProgressBar from "../hooks/useProgressBar";
 
 const Root = styled.div``;
 
@@ -32,6 +33,7 @@ const ProductList: FC<ProductListProps> = props => {
   const router = useRouter();
   const { app: firebaseApp } = useFirebase();
   const { user: dlCodeUser } = useDlCodeUser();
+  const { start: startProgress, stop: stopProgress } = useProgressBar();
 
   useEffect(() => {
     if (!firebaseApp) {
@@ -42,11 +44,14 @@ const ProductList: FC<ProductListProps> = props => {
       return;
     }
 
+    startProgress();
+
     const unsubscribe = Product.watchList(
       dlCodeUser.uid,
       firebaseApp.firestore(),
       owns => {
         setProducts(owns);
+        stopProgress();
       }
     );
 
@@ -56,7 +61,12 @@ const ProductList: FC<ProductListProps> = props => {
   }, [firebaseApp, dlCodeUser]);
 
   const onSelected = (id: string) => () => {
-    router.push(`/publish/products/${id}`);
+    router.push({
+      pathname: `/publish/product/edit`,
+      query: {
+        id
+      }
+    });
   };
 
   const [thumbnailImageUrls, setThumbnailImageUrls] = useState<{

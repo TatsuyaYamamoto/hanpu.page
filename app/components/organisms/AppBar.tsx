@@ -48,7 +48,7 @@ const AppBar: React.FC<AppBarProps> = props => {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [tabValue, setTabValue] = React.useState<TabValue>(() => {
-    if (router.pathname.startsWith(`/publish/products`)) {
+    if (router.pathname.startsWith(`/publish/product`)) {
       return "product";
     }
     return "home";
@@ -83,7 +83,7 @@ const AppBar: React.FC<AppBarProps> = props => {
         router.push(`/publish`);
         break;
       case "product":
-        router.push(`/publish/products`);
+        router.push(`/publish/product/list`);
         break;
     }
   };

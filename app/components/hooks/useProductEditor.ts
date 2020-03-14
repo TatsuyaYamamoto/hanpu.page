@@ -12,11 +12,13 @@ import {
   ProductName
 } from "../../domains/Product";
 import useDlCodeUser from "./useDlCodeUser";
+import useProgressBar from "./useProgressBar";
 
 const useProductEditor = (productId?: string) => {
   const { app: firebaseApp } = useFirebase();
   const { user: dlCodeUser } = useDlCodeUser();
   const [product, setProduct] = useState<Product | null>(null);
+  const { start: startProgress, stop: stopProgress } = useProgressBar();
 
   /**
    * @param nullableProduct
@@ -35,22 +37,28 @@ const useProductEditor = (productId?: string) => {
       return;
     }
 
+    if (!dlCodeUser) {
+      return;
+    }
+
     if (!productId) {
       return;
     }
 
+    startProgress();
     const unsubscribe = Product.watchOne(
       productId,
       firebaseApp.firestore(),
       one => {
         setProduct(one);
+        stopProgress();
       }
     );
 
     return () => {
       unsubscribe();
     };
-  }, [firebaseApp, productId]);
+  }, [firebaseApp, dlCodeUser, productId]);
 
   const addProduct = useCallback(
     async (
