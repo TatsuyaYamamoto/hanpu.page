@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import {
   default as MuiAppBar,
@@ -33,6 +34,16 @@ const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   }
 `;
 
+const LogoLink = styled(({ className }) => (
+  <Link href={`/`}>
+    <Typography variant="h6" color="inherit" className={className}>
+      <Logo />
+    </Typography>
+  </Link>
+))`
+  cursor: pointer;
+`;
+
 type TabValue = "home" | "product";
 
 interface AppBarProps {
@@ -60,11 +71,6 @@ const AppBar: React.FC<AppBarProps> = props => {
     <IconButton color="inherit" onClick={onBack}>
       <Icon>arrow_back</Icon>
     </IconButton>
-  );
-  const logo = (
-    <Typography variant="h6" color="inherit">
-      <Logo />
-    </Typography>
   );
 
   const handleMenu = (event?: any) => {
@@ -130,7 +136,7 @@ const AppBar: React.FC<AppBarProps> = props => {
     <>
       <StyledMuiAppBar position="static">
         <Toolbar>
-          {onBack ? back : logo}
+          {onBack ? back : <LogoLink />}
           {showTabs && (
             <>
               <FlexSpace />
