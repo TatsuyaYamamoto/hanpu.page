@@ -1,19 +1,7 @@
-import * as React from "react";
-const { useState } = React;
-
+import { default as React } from "react";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
-
-import LinkButton from "../../components/atoms/LinkButton";
-import DownloadCodeInputCard from "../../components/organisms/DownloadCodeInputCard";
-import DownloadCodeErrorDialog from "../../components/organisms/DownloadCodeErrorDialog";
-import AppBar from "../../components/organisms/AppBar";
-import Footer from "../../components/organisms/Footer";
-
-import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
+import { stringify } from "querystring";
 
 /**
  * QueryParameters:
@@ -23,79 +11,25 @@ import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerif
  * @param props
  * @constructor
  */
-const DownloadPage: NextPage<{ code: string }> = props => {
-  const router = useRouter();
-  const [downloadCode, setDownloadCode] = useState(props.code);
-  const [openNotFoundDialog, setOpenNotFoundDialog] = useState(false);
 
-  const { verifyDownloadCode } = useDownloadCodeVerifier();
-
-  const onChangeDownloadCodeValue = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setDownloadCode(e.target.value);
-  };
-
-  const submit = () => {
-    verifyDownloadCode(downloadCode)
-      .then(() => {
-        router.push(`/d/dashboard`);
-      })
-      .catch(_ => {
-        handleNotFoundDialog();
-      });
-  };
-
-  const handleNotFoundDialog = () => {
-    setOpenNotFoundDialog(!openNotFoundDialog);
-  };
-
-  return (
-    <>
-      <>
-        <Grid
-          container={true}
-          direction="column"
-          justify="space-between"
-          style={{ height: "100vh" }}
-        >
-          <AppBar showTabs={false} />
-
-          <Container>
-            <Grid container={true} justify="center">
-              <DownloadCodeInputCard
-                value={downloadCode}
-                onChange={onChangeDownloadCodeValue}
-                onSubmit={submit}
-              />
-            </Grid>
-            <Grid container={true} justify="center">
-              <LinkButton href={`/d/dashboard`}>
-                過去にコードを入力したコンテンツを見る
-              </LinkButton>
-            </Grid>
-          </Container>
-
-          <Footer />
-        </Grid>
-      </>
-      <DownloadCodeErrorDialog
-        message={
-          // TODO: handle all errors
-          "ダウンロードコードが不正です。入力した文字に間違いがないか確認してください。"
-        }
-        open={openNotFoundDialog}
-        handleClose={handleNotFoundDialog}
-      />
-    </>
-  );
+const DPage: NextPage = () => {
+  return <></>;
 };
 
-DownloadPage.getInitialProps = ({ query }) => {
-  const code = (query.c as string) || "";
-  return {
-    code
-  };
+DPage.getInitialProps = context => {
+  const { res, query } = context;
+  const { c, ...otherQueries } = query;
+  const code = Array.isArray(c) ? c[0] : c || "";
+  const queryString = stringify({ code, ...otherQueries });
+
+  if (res) {
+    res.writeHead(302, {
+      Location: `/download/verify?${queryString}`
+    });
+    res.end();
+  }
+
+  return {};
 };
 
-export default DownloadPage;
+export default DPage;

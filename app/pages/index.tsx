@@ -29,7 +29,7 @@ const Hero = () => {
         <Logo />
       </Typography>
 
-      <LinkButton href="/d">
+      <LinkButton href="/download/verify">
         <LeftIcon>cloud_download</LeftIcon>
         <span>ダウンロードページへ</span>
       </LinkButton>
