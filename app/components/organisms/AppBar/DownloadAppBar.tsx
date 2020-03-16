@@ -1,4 +1,4 @@
-import { default as React } from "react";
+import { default as React, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -7,19 +7,13 @@ import {
   AppBarProps as MuiAppBarProps
 } from "@material-ui/core/AppBar";
 import {
-  Avatar,
-  Menu,
-  MenuItem,
   Toolbar,
   Typography,
   Icon,
   IconButton,
-  ListItemIcon,
-  ListItemText,
   Tabs,
   Tab
 } from "@material-ui/core";
-import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 import styled from "styled-components";
 
@@ -27,6 +21,7 @@ import FlexSpace from "../../atoms/FlexSpace";
 import Logo from "../../atoms/Logo";
 import useDlCodeUser from "../../hooks/useDlCodeUser";
 import useAuth0 from "../../hooks/useAuth0";
+import UserIconMenu from "./UserIconMenu";
 
 const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   && {
@@ -58,15 +53,12 @@ const AppBar: React.FC<AppBarProps> = props => {
   const { user } = useDlCodeUser();
   const router = useRouter();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [tabValue, setTabValue] = React.useState<TabValue>(() => {
+  const [tabValue, setTabValue] = useState<TabValue>(() => {
     if (router.pathname.startsWith(`/download/list`)) {
       return "list";
     }
     return "verify";
   });
-
-  const open = Boolean(anchorEl);
 
   const back = (
     <IconButton color="inherit" onClick={onBack}>
@@ -74,12 +66,7 @@ const AppBar: React.FC<AppBarProps> = props => {
     </IconButton>
   );
 
-  const handleMenu = (event?: any) => {
-    setAnchorEl(open ? null : event.currentTarget);
-  };
-
   const onClickLogout = () => {
-    handleMenu();
     logout();
   };
 
@@ -101,34 +88,9 @@ const AppBar: React.FC<AppBarProps> = props => {
       <Tab label="リスト" value={"list"} />
     </Tabs>
   );
+
   const userIcon = user ? (
-    <>
-      <IconButton onClick={handleMenu}>
-        <Avatar src={user && user.iconUrl} />
-      </IconButton>
-      <Menu
-        keepMounted={true}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMenu}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center"
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center"
-        }}
-      >
-        <MenuItem onClick={onClickLogout}>
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary={`ログアウト`} />
-        </MenuItem>
-      </Menu>
-    </>
+    <UserIconMenu iconUrl={user.iconUrl} onLogoutClicked={onClickLogout} />
   ) : (
     <></>
   );

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { default as React, FC, useState, ChangeEvent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -7,28 +7,24 @@ import {
   AppBarProps as MuiAppBarProps
 } from "@material-ui/core/AppBar";
 import {
-  Avatar,
-  Menu,
-  MenuItem,
   Toolbar,
   Typography,
   Icon,
   IconButton,
-  ListItemIcon,
-  ListItemText,
   Tabs,
   Tab
 } from "@material-ui/core";
-import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 import styled from "styled-components";
+
+import UserIconMenu from "./UserIconMenu";
 
 import FlexSpace from "../../atoms/FlexSpace";
 import Logo from "../../atoms/Logo";
 import useDlCodeUser from "../../hooks/useDlCodeUser";
 import useAuth0 from "../../hooks/useAuth0";
 
-const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
+const StyledMuiAppBar = styled(MuiAppBar as FC<MuiAppBarProps>)`
   && {
     background-color: transparent;
     color: grey;
@@ -52,21 +48,18 @@ interface AppBarProps {
   onBack?: () => void;
 }
 
-const AppBar: React.FC<AppBarProps> = props => {
+const AppBar: FC<AppBarProps> = props => {
   const { onBack } = props;
   const { logout } = useAuth0();
   const { user } = useDlCodeUser();
   const router = useRouter();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [tabValue, setTabValue] = React.useState<TabValue>(() => {
+  const [tabValue, setTabValue] = useState<TabValue>(() => {
     if (router.pathname.startsWith(`/publish/product`)) {
       return "product";
     }
     return "home";
   });
-
-  const open = Boolean(anchorEl);
 
   const back = (
     <IconButton color="inherit" onClick={onBack}>
@@ -74,16 +67,11 @@ const AppBar: React.FC<AppBarProps> = props => {
     </IconButton>
   );
 
-  const handleMenu = (event?: any) => {
-    setAnchorEl(open ? null : event.currentTarget);
-  };
-
   const onClickLogout = () => {
-    handleMenu();
     logout();
   };
 
-  const onTabMenuChanged = (_: React.ChangeEvent<{}>, newValue: TabValue) => {
+  const onTabMenuChanged = (_: ChangeEvent<{}>, newValue: TabValue) => {
     setTabValue(newValue);
     switch (newValue) {
       case "home":
@@ -101,34 +89,9 @@ const AppBar: React.FC<AppBarProps> = props => {
       <Tab label="プロダクト" value={"product"} />
     </Tabs>
   );
+
   const userIcon = user ? (
-    <>
-      <IconButton onClick={handleMenu}>
-        <Avatar src={user && user.iconUrl} />
-      </IconButton>
-      <Menu
-        keepMounted={true}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMenu}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center"
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center"
-        }}
-      >
-        <MenuItem onClick={onClickLogout}>
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary={`ログアウト`} />
-        </MenuItem>
-      </Menu>
-    </>
+    <UserIconMenu iconUrl={user.iconUrl} onLogoutClicked={onClickLogout} />
   ) : (
     <></>
   );
