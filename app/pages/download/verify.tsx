@@ -9,7 +9,7 @@ import Container from "@material-ui/core/Container";
 import LinkButton from "../../components/atoms/LinkButton";
 import DownloadCodeInputCard from "../../components/organisms/DownloadCodeInputCard";
 import DownloadCodeErrorDialog from "../../components/organisms/DownloadCodeErrorDialog";
-import AppBar from "../../components/organisms/AppBar";
+import AppBar from "../../components/organisms/AppBar/DownloadAppBar";
 import Footer from "../../components/organisms/Footer";
 
 import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
@@ -44,7 +44,7 @@ const VerifyPage: NextPage = () => {
   const submit = () => {
     verifyDownloadCode(downloadCode)
       .then(() => {
-        router.push(`/download/dashboard`);
+        return router.push(`/download/list`);
       })
       .catch(_ => {
         handleNotFoundDialog();
@@ -64,7 +64,7 @@ const VerifyPage: NextPage = () => {
           justify="space-between"
           style={{ height: "100vh" }}
         >
-          <AppBar showTabs={false} />
+          <AppBar />
 
           <Container>
             <Grid container={true} justify="center">
@@ -75,7 +75,7 @@ const VerifyPage: NextPage = () => {
               />
             </Grid>
             <Grid container={true} justify="center">
-              <LinkButton href={`/d/dashboard`}>
+              <LinkButton href={`/download/list`}>
                 過去にコードを入力したコンテンツを見る
               </LinkButton>
             </Grid>

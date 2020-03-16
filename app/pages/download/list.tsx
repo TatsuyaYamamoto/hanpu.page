@@ -5,7 +5,7 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
-import AppBar from "../../components/organisms/AppBar";
+import AppBar from "../../components/organisms/AppBar/DownloadAppBar";
 import Footer from "../../components/organisms/Footer";
 import ImpressionForm from "../../components/organisms/ImpressionForm";
 import ProductDetail from "../../components/organisms/ProductDetail";
@@ -37,7 +37,7 @@ const DetailPage: React.FC<DetailPageProps> = ({
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar showTabs={false} onBack={onBack} />
+          <AppBar onBack={onBack} />
         </Grid>
 
         <Grid item={true}>
@@ -84,7 +84,7 @@ const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar showTabs={false} />
+          <AppBar />
         </Grid>
 
         <Grid item={true}>

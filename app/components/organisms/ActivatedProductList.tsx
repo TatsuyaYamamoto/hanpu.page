@@ -95,7 +95,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
 現在お使いのブラウザからコンテンツをダウンロードするためには、
 ダウンロードコードを再入力する必要があります。`}
           </EmptyInfo>
-          <LinkButton href="/d" variant="contained">
+          <LinkButton href="/download/verify" variant="contained">
             <span>ダウンロードコード入力ページへ</span>
           </LinkButton>
         </Grid>
