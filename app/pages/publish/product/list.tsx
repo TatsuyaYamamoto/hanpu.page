@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 
 import useAuth0 from "../../../components/hooks/useAuth0";
 
-import AppBar from "../../../components/organisms/AppBar";
+import AppBar from "../../../components/organisms/AppBar/PublishAppBar";
 import Footer from "../../../components/organisms/Footer";
 import ProductList from "../../../components/organisms/ProductList";
 import ProductAddDialog from "../../../components/organisms/ProductAddDialog";
@@ -47,7 +47,7 @@ const ProductListPage: NextPage = () => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar showTabs={true} />
+          <AppBar />
         </Grid>
 
         <Grid item={true}>

@@ -6,25 +6,27 @@ import {
   default as MuiAppBar,
   AppBarProps as MuiAppBarProps
 } from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Icon from "@material-ui/core/Icon";
-import Avatar from "@material-ui/core/Avatar";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import {
+  Avatar,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+  Icon,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Tabs,
+  Tab
+} from "@material-ui/core";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 import styled from "styled-components";
 
-import FlexSpace from "../atoms/FlexSpace";
-import Logo from "../atoms/Logo";
-import useDlCodeUser from "../hooks/useDlCodeUser";
-import useAuth0 from "../hooks/useAuth0";
+import FlexSpace from "../../atoms/FlexSpace";
+import Logo from "../../atoms/Logo";
+import useDlCodeUser from "../../hooks/useDlCodeUser";
+import useAuth0 from "../../hooks/useAuth0";
 
 const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   && {
@@ -47,12 +49,11 @@ const LogoLink = styled(({ className }) => (
 type TabValue = "home" | "product";
 
 interface AppBarProps {
-  showTabs: boolean;
   onBack?: () => void;
 }
 
 const AppBar: React.FC<AppBarProps> = props => {
-  const { showTabs, onBack } = props;
+  const { onBack } = props;
   const { logout } = useAuth0();
   const { user } = useDlCodeUser();
   const router = useRouter();
@@ -137,13 +138,11 @@ const AppBar: React.FC<AppBarProps> = props => {
       <StyledMuiAppBar position="static">
         <Toolbar>
           {onBack ? back : <LogoLink />}
-          {showTabs && (
-            <>
-              <FlexSpace />
-              {menuTabs}
-              {userIcon}
-            </>
-          )}
+          <>
+            <FlexSpace />
+            {menuTabs}
+            {userIcon}
+          </>
         </Toolbar>
       </StyledMuiAppBar>
     </>

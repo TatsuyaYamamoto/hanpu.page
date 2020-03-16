@@ -5,7 +5,7 @@ import { NextPage } from "next";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-import AppBar from "../../components/organisms/AppBar";
+import AppBar from "../../components/organisms/AppBar/PublishAppBar";
 import Footer from "../../components/organisms/Footer";
 import PublishUserProfile from "../../components/organisms/PublishUserProfile";
 import useAuth0 from "../../components/hooks/useAuth0";
@@ -34,7 +34,7 @@ const PublishIndexPage: NextPage = () => {
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
-          <AppBar showTabs={true} />
+          <AppBar />
         </Grid>
 
         <Grid item={true}>
