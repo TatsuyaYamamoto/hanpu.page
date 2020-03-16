@@ -112,7 +112,12 @@ const useAuth0 = () => {
   const loginWithRedirect = useCallback(
     async (options: RedirectLoginOptions = {}) => {
       if (auth0Client) {
-        await auth0Client.loginWithRedirect(options);
+        const { origin, href } = location;
+
+        await auth0Client.loginWithRedirect({
+          ...options,
+          redirect_uri: `${origin}/callback?to=${href}`
+        });
       }
     },
     [auth0Client]

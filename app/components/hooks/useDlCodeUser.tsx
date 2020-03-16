@@ -117,6 +117,11 @@ export class DlCodeUser {
   }
 }
 
+const log = (message?: any, ...optionalParams: any[]): void => {
+  // tslint:disable-next-line
+  console.log(`[useDlCodeUser] ${message}`, ...optionalParams);
+};
+
 interface IDlCodeUserContext {
   user?: DlCodeUser;
   sessionState: SessionState;
@@ -143,7 +148,7 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
     }
 
     if (!auth0User) {
-      // currently, user is not logged-in as auth0 user.
+      log("user is not logged-in as auth0 user.");
       setContextValue(prev => ({
         ...prev,
         sessionState: "loggedOut",
@@ -158,12 +163,17 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
       .onSnapshot(snap => {
         if (snap.exists) {
           const dlCodeUserDoc = snap.data() as DlCodeUserDocument;
+          const user = new DlCodeUser(dlCodeUserDoc, auth0User);
+
+          log(`user is logged-in as auth0 user. uid: ${uid}`);
 
           setContextValue(prev => ({
             ...prev,
             sessionState: "loggedIn",
-            user: new DlCodeUser(dlCodeUserDoc, auth0User)
+            user
           }));
+        } else {
+          throw new Error(`unexpected error. no user is on db. uid: ${uid} `);
         }
       });
 

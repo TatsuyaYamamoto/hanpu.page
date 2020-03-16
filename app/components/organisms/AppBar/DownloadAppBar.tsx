@@ -12,7 +12,8 @@ import {
   Icon,
   IconButton,
   Tabs,
-  Tab
+  Tab,
+  Button
 } from "@material-ui/core";
 
 import styled from "styled-components";
@@ -49,8 +50,8 @@ interface AppBarProps {
 
 const AppBar: React.FC<AppBarProps> = props => {
   const { onBack } = props;
-  const { logout } = useAuth0();
-  const { user } = useDlCodeUser();
+  const { loginWithRedirect, logout } = useAuth0();
+  const { user, sessionState } = useDlCodeUser();
   const router = useRouter();
 
   const [tabValue, setTabValue] = useState<TabValue>(() => {
@@ -65,6 +66,10 @@ const AppBar: React.FC<AppBarProps> = props => {
       <Icon>arrow_back</Icon>
     </IconButton>
   );
+
+  const onClickLogin = () => {
+    return loginWithRedirect();
+  };
 
   const onClickLogout = () => {
     logout();
@@ -89,11 +94,21 @@ const AppBar: React.FC<AppBarProps> = props => {
     </Tabs>
   );
 
-  const userIcon = user ? (
-    <UserIconMenu iconUrl={user.iconUrl} onLogoutClicked={onClickLogout} />
-  ) : (
-    <></>
-  );
+  const userIcon =
+    sessionState === "processing" ? (
+      <></>
+    ) : user ? (
+      <UserIconMenu iconUrl={user.iconUrl} onLogoutClicked={onClickLogout} />
+    ) : (
+      <Button
+        variant="contained"
+        color="primary"
+        disableElevation={true}
+        onClick={onClickLogin}
+      >
+        ログイン
+      </Button>
+    );
 
   return (
     <>

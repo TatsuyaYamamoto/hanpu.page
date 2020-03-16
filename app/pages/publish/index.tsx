@@ -23,10 +23,7 @@ const PublishIndexPage: NextPage = () => {
     }
 
     if (!idToken) {
-      const { origin, href } = location;
-      loginWithRedirect({
-        redirect_uri: `${origin}/callback?to=${href}`
-      });
+      loginWithRedirect();
     }
   }, [idToken, isAuth0Initialized, loginWithRedirect]);
 
