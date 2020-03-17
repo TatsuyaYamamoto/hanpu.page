@@ -10,6 +10,13 @@
   "hosting": {
     "public": "public",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "redirects": [
+      {
+        "source": "/d/",
+        "destination": "/download/verify",
+        "type": 302
+      }
+    ],
     "rewrites": [
       {
         "source": "/api/**",
