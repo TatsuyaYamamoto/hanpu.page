@@ -1,13 +1,13 @@
-import * as React from "react";
-const { useEffect, useCallback } = React;
+import { default as React, useEffect, useCallback } from "react";
 
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 
+import NProgress from "nprogress";
 import { SnackbarProvider } from "notistack";
 
 import "firebase/auth";
@@ -22,6 +22,8 @@ import { Auth0Provider } from "../components/hooks/useAuth0";
 import theme from "../theme";
 import configs from "../configs";
 
+NProgress.configure({ showSpinner: true });
+
 const GlobalStyle = createGlobalStyle`
 @font-face{
   font-family: PixelMplus10 Regular;
@@ -33,8 +35,7 @@ body {
 `;
 
 const MyApp: React.FC<AppProps> = props => {
-  const { Component, pageProps } = props;
-  const router = useRouter();
+  const { Component, pageProps, router } = props;
   const { init: initGa, logPageView, logError } = useGa();
 
   const requestErrorDetailContact = useCallback(
@@ -84,6 +85,11 @@ const MyApp: React.FC<AppProps> = props => {
     window.addEventListener("unhandledrejection", e => {
       requestErrorDetailContact(e.reason);
     });
+
+    // next router
+    Router.events.on("routeChangeStart", NProgress.start);
+    Router.events.on("routeChangeComplete", NProgress.done);
+    Router.events.on("routeChangeError", NProgress.done);
   }, []);
 
   return (
@@ -117,6 +123,12 @@ const MyApp: React.FC<AppProps> = props => {
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
+
+        {/* TODO remove cdn*/}
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/nprogress@0.2.0/nprogress.css"
         />
       </Head>
       <GlobalStyle />
