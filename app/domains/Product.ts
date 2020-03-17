@@ -231,6 +231,8 @@ export class Product implements ProductDocument {
     return querySnap.size;
   }
 
+  private cachedIconUrl: string | null = null;
+
   public constructor(
     // metadata
     readonly id: string,
@@ -379,9 +381,15 @@ export class Product implements ProductDocument {
       return null;
     }
 
-    return await storage()
+    if (this.cachedIconUrl) {
+      return this.cachedIconUrl;
+    }
+
+    this.cachedIconUrl = await storage()
       .refFromURL(this.iconStorageUrl)
       .getDownloadURL();
+
+    return this.cachedIconUrl;
   }
 
   public uploadIconToStorage(

@@ -63,7 +63,6 @@ const ProductDetailContent: FC<DetailPageProps> = ({
   );
 };
 
-// TODO: cache and reuse product thumbnail image.
 const DownloadProductListPage: NextPage = () => {
   const { actives } = useDownloadCodeVerifier();
   const [showingProductId, setShowingProductId] = useState<string | null>(null);
