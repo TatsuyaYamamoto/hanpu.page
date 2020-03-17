@@ -1,8 +1,8 @@
-import * as React from "react";
-const { useState, useEffect, useMemo } = React;
+import { default as React, FC, useState, useEffect, useMemo } from "react";
 
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
+import { NextPage } from "next";
+
+import { Container, Grid, CircularProgress } from "@material-ui/core";
 
 import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
 import AppBar from "../../components/organisms/AppBar/DownloadAppBar";
@@ -13,17 +13,16 @@ import ProductFileDownloaderTable from "../../components/organisms/ProductFileDo
 import ActivatedProductList from "../../components/organisms/ActivatedProductList";
 
 import { Product } from "../../domains/Product";
+import useProgressBar from "../../components/hooks/useProgressBar";
 
 interface DetailPageProps {
   product: Product;
   downloadCodeExpiredAt: Date;
-  onBack: () => void;
 }
 
-const DetailPage: React.FC<DetailPageProps> = ({
+const ProductDetailContent: React.FC<DetailPageProps> = ({
   product,
-  downloadCodeExpiredAt,
-  onBack
+  downloadCodeExpiredAt
 }) => {
   const [iconUrl, setIconUrl] = useState("");
 
@@ -34,6 +33,82 @@ const DetailPage: React.FC<DetailPageProps> = ({
   }, []);
 
   return (
+    <Grid container={true} direction={"column"} spacing={5}>
+      <Grid item={true}>
+        <ProductDetail
+          name={product.name}
+          description={product.description}
+          iconUrl={iconUrl}
+          downloadCodeExpiredAt={downloadCodeExpiredAt}
+        />
+      </Grid>
+
+      <Grid item={true}>
+        <ProductFileDownloaderTable
+          files={product.productFiles}
+          productId={product.id}
+        />
+      </Grid>
+
+      <Grid item={true}>
+        <ImpressionForm productId={product.id} />
+      </Grid>
+    </Grid>
+  );
+};
+
+// TODO: cache and reuse product thumbnail image.
+const DownloadProductListPage: NextPage = () => {
+  const { actives } = useDownloadCodeVerifier();
+  const [showingProductId, setShowingProductId] = useState<string | null>(null);
+
+  const onBack = useMemo(() => {
+    if (!showingProductId) {
+      return;
+    }
+
+    return () => {
+      setShowingProductId(null);
+    };
+  }, [showingProductId]);
+
+  const onProductSelected = (selectedId: string) => {
+    setShowingProductId(selectedId);
+  };
+
+  const main = useMemo(() => {
+    if (actives === "processing") {
+      return <></>;
+    }
+
+    if (!showingProductId) {
+      return (
+        <ActivatedProductList
+          products={actives.map(a => a.product)}
+          onPanelClicked={onProductSelected}
+        />
+      );
+    }
+
+    const showingActiveProduct = actives.find(
+      ({ product }) => product.id === showingProductId
+    );
+
+    if (!showingActiveProduct) {
+      return;
+    }
+
+    const { product: showingProduct, expiredAt } = showingActiveProduct;
+
+    return (
+      <ProductDetailContent
+        product={showingProduct}
+        downloadCodeExpiredAt={expiredAt}
+      />
+    );
+  }, [actives, showingProductId]);
+
+  return (
     <>
       <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
         <Grid item={true}>
@@ -42,27 +117,7 @@ const DetailPage: React.FC<DetailPageProps> = ({
 
         <Grid item={true}>
           <Container style={{ marginTop: 30, marginBottom: 30 }}>
-            <Grid container={true} direction={"column"} spacing={5}>
-              <Grid item={true}>
-                <ProductDetail
-                  name={product.name}
-                  description={product.description}
-                  iconUrl={iconUrl}
-                  downloadCodeExpiredAt={downloadCodeExpiredAt}
-                />
-              </Grid>
-
-              <Grid item={true}>
-                <ProductFileDownloaderTable
-                  files={product.productFiles}
-                  productId={product.id}
-                />
-              </Grid>
-
-              <Grid item={true}>
-                <ImpressionForm productId={product.id} />
-              </Grid>
-            </Grid>
+            {main}
           </Container>
         </Grid>
 
@@ -74,76 +129,4 @@ const DetailPage: React.FC<DetailPageProps> = ({
   );
 };
 
-interface PanelPageProps {
-  products: Product[];
-  onPanelClicked: (selectedId: string) => void;
-}
-
-const PanelPage: React.FC<PanelPageProps> = ({ products, onPanelClicked }) => {
-  return (
-    <>
-      <Grid container={true} direction="column" style={{ minHeight: "100vh" }}>
-        <Grid item={true}>
-          <AppBar />
-        </Grid>
-
-        <Grid item={true}>
-          <Container style={{ marginTop: 30, marginBottom: 30 }}>
-            <ActivatedProductList
-              products={products}
-              onPanelClicked={onPanelClicked}
-            />
-          </Container>
-        </Grid>
-
-        <Grid item={true} style={{ marginTop: "auto" }}>
-          <Footer />
-        </Grid>
-      </Grid>
-    </>
-  );
-};
-
-// TODO: cache and reuse product thumbnail image.
-const DownloadDashboardPage: React.FC = () => {
-  const { actives } = useDownloadCodeVerifier();
-  const [selected, setSelected] = useState<{
-    product: Product;
-    expiredAt: Date;
-  } | null>(null);
-
-  const onProductSelected = (selectedId: string) => {
-    const activeProduct = actives.find(
-      ({ product }) => product.id === selectedId
-    );
-
-    if (activeProduct) {
-      setSelected({
-        product: activeProduct.product,
-        expiredAt: activeProduct.expiredAt
-      });
-    }
-  };
-
-  const products = useMemo(() => {
-    return actives.map(a => a.product);
-  }, [actives]);
-
-  const showList = () => {
-    setSelected(null);
-  };
-
-  if (selected) {
-    return (
-      <DetailPage
-        product={selected.product}
-        downloadCodeExpiredAt={selected.expiredAt}
-        onBack={showList}
-      />
-    );
-  }
-
-  return <PanelPage products={products} onPanelClicked={onProductSelected} />;
-};
-
-export default DownloadDashboardPage;
+export default DownloadProductListPage;

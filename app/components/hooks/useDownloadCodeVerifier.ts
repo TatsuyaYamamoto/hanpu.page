@@ -42,7 +42,9 @@ interface ActiveProduct {
 
 const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
   const { okAudit, errorAudit } = useAuditLogger();
-  const [actives, setActives] = useState<ActiveProduct[]>([]);
+  const [actives, setActives] = useState<ActiveProduct[] | "processing">(
+    "processing"
+  );
   const { app: firebaseApp } = useFirebase();
 
   /**
