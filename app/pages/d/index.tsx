@@ -18,9 +18,7 @@ const DPage: NextPage = () => {
 
 DPage.getInitialProps = context => {
   const { res, query } = context;
-  const { c, ...otherQueries } = query;
-  const code = Array.isArray(c) ? c[0] : c || "";
-  const queryString = stringify({ code, ...otherQueries });
+  const queryString = stringify(query);
 
   if (res) {
     res.writeHead(302, {

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import createAuth0Client from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
+import { parse as parseQuery } from "querystring";
 
 import { useAssignableState } from "../../utils/hooks";
 
@@ -54,28 +55,33 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
     initialized: false
   });
 
-  const isAuth0Redirected = () => {
-    return (
-      window.location.search.includes("code=") &&
-      window.location.search.includes("state=")
-    );
-  };
-
   useEffect(() => {
     (async () => {
       const auth0Client = await createAuth0Client(auth0ClientOptions);
       assignContextValue({ auth0Client });
       log("auth0 client is created.");
 
-      if (isAuth0Redirected()) {
-        const result = await auth0Client.handleRedirectCallback();
-        log("this access is redirect. handle redirect callback.", result);
+      const query = parseQuery(
+        window.location.search.trim().replace(/^[?#&]/, "")
+      );
+      const { code, state, ...otherQueries } = query;
+      const isAuth0Redirected = !!code && !!state;
+      if (isAuth0Redirected) {
+        await auth0Client
+          .handleRedirectCallback()
+          .then(result => {
+            log("this access is redirect. handle redirect callback.", result);
+          })
+          .catch(() => {
+            // prettier-ignore
+            // tslint:disable-next-line
+            console.log("location.search has invalid code or state of auth0. remove them.");
+          });
 
-        router.replace(
-          result.appState && result.appState.targetUrl
-            ? result.appState.targetUrl
-            : window.location.pathname
-        );
+        router.replace({
+          pathname: window.location.pathname,
+          query: otherQueries
+        });
       }
 
       const isAuthenticated = await auth0Client.isAuthenticated();

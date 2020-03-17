@@ -29,7 +29,10 @@ const VerifyPage: NextPage = () => {
   const { verifyDownloadCode } = useDownloadCodeVerifier();
 
   useEffect(() => {
-    const { code } = router.query;
+    // IMPORTANT!!
+    // ダウンロードコードを受け取るクエリのキーに"code"は使用できない。
+    // auth0のlogin callback時にcodeを使用しているため。
+    const code = router.query.c;
     if (code) {
       setDownloadCode(typeof code === "string" ? code : code[0]);
     }
