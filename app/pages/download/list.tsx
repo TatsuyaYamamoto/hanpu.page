@@ -1,10 +1,11 @@
-import { default as React, FC, useState, useEffect, useMemo } from "react";
+import { default as React, useState, useEffect, useMemo, FC } from "react";
 
 import { NextPage } from "next";
 
-import { Container, Grid, CircularProgress } from "@material-ui/core";
+import { CircularProgress, Container, Grid } from "@material-ui/core";
 
 import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerifier";
+
 import AppBar from "../../components/organisms/AppBar/DownloadAppBar";
 import Footer from "../../components/organisms/Footer";
 import ImpressionForm from "../../components/organisms/ImpressionForm";
@@ -13,14 +14,19 @@ import ProductFileDownloaderTable from "../../components/organisms/ProductFileDo
 import ActivatedProductList from "../../components/organisms/ActivatedProductList";
 
 import { Product } from "../../domains/Product";
-import useProgressBar from "../../components/hooks/useProgressBar";
+
+const ProgressContent: FC = () => (
+  <Grid container={true} justify={"center"}>
+    <CircularProgress />
+  </Grid>
+);
 
 interface DetailPageProps {
   product: Product;
   downloadCodeExpiredAt: Date;
 }
 
-const ProductDetailContent: React.FC<DetailPageProps> = ({
+const ProductDetailContent: FC<DetailPageProps> = ({
   product,
   downloadCodeExpiredAt
 }) => {
@@ -78,7 +84,7 @@ const DownloadProductListPage: NextPage = () => {
 
   const main = useMemo(() => {
     if (actives === "processing") {
-      return <></>;
+      return <ProgressContent />;
     }
 
     if (!showingProductId) {
