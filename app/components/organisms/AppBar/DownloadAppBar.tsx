@@ -12,17 +12,13 @@ import {
   Icon,
   IconButton,
   Tabs,
-  Tab,
-  Button
+  Tab
 } from "@material-ui/core";
 
 import styled from "styled-components";
 
 import FlexSpace from "../../atoms/FlexSpace";
 import Logo from "../../atoms/Logo";
-import useDlCodeUser from "../../hooks/useDlCodeUser";
-import useAuth0 from "../../hooks/useAuth0";
-import UserIconMenu from "./UserIconMenu";
 
 const StyledMuiAppBar = styled(MuiAppBar as React.FC<MuiAppBarProps>)`
   && {
@@ -50,8 +46,6 @@ interface AppBarProps {
 
 const AppBar: React.FC<AppBarProps> = props => {
   const { onBack } = props;
-  const { loginWithRedirect, logout } = useAuth0();
-  const { user, sessionState } = useDlCodeUser();
   const router = useRouter();
 
   const [tabValue, setTabValue] = useState<TabValue>(() => {
@@ -66,14 +60,6 @@ const AppBar: React.FC<AppBarProps> = props => {
       <Icon>arrow_back</Icon>
     </IconButton>
   );
-
-  const onClickLogin = () => {
-    return loginWithRedirect();
-  };
-
-  const onClickLogout = () => {
-    logout();
-  };
 
   const onTabMenuChanged = (_: React.ChangeEvent<{}>, newValue: TabValue) => {
     setTabValue(newValue);
@@ -94,22 +80,6 @@ const AppBar: React.FC<AppBarProps> = props => {
     </Tabs>
   );
 
-  const userIcon =
-    sessionState === "processing" ? (
-      <></>
-    ) : user ? (
-      <UserIconMenu iconUrl={user.iconUrl} onLogoutClicked={onClickLogout} />
-    ) : (
-      <Button
-        variant="contained"
-        color="primary"
-        disableElevation={true}
-        onClick={onClickLogin}
-      >
-        ログイン
-      </Button>
-    );
-
   return (
     <>
       <StyledMuiAppBar position="static">
@@ -118,7 +88,6 @@ const AppBar: React.FC<AppBarProps> = props => {
           <>
             <FlexSpace />
             {menuTabs}
-            {userIcon}
           </>
         </Toolbar>
       </StyledMuiAppBar>
