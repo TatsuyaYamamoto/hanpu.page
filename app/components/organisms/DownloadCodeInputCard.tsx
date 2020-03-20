@@ -15,6 +15,8 @@ const StyledPaper = styled(Paper)`
 ` as React.FC<PaperProps>;
 
 const StyledTextField = styled(TextField)`
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
   padding-top: ${({ theme }: ThemeProps<MuiTheme>) => theme.spacing(1)}px;
 ` as React.FC<TextFieldProps>;
 
@@ -39,6 +41,8 @@ const DownloadCodeInputCard: React.FC<DownloadCodeInputCardProps> = ({
       <StyledTextField
         value={value}
         onChange={onChange}
+        variant="outlined"
+        fullWidth={true}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -52,6 +56,7 @@ const DownloadCodeInputCard: React.FC<DownloadCodeInputCardProps> = ({
         color="primary"
         disabled={disableSubmit}
         onClick={onSubmit}
+        fullWidth={true}
       >
         実行
       </Button>
