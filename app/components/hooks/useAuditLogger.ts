@@ -1,26 +1,63 @@
-import { AuditLog, LogType } from "../../domains/AuditLog";
+import { auth, firestore } from "firebase/app";
+
+import {
+  AuditLogDocument,
+  LogType,
+  getColRef as getAuditLogColRef
+} from "../../domains/AuditLog";
 
 const useAuditLogger = () => {
-  const log = (data: {
+  const log = async <E extends Error>(
+    type: LogType,
+    params: any,
+    ok: boolean,
+    error?: E
+  ) => {
+    const { currentUser } = auth();
+    const userId = currentUser ? currentUser.uid : null;
+    const newLog: Partial<AuditLogDocument> = {
+      userId,
+      type,
+      params,
+      ok,
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      href: location.href,
+      userAgent: navigator.userAgent
+    };
+
+    if (error) {
+      const { name, message, stack } = error;
+      newLog.error = {
+        name,
+        message,
+        stack
+      };
+    }
+
+    await getAuditLogColRef().add(newLog);
+
+    // tslint:disable-next-line
+    console.log("sending auditLog is successfully.", newLog);
+  };
+
+  interface OkAuditData {
     type: LogType;
     params: any;
-    ok: boolean;
-    error?: any;
-  }) => {
-    return AuditLog.write(data);
+  }
+
+  const okAudit = (data: OkAuditData) => {
+    return log(data.type, data.params, true);
   };
 
-  const okAudit = (data: { type: LogType; params: any }) => {
-    return log({ type: data.type, params: data.params, ok: true });
-  };
+  interface ErrorAuditData<E extends Error = Error> {
+    type: LogType;
+    params: any;
+    error: E;
+  }
 
-  const errorAudit = (data: { type: LogType; params: any; error: any }) => {
-    return log({
-      type: data.type,
-      params: data.params,
-      ok: false,
-      error: data.error
-    });
+  const errorAudit = (data: ErrorAuditData) => {
+    const { type, params, error } = data;
+    return log(type, params, false, error);
   };
 
   return { okAudit, errorAudit };
