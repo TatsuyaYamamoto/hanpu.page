@@ -62,7 +62,7 @@ const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
 
 const EmptyInfo = styled.div`
   margin-bottom: 30px;
-  white-space: pre;
+  white-space: pre-wrap;
 `;
 
 interface ActivatedProductListProps {
@@ -86,7 +86,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
         alignItems="center"
         spacing={2 /* TODO: get it from theme */}
       >
-        <Grid item={true} container={true} justify="center">
+        <Grid item={true}>
           <EmptyInfo>
             {`ダウンロード可能なコンテンツがありません。以下の理由が考えられます。
 ・ダウンロードコードを入力していない。
