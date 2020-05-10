@@ -3,14 +3,15 @@ import { Chip } from "@material-ui/core";
 
 import styled from "styled-components";
 
-const TextAvatar = styled.div`
+const TextAvatar = styled.span`
   // Mui-ChipAvatarに上書きされないため
   width: inherit !important;
+  height: auto !important;
   color: #fafafa !important;
 
-  display: inline-block;
+  //display: inline-block;
   background-color: #bdbdbd;
-  padding: 5px 10px;
+  padding: 2px 10px;
   border-radius: 24px;
 `;
 

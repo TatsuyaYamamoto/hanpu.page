@@ -1,12 +1,15 @@
 import * as React from "react";
-import LetterAvatar from "../LetterAvatar";
+import TextAvatarChip from "../TextAvatarChip";
 
-export default { title: "LetterAvatar" };
+export default { title: "TextAvatarChip" };
 
-export const withSmall = () => <LetterAvatar>有効</LetterAvatar>;
-
-export const withMiddle = () => <LetterAvatar>有効期限</LetterAvatar>;
+export const withSmall = () => (
+  <TextAvatarChip avatar={`有効期限`} label={`2019/6/18`} />
+);
 
 export const withLarge = () => (
-  <LetterAvatar>めちゃめちゃながいゆうこうきげん</LetterAvatar>
+  <TextAvatarChip
+    avatar={`有効期限有効期限有効期限`}
+    label={`2019/6/182019/6/182019/6/182019/6/18`}
+  />
 );
