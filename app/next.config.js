@@ -9,9 +9,14 @@ if (isProduction) {
 }
 
 const isNextBuildCommand = process.argv[2] === "build";
+const isNextExportCommand = process.argv[2] === "export";
 
 if (isNextBuildCommand) {
   console.log("[next.config.js] detect `next build` command");
+}
+
+if (isNextExportCommand) {
+  console.log("[next.config.js] detect `next export` command");
 }
 
 const env = {
@@ -32,9 +37,12 @@ if (isProduction) {
 
 module.exports = {
   env,
-  distDir: isNextBuildCommand ? "../dist/functions/next" : /*default*/ ".next",
-  exportPathMap: async (defaultPathMap)=>{
-    const pathMap ={...defaultPathMap};
+  distDir:
+    isNextBuildCommand || isNextExportCommand
+      ? "../dist/functions/next"
+      : /*default*/ ".next",
+  exportPathMap: async defaultPathMap => {
+    const pathMap = { ...defaultPathMap };
 
     delete pathMap[`/d`];
     delete pathMap[`/callback`];
