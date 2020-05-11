@@ -6,7 +6,7 @@ import jsQR, { QRCode } from "jsqr";
 
 const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
   const videoStreamRef = useRef<MediaStream | null>(null);
-  const internalId = useRef<number | null>(null);
+  const internalId = useRef<NodeJS.Timeout | null>(null);
 
   const [detected, setDetected] = useState<QRCode | null>(null);
 

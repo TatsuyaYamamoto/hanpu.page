@@ -60,7 +60,7 @@ const useProductEditor = (productId?: string) => {
     async (
       name: ProductName,
       description: ProductDescription
-    ): Promise<[void, (DocumentReference | void)]> => {
+    ): Promise<[DocumentReference | void, DocumentReference | void]> => {
       if (!firebaseApp || !dlCodeUser) {
         throw new Error(
           "unexpected. firebase and user haven't benn initialized."

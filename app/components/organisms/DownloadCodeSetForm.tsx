@@ -29,8 +29,8 @@ const PreviewComponentRender = (rowData: CodeData) => (
   <DescriptionTextField>{rowData.description}</DescriptionTextField>
 );
 
-const EditComponent = (props: EditComponentProps) => {
-  const codeData: CodeData = props.rowData;
+const EditComponent = (props: EditComponentProps<CodeData>) => {
+  const codeData = props.rowData;
 
   const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.onChange(e.target.value);
@@ -64,11 +64,10 @@ const TABLE_LOCALIZATION: TableLocalization = {
   }
 };
 
-const TABLE_COLUMNS: TableColumn[] = [
+const TABLE_COLUMNS: TableColumn<CodeData>[] = [
   {
     title: "ID",
     field: "id",
-    type: "string",
     editable: "never",
     cellStyle: {
       maxWidth: 200
@@ -139,7 +138,13 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     handleAddDialog();
   };
 
-  const onDownloadButtonClicked = (_: any, selected: CodeData) => {
+  const onDownloadButtonClicked = (_: any, selected: CodeData | CodeData[]) => {
+    if (Array.isArray(selected)) {
+      throw new Error(
+        "unexpected error. download allow single code-data only."
+      );
+    }
+
     const codeSet = downloadCodeSets.find(({ id }) => id === selected.id);
 
     if (!codeSet) {
@@ -178,7 +183,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     [downloadCodeSets]
   );
 
-  const actions: Action[] = [
+  const actions: Action<CodeData>[] = [
     // TODO ダウンロードアイコンの場所の調整。
     // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。
     {

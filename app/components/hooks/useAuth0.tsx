@@ -1,7 +1,11 @@
 import React, { useEffect, useContext, useCallback, FC } from "react";
 import { useRouter } from "next/router";
 
-import createAuth0Client from "@auth0/auth0-spa-js";
+import createAuth0Client, {
+  Auth0ClientOptions,
+  IdToken,
+  RedirectLoginOptions
+} from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import { parse as parseQuery } from "querystring";
 
