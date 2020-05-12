@@ -33,7 +33,32 @@ class DlCodeDb extends Dexie {
     });
     this.activeProducts = this.table("activeProducts");
   }
+
+  public getProductById(id: string) {
+    return this.activeProducts.get({
+      productId: id
+    });
+  }
+
+  public addNewProduct(
+    downloadCode: string,
+    productId: string,
+    expiredAt: Date
+  ) {
+    return this.transaction("rw", this.activeProducts, () => {
+      return this.activeProducts.add({
+        downloadCode,
+        productId,
+        expiredAt
+      });
+    });
+  }
 }
+
+const log = (message?: any, ...optionalParams: any[]): void => {
+  // tslint:disable-next-line
+  console.log(`[useDownloadCodeVerifier] ${message}`, ...optionalParams);
+};
 
 interface ActiveProduct {
   product: Product;
@@ -48,28 +73,39 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
   const { app: firebaseApp } = useFirebase();
 
   /**
-   * @param nullableApp
    * @private
+   * @param app
    */
-  const shouldAppInitialized = (nullableApp?: FirebaseApp): FirebaseApp => {
-    if (!nullableApp) {
-      throw new Error("FirebaseApp has not been initialized yet.");
-    }
-
-    return nullableApp;
+  const isFirebaseInitialized = (
+    app: FirebaseApp | undefined
+  ): app is FirebaseApp => {
+    return !!app;
   };
 
   useEffect(() => {
-    if (!firebaseApp) {
+    if (!isFirebaseInitialized(firebaseApp)) {
+      log(`firebase app is not initialized yet.`);
       return;
     }
 
     if (!preventLoadActives) {
-      loadActives();
+      const db = new DlCodeDb();
+      loadActives(firebaseApp, db);
+    } else {
+      log(`not loaded active products according to preventLoadActives flag.`);
     }
   }, [firebaseApp]);
 
+  /**
+   * DownloadCodeを検証する。正常な文字列の場合、productを読み込む
+   * @param code
+   */
   const verifyDownloadCode = async (code: string) => {
+    if (!isFirebaseInitialized(firebaseApp)) {
+      log(`firebase app is not initialized yet.`);
+      return;
+    }
+
     const result = await DownloadCodeSet.verify(code);
 
     // TODO: check code is expired too!
@@ -87,14 +123,10 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     const { productId: verifiedProductId, expiredAt } = result;
 
     const db = new DlCodeDb();
+    const targetProduct = await db.getProductById(verifiedProductId);
 
-    const target = await db.activeProducts.get({
-      productId: verifiedProductId
-    });
-
-    if (!!target /* exists */) {
-      // tslint:disable-next-line:no-console
-      console.info("requested product is already registered.");
+    if (!!targetProduct /* exists */) {
+      log("requested product is already registered.");
 
       okAudit({
         type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
@@ -112,85 +144,80 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
       params: { code }
     });
 
-    db.transaction("rw", db.activeProducts, () => {
-      return db.activeProducts.add({
-        downloadCode: code,
-        productId: verifiedProductId,
-        expiredAt
-      });
-    }).then(() => {
-      return loadActives();
-    });
+    await db.addNewProduct(code, verifiedProductId, expiredAt);
+    await loadActives(firebaseApp, db);
   };
 
   /**
+   * IDから {@link ActiveProduct} を取得する
+   *
    * @public
    */
   const getByProductId = async (
     id: string
   ): Promise<ActiveProductSchema | undefined> => {
     const db = new DlCodeDb();
-
-    return await db.activeProducts.get({
-      productId: id
-    });
+    return db.getProductById(id);
   };
 
   /**
+   * DownloadCode付きURLの文字列形式を検証する。
+   * 正常な文字列の場合、DownloadCodeのみの文字列を返す
+   *
    * @public
    */
   const checkFormat = (decoded: string) => {
-    // TODO
-    // tslint:disable-next-line:no-console
-    console.log(`QRCode is found. decoded: ${decoded}`);
+    log(`QRCode is found. decoded: ${decoded}`);
 
     const validFormat = new RegExp(
       "https://dl-code.web.app/d/\\?c=[A-Z2-9]{8}"
     ).test(decoded);
 
     if (!validFormat) {
-      // TODO
-      // tslint:disable-next-line:no-console
-      console.log("unexpected qrcode.");
+      log("unexpected qrcode.");
       return;
     }
 
     const downloadCode = decoded.replace("https://dl-code.web.app/d/?c=", "");
-
-    // TODO
-    // prettier-ignore
-    // tslint:disable-next-line:no-console
-    console.log(`Decoded text is expected URL format. download code: ${downloadCode}`);
+    log(`Decoded text is expected URL format. download code: ${downloadCode}`);
 
     return downloadCode;
   };
 
+  /**
+   * 引数の{@link downloadCode}に紐付いたリソース情報を取得する
+   */
   const checkLinkedResources = useCallback(
-    async (downloadCode: string) => {
-      const initializedApp = shouldAppInitialized(firebaseApp);
-      // TODO
-      // prettier-ignore
-      // tslint:disable-next-line:no-console
-      console.log(`Decoded text is expected URL format. download code: ${downloadCode}`);
+    async (
+      downloadCode: string
+    ): Promise<{
+      productId: string;
+      productName: string;
+      downloadCodeCreatedAt: Date;
+      downloadCodeExpireAt: Date;
+    } | void> => {
+      if (!isFirebaseInitialized(firebaseApp)) {
+        log(`firebase app is not initialized yet.`);
+        return;
+      }
+
+      log(
+        `Decoded text is expected URL format. download code: ${downloadCode}`
+      );
 
       const snap = await DownloadCodeSet.getColRef()
         .where(`codes.${downloadCode}`, "==", true)
         .get();
 
       if (snap.empty) {
-        // TODO
-        // tslint:disable-next-line:no-console
-        console.log("non-existed download code.");
+        log("non-existed download code.");
         return;
       }
 
       const downloadCodeSetDoc = snap.docs[0].data() as DownloadCodeSetDocument;
       const productId = downloadCodeSetDoc.productRef.id;
 
-      const product = await Product.getById(
-        productId,
-        initializedApp.firestore()
-      );
+      const product = await Product.getById(productId, firebaseApp.firestore());
 
       if (!product) {
         return;
@@ -209,35 +236,27 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
   /**
    * @private
    */
-  const loadActives = useCallback(async () => {
-    const initializedApp = shouldAppInitialized(firebaseApp);
-    const db = new DlCodeDb();
+  const loadActives = async (app: FirebaseApp, db: DlCodeDb) => {
+    const activeProductsInDb = await db.activeProducts.toArray();
+    const activeProductIds = activeProductsInDb.map(
+      ({ productId }) => productId
+    );
+    log(`load active product from indexeddb.`, activeProductIds);
 
-    const activeProducts = await db.activeProducts.toArray();
-    const activeIds = activeProducts.map(activeProduct => ({
-      productId: activeProduct.productId,
-      expiredAt: activeProduct.expiredAt
-    }));
+    const activeProducts = (
+      await Promise.all(
+        activeProductsInDb.map(async ({ productId, expiredAt }) => {
+          const product = await Product.getById(productId, app.firestore());
+          return product ? { product, expiredAt } : null;
+        })
+      )
+    ).filter((activate): activate is ActiveProduct => !!activate);
 
-    const loadProductPromises = activeIds.map(({ productId, expiredAt }) => {
-      return Product.getById(productId, initializedApp.firestore()).then(
-        product => {
-          const active: ActiveProduct | null = product
-            ? {
-                product,
-                expiredAt
-              }
-            : null;
+    const activeProductNames = activeProducts.map(({ product: p }) => p.name);
+    log(`load active product info from remote db.`, activeProductNames);
 
-          return active;
-        }
-      );
-    });
-
-    await Promise.all(loadProductPromises).then(resolveActives => {
-      setActives(resolveActives.filter(a => a) as ActiveProduct[]);
-    });
-  }, [firebaseApp]);
+    setActives(activeProducts);
+  };
 
   return {
     actives,

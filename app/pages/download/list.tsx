@@ -1,4 +1,4 @@
-import { default as React, useState, useEffect, useMemo, FC } from "react";
+import { default as React, useState, useMemo, FC } from "react";
 
 import { NextPage } from "next";
 
@@ -8,60 +8,14 @@ import useDownloadCodeVerifier from "../../components/hooks/useDownloadCodeVerif
 
 import AppBar from "../../components/organisms/AppBar/DownloadAppBar";
 import Footer from "../../components/organisms/Footer";
-import ImpressionForm from "../../components/organisms/ImpressionForm";
-import ProductDetail from "../../components/organisms/ProductDetail";
-import ProductFileDownloaderTable from "../../components/organisms/ProductFileDownloaderTable";
 import ActivatedProductList from "../../components/organisms/ActivatedProductList";
-
-import { Product } from "../../domains/Product";
+import ProductDetailContent from "../../components/organisms/ProductDetailContent";
 
 const ProgressContent: FC = () => (
   <Grid container={true} justify={"center"}>
     <CircularProgress />
   </Grid>
 );
-
-interface DetailPageProps {
-  product: Product;
-  downloadCodeExpiredAt: Date;
-}
-
-const ProductDetailContent: FC<DetailPageProps> = ({
-  product,
-  downloadCodeExpiredAt
-}) => {
-  const [iconUrl, setIconUrl] = useState("");
-
-  useEffect(() => {
-    product.getIconUrl().then(url => {
-      setIconUrl(url || "");
-    });
-  }, []);
-
-  return (
-    <Grid container={true} direction={"column"} spacing={5}>
-      <Grid item={true}>
-        <ProductDetail
-          name={product.name}
-          description={product.description}
-          iconUrl={iconUrl}
-          downloadCodeExpiredAt={downloadCodeExpiredAt}
-        />
-      </Grid>
-
-      <Grid item={true}>
-        <ProductFileDownloaderTable
-          files={product.productFiles}
-          productId={product.id}
-        />
-      </Grid>
-
-      <Grid item={true}>
-        <ImpressionForm productId={product.id} />
-      </Grid>
-    </Grid>
-  );
-};
 
 const DownloadProductListPage: NextPage = () => {
   const { actives } = useDownloadCodeVerifier();

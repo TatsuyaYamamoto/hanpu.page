@@ -20,6 +20,7 @@ if (isNextExportCommand) {
 }
 
 const env = {
+  nodeEnv: process.env.NODE_ENV,
   noIndex: true,
   gaTrackingId: "UA-127664761-5",
   title: "DEVELOPMENT DLCode",
