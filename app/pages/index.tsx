@@ -24,20 +24,29 @@ const Space = styled.div`
 
 const Hero = () => {
   return (
-    <Grid item={true}>
-      <Typography variant="h1">
-        <Logo />
-      </Typography>
-
-      <LinkButton href="/download/verify">
-        <LeftIcon>cloud_download</LeftIcon>
-        <span>ダウンロードページへ</span>
-      </LinkButton>
-      <LinkButton href="/publish">
-        <LeftIcon>publish</LeftIcon>
-        <span>配信管理ページへ</span>
-      </LinkButton>
-    </Grid>
+    <>
+      <Grid item={true}>
+        <Typography variant="h1">
+          <Logo />
+        </Typography>
+        <Typography variant="subtitle2">{process.env.version}</Typography>
+      </Grid>
+      <Grid
+        item={true}
+        style={{
+          marginTop: 20
+        }}
+      >
+        <LinkButton href="/download/verify">
+          <LeftIcon>cloud_download</LeftIcon>
+          <span>ダウンロードページへ</span>
+        </LinkButton>
+        <LinkButton href="/publish">
+          <LeftIcon>publish</LeftIcon>
+          <span>配信管理ページへ</span>
+        </LinkButton>
+      </Grid>
+    </>
   );
 };
 

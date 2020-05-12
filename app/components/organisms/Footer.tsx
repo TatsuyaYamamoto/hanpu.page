@@ -41,7 +41,9 @@ const Footer: React.FC = () => {
     <StyledLinkButton href={config.twitterUrl}>Twitter</StyledLinkButton>
   );
 
-  const copyRight = <CopyRight>{copyRightSymbol} 2019 DBCode</CopyRight>;
+  const copyRight = (
+    <CopyRight>{`${copyRightSymbol} 2019 そこんところ工房`}</CopyRight>
+  );
 
   return (
     <Root>
