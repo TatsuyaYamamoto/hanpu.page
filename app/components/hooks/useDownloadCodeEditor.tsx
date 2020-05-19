@@ -35,7 +35,7 @@ const useDownloadCodeEditor = (product: Product | null) => {
     numberOfCodes: number,
     expiredAt: Date
   ): Promise<void> => {
-    if (!product || !user || !firebaseApp) {
+    if (!product || !user) {
       throw new Error("unexpected.");
     }
 

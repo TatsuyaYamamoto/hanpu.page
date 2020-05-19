@@ -34,10 +34,6 @@ const ProductList: FC<ProductListProps> = props => {
   const { user: dlCodeUser } = useDlCodeUser();
 
   useEffect(() => {
-    if (!firebaseApp) {
-      return;
-    }
-
     if (!dlCodeUser) {
       return;
     }

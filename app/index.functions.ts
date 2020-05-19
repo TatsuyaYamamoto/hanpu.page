@@ -1,5 +1,5 @@
 // tslint:disable:no-console
-import { https, region } from "firebase-functions";
+import * as functions from "firebase-functions";
 import * as firebaseAdmin from "firebase-admin";
 
 // Initial Firebase App
@@ -8,6 +8,7 @@ const firebaseApp = firebaseAdmin.initializeApp();
 import next from "next";
 
 import { backupFirestoreData } from "./utils/gcp";
+import { DlCodeUserDocument } from "./domains/DlCodeUser";
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
@@ -29,12 +30,12 @@ const nextServer = next({
 });
 const handle = nextServer.getRequestHandler();
 
-export const nextApp = https.onRequest((req, res) => {
+export const nextApp = functions.https.onRequest((req, res) => {
   // @ts-ignore
   return nextServer.prepare().then(() => handle(req, res));
 });
 
-export const api = https.onRequest((_, res) => {
+export const api = functions.https.onRequest((_, res) => {
   // TODO
   // @ts-ignore
   res.json({
@@ -46,7 +47,8 @@ export const api = https.onRequest((_, res) => {
  * FirestoreのバックアップをstorageにexportするScheduledJob
  * 日本時間のAM09:00に実行される
  */
-export const scheduledFirestoreBackup = region("asia-northeast1")
+export const scheduledFirestoreBackup = functions
+  .region("asia-northeast1")
   .pubsub.schedule("00 09 * * *")
   .timeZone("Asia/Tokyo")
   .onRun(async context => {
@@ -112,4 +114,48 @@ export const scheduledFirestoreBackup = region("asia-northeast1")
     } catch (error) {
       console.error("fail to backup-export.", error);
     }
+  });
+
+export const initUser = functions
+  .region("asia-northeast1")
+  .https.onCall(async (_, context) => {
+    const uid = context.auth?.uid;
+
+    if (!uid) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "to initialize the user, send the authenticated uid"
+      );
+    }
+
+    const newUserDoc: DlCodeUserDocument = {
+      counters: {
+        product: {
+          limit: 1,
+          current: 0
+        },
+        downloadCode: {
+          limit: 100,
+          current: 0
+        },
+        totalFileSizeByte: {
+          limit: 1 * 1000 * 1000 * 1000, // 1GB
+          current: 0
+        }
+      }
+    };
+    const newUserDocRef = firebaseApp
+      .firestore()
+      .collection("users")
+      .doc(uid);
+
+    const newUserSnap = await newUserDocRef.get();
+    if (newUserSnap.exists) {
+      throw new functions.https.HttpsError(
+        "already-exists",
+        "user with provided uid is already exist."
+      );
+    }
+
+    await newUserDocRef.set(newUserDoc);
   });

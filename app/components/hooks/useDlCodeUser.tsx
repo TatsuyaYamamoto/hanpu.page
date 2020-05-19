@@ -6,116 +6,11 @@ import {
   useContext
 } from "react";
 
-import { firestore } from "firebase/app";
-
 import useFirebase from "./useFirebase";
-import useAuth0, { Auth0User } from "./useAuth0";
+import useAuth0 from "./useAuth0";
+import { DlCodeUser, DlCodeUserDocument } from "../../domains/DlCodeUser";
 
 export type SessionState = "processing" | "loggedIn" | "loggedOut";
-
-export interface Counter {
-  limit: number;
-  current: number;
-}
-
-export type CounterType = "product" | "downloadCode" | "totalFileSizeByte";
-
-export interface DlCodeUserDocument {
-  counters: { [type in CounterType]: Counter };
-}
-
-export class DlCodeUser {
-  public constructor(
-    readonly user: DlCodeUserDocument,
-    readonly auth0User: Auth0User
-  ) {}
-
-  public get uid(): string {
-    return this.auth0User.sub;
-  }
-
-  /**
-   * twitter api上のscreen_nameを返却する
-   */
-  public get displayName(): string {
-    const displayName = this.auth0User.nickname;
-
-    if (!displayName) {
-      // TODO Twitterアカウントに表示名がない想定は無いが、デフォルト文字列を返却するようにする
-      return "";
-    }
-
-    return displayName;
-  }
-
-  public get iconUrl(): string {
-    const url = this.auth0User.picture;
-
-    if (!url) {
-      // TODO Twitterアカウントにアイコンがない想定は無いが、デフォルト画像のURLを返却するようにする
-      return "";
-    }
-
-    // https://developer.twitter.com/en/docs/accounts-and-users/user-profile-images-and-banners
-    return url.replace("normal", "bigger");
-  }
-
-  public async editCounter(
-    counter: CounterType,
-    newValue: number,
-    firestoreInstance: firestore.Firestore
-  ) {
-    const { limit } = this.user.counters[counter];
-
-    if (limit < newValue) {
-      throw new Error(`Exceeded limit. limit: ${limit}, new : ${newValue}`);
-    }
-
-    const colRef = DlCodeUser.getColRef(firestoreInstance);
-
-    // (100%ではないが)型安全にネストされたオブジェクトのkeyを宣言する
-    const keyElements: (
-      | (keyof DlCodeUserDocument)
-      | CounterType
-      | (keyof Counter))[] = ["counters", counter, "current"];
-    const nestedUpdateObjectKey = keyElements.join(".");
-
-    return colRef.doc(this.uid).update({
-      [nestedUpdateObjectKey]: newValue
-    });
-  }
-
-  public static getColRef(firestoreInstance: firestore.Firestore) {
-    return firestoreInstance.collection(`users`);
-  }
-
-  public static async load(
-    auth0User: Auth0User,
-    firestoreInstance: firestore.Firestore
-  ): Promise<DlCodeUser> {
-    const uid = auth0User.sub;
-    const colRef = DlCodeUser.getColRef(firestoreInstance);
-
-    const snap = await colRef.doc(uid).get();
-
-    if (snap.exists) {
-      const doc = snap.data() as DlCodeUserDocument;
-      return new DlCodeUser(doc, auth0User);
-    }
-
-    // TODO avoid hard coding of initial params
-    const userDoc: DlCodeUserDocument = {
-      counters: {
-        product: { limit: 1, current: 0 },
-        downloadCode: { limit: 10, current: 0 },
-        totalFileSizeByte: { limit: 10, current: 0 }
-      }
-    };
-    await colRef.doc(uid).set(userDoc);
-
-    return new DlCodeUser(userDoc, auth0User);
-  }
-}
 
 const log = (message?: any, ...optionalParams: any[]): void => {
   // tslint:disable-next-line
@@ -133,31 +28,42 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
   const [contextValue, setContextValue] = useState<IDlCodeUserContext>({
     sessionState: "processing"
   });
-  const { app: firebaseApp } = useFirebase();
+  const { app: firebaseApp, initUser } = useFirebase();
   const { initialized: isAuth0Initialized, user: auth0User } = useAuth0();
 
+  const handleLogout = () => {
+    setContextValue(prev => ({
+      ...prev,
+      sessionState: "loggedOut",
+      user: undefined
+    }));
+  };
+
+  const handleLogin = (user: DlCodeUser) => {
+    setContextValue(prev => ({
+      ...prev,
+      sessionState: "loggedIn",
+      user
+    }));
+  };
+
   useEffect(() => {
-    if (!firebaseApp) {
-      // suspend. if firebase app has not been initialized.
-      return;
-    }
+    log(`start flow of loading DlCodeUser.`);
 
     if (!isAuth0Initialized) {
-      // suspend. if auth0 has not been initialized
+      log(`suspend loading-flow. auth0 has not been initialized`);
       return;
     }
 
     if (!auth0User) {
       log("user is not logged-in as auth0 user.");
-      setContextValue(prev => ({
-        ...prev,
-        sessionState: "loggedOut",
-        user: undefined
-      }));
+      handleLogout();
       return;
     }
 
     const uid = auth0User.sub;
+    log(`user is logged-in as auth0 user. uid: ${uid}`);
+
     const unsubscribe = DlCodeUser.getColRef(firebaseApp.firestore())
       .doc(uid)
       .onSnapshot(snap => {
@@ -165,15 +71,13 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
           const dlCodeUserDoc = snap.data() as DlCodeUserDocument;
           const user = new DlCodeUser(dlCodeUserDoc, auth0User);
 
-          log(`user is logged-in as auth0 user. uid: ${uid}`);
-
-          setContextValue(prev => ({
-            ...prev,
-            sessionState: "loggedIn",
-            user
-          }));
+          log(`DLCode user found. end login-flow. uid: ${uid} `);
+          handleLogin(user);
         } else {
-          throw new Error(`unexpected error. no user is on db. uid: ${uid} `);
+          initUser();
+          log(
+            `no DLCode user is on db. wait for backend to create new DLCode user. uid: ${uid} `
+          );
         }
       });
 

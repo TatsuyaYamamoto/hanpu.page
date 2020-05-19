@@ -9,10 +9,6 @@ const useImpression = () => {
 
   const postImpression = useCallback(
     async (productId: string, text: string) => {
-      if (!firebaseApp) {
-        return;
-      }
-
       const product = await Product.getById(productId, firebaseApp.firestore());
       if (!product) {
         throw new Error("provided product dose not exist.");

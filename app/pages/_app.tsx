@@ -13,6 +13,7 @@ import { SnackbarProvider } from "notistack";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
+import "firebase/functions";
 
 import useGa from "../components/hooks/useGa";
 import { FirebaseContextProvider } from "../components/hooks/useFirebase";

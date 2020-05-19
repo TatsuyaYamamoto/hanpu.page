@@ -1,20 +1,20 @@
-import * as React from "react";
+import React, { useState } from "react";
 const { useEffect, createContext, useContext } = React;
 
 import {
   initializeApp,
   app as firebaseApp,
+  apps as initializedFirebaseApps,
   User as FirebaseUser
 } from "firebase/app";
 
 import useAuth0 from "./useAuth0";
 import configs from "../../configs";
-import { useAssignableState } from "../../utils/hooks";
 
 type FirebaseApp = firebaseApp.App;
 
 interface IFirebaseContext {
-  app?: FirebaseApp;
+  app: FirebaseApp;
   user?: FirebaseUser;
   authStateChecked: boolean;
 }
@@ -25,39 +25,48 @@ interface FirebaseContextProviderProps {
 
 const firebaseContext = createContext<IFirebaseContext>(null as any);
 
-const FirebaseContextProvider: React.FC<
-  FirebaseContextProviderProps
-> = props => {
-  const [contextValue, assignContextValue] = useAssignableState<
-    IFirebaseContext
-  >({
-    authStateChecked: false
+const FirebaseContextProvider: React.FC<FirebaseContextProviderProps> = props => {
+  const { initParams } = props;
+  const [contextValue, setContextValue] = useState<IFirebaseContext>(() => {
+    const app =
+      initializedFirebaseApps[0] ??
+      initializeApp(initParams.options, initParams.name);
+    // @ts-ignore
+    const { projectId } = app.options;
+
+    log(`firebase app initialized. projectId: ${projectId}`);
+
+    return {
+      authStateChecked: false,
+      app
+    };
   });
   const { initialized: isAuth0Initialized, idToken: auth0IdToken } = useAuth0();
 
   useEffect(() => {
-    const { options, name } = props.initParams;
+    const unsubscribe = contextValue.app
+      .auth()
+      .onAuthStateChanged(changedUser => {
+        log(`firebase auth state is changed. uid: ${changedUser?.uid}`);
 
-    const app = initializeApp(options, name);
-    assignContextValue({ app });
-
-    app.auth().onAuthStateChanged((changedUser: any) => {
-      log("auth state is changed.", changedUser);
-
-      assignContextValue({
-        user: changedUser ? changedUser : undefined,
-        authStateChecked: true
+        setContextValue(prev => ({
+          ...prev,
+          user: changedUser ? changedUser : undefined,
+          authStateChecked: true
+        }));
       });
-    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
+    log(`start flow of sign-in firebase auth.`);
     const { app: firebaseAppInstance } = contextValue;
-    if (!firebaseAppInstance) {
-      return;
-    }
 
     if (!isAuth0Initialized) {
+      log(`suspend sign-in flow. auth0 client has not been initialized.`);
       return;
     }
 
@@ -83,10 +92,16 @@ const FirebaseContextProvider: React.FC<
 const useFirebase = () => {
   const { app, user, authStateChecked } = useContext(firebaseContext);
 
+  const initUser = async () => {
+    const callable = app.functions("asia-northeast1").httpsCallable("initUser");
+    return callable();
+  };
+
   return {
     authStateChecked,
     app,
-    user
+    user,
+    initUser
   };
 };
 

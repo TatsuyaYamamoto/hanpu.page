@@ -72,22 +72,7 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
   );
   const { app: firebaseApp } = useFirebase();
 
-  /**
-   * @private
-   * @param app
-   */
-  const isFirebaseInitialized = (
-    app: FirebaseApp | undefined
-  ): app is FirebaseApp => {
-    return !!app;
-  };
-
   useEffect(() => {
-    if (!isFirebaseInitialized(firebaseApp)) {
-      log(`firebase app is not initialized yet.`);
-      return;
-    }
-
     if (!preventLoadActives) {
       const db = new DlCodeDb();
       loadActives(firebaseApp, db);
@@ -101,11 +86,6 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
    * @param code
    */
   const verifyDownloadCode = async (code: string) => {
-    if (!isFirebaseInitialized(firebaseApp)) {
-      log(`firebase app is not initialized yet.`);
-      return;
-    }
-
     const result = await DownloadCodeSet.verify(code);
 
     // TODO: check code is expired too!
@@ -196,15 +176,6 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
       downloadCodeCreatedAt: Date;
       downloadCodeExpireAt: Date;
     } | void> => {
-      if (!isFirebaseInitialized(firebaseApp)) {
-        log(`firebase app is not initialized yet.`);
-        return;
-      }
-
-      log(
-        `Decoded text is expected URL format. download code: ${downloadCode}`
-      );
-
       const snap = await DownloadCodeSet.getColRef()
         .where(`codes.${downloadCode}`, "==", true)
         .get();

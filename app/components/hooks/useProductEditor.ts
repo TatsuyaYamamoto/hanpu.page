@@ -31,10 +31,6 @@ const useProductEditor = (productId?: string) => {
   };
 
   useEffect(() => {
-    if (!firebaseApp) {
-      return;
-    }
-
     if (!dlCodeUser) {
       return;
     }
@@ -61,7 +57,7 @@ const useProductEditor = (productId?: string) => {
       name: ProductName,
       description: ProductDescription
     ): Promise<[DocumentReference | void, DocumentReference | void]> => {
-      if (!firebaseApp || !dlCodeUser) {
+      if (!dlCodeUser) {
         throw new Error(
           "unexpected. firebase and user haven't benn initialized."
         );
@@ -124,7 +120,7 @@ const useProductEditor = (productId?: string) => {
       promise: Promise<void>;
     } => {
       const loadedProduct = shouldProductRefLoaded(product);
-      if (!firebaseApp || !dlCodeUser) {
+      if (!dlCodeUser) {
         throw new Error("non auth user logged-in.");
       }
 
@@ -174,7 +170,7 @@ const useProductEditor = (productId?: string) => {
 
   const deleteProductFile = useCallback(
     async (productFileId: string) => {
-      if (!firebaseApp || !dlCodeUser) {
+      if (!dlCodeUser) {
         throw new Error("non auth user logged-in.");
       }
 

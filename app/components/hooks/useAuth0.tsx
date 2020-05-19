@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback, FC } from "react";
+import React, { useEffect, useContext, useCallback, FC, useState } from "react";
 import { useRouter } from "next/router";
 
 import createAuth0Client, {
@@ -8,8 +8,6 @@ import createAuth0Client, {
 } from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import { parse as parseQuery } from "querystring";
-
-import { useAssignableState } from "../../utils/hooks";
 
 export type Auth0User = Auth0TwitterUser;
 
@@ -55,14 +53,14 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
   const { children, auth0ClientOptions } = props;
 
   const router = useRouter();
-  const [contextValue, assignContextValue] = useAssignableState<IAuth0Context>({
+  const [contextValue, setContextValue] = useState<IAuth0Context>({
     initialized: false
   });
 
   useEffect(() => {
     (async () => {
       const auth0Client = await createAuth0Client(auth0ClientOptions);
-      assignContextValue({ auth0Client });
+      setContextValue(prev => ({ ...prev, auth0Client }));
       log("auth0 client is created.");
 
       const query = parseQuery(
@@ -77,9 +75,9 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
             log("this access is redirect. handle redirect callback.", result);
           })
           .catch(() => {
-            // prettier-ignore
-            // tslint:disable-next-line
-            console.log("location.search has invalid code or state of auth0. remove them.");
+            log(
+              "location.search has invalid code or state of auth0. remove them."
+            );
           });
 
         router.replace({
@@ -96,17 +94,18 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
           IdToken
         >([auth0Client.getUser(), auth0Client.getIdTokenClaims()]);
 
-        assignContextValue({ user, idToken: idTokenClaims.__raw });
-        log(`client is authenticated. uid: ${user.sub}`);
+        setContextValue(prev => ({
+          ...prev,
+          user,
+          idToken: idTokenClaims.__raw,
+          initialized: true
+        }));
+        log(`client is initialized. authenticated. uid: ${user.sub}`);
+      } else {
+        setContextValue(prev => ({ ...prev, initialized: true }));
+        log(`client is initialized. NOT authenticated.`);
       }
-
-      assignContextValue({ initialized: true });
-      log(`client is initialized.`);
-    })().catch(e => {
-      // TODO
-      // tslint:disable-next-line
-      console.error("fail initializing auth0", e);
-    });
+    })();
   }, []);
 
   return (
