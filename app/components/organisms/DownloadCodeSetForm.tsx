@@ -22,15 +22,15 @@ import {
 
 const DescriptionTextField = styled.div`
   white-space: pre-wrap;
-  width: 250px;
+  max-width: 250px;
 `;
 
 const PreviewComponentRender = (rowData: CodeData) => (
   <DescriptionTextField>{rowData.description}</DescriptionTextField>
 );
 
-const EditComponent = (props: EditComponentProps) => {
-  const codeData: CodeData = props.rowData;
+const EditComponent = (props: EditComponentProps<CodeData>) => {
+  const codeData = props.rowData;
 
   const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.onChange(e.target.value);
@@ -64,11 +64,10 @@ const TABLE_LOCALIZATION: TableLocalization = {
   }
 };
 
-const TABLE_COLUMNS: TableColumn[] = [
+const TABLE_COLUMNS: TableColumn<CodeData>[] = [
   {
     title: "ID",
     field: "id",
-    type: "string",
     editable: "never",
     cellStyle: {
       maxWidth: 200
@@ -94,7 +93,7 @@ const TABLE_COLUMNS: TableColumn[] = [
     editable: "never"
   },
   {
-    title: "Description",
+    title: "説明",
     field: "description",
     render: PreviewComponentRender,
     editComponent: EditComponent
@@ -114,7 +113,7 @@ interface DownloadCodeSetFormProps {
   onAdd: (numberOfCodes: number, expiredAt: Date) => Promise<void>;
   onUpdate: (
     codeSetId: string,
-    edited: Partial<DownloadCodeSetDocument>
+    edited: Pick<DownloadCodeSetDocument, "description">
   ) => Promise<void>;
 }
 
@@ -139,7 +138,13 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     handleAddDialog();
   };
 
-  const onDownloadButtonClicked = (_: any, selected: CodeData) => {
+  const onDownloadButtonClicked = (_: any, selected: CodeData | CodeData[]) => {
+    if (Array.isArray(selected)) {
+      throw new Error(
+        "unexpected error. download allow single code-data only."
+      );
+    }
+
     const codeSet = downloadCodeSets.find(({ id }) => id === selected.id);
 
     if (!codeSet) {
@@ -154,12 +159,14 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
       return;
     }
 
-    const { id } = newData;
-    const edited: Partial<DownloadCodeSetDocument> = {};
-
-    if (newData.description !== oldData.description) {
-      edited.description = newData.description;
+    if (newData.description === oldData.description) {
+      return;
     }
+
+    const { id } = newData;
+    const edited: Pick<DownloadCodeSetDocument, "description"> = {
+      description: newData.description
+    };
 
     return onUpdate(id, edited);
   };
@@ -176,7 +183,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     [downloadCodeSets]
   );
 
-  const actions: Action[] = [
+  const actions: Action<CodeData>[] = [
     // TODO ダウンロードアイコンの場所の調整。
     // <EDIT><DELETE><DL>ではなくて、<DL><EDIT><DELETE>にする。
     {

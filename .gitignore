@@ -1,4 +1,9 @@
 dist/
+public/*.html
+public/_next
+public/next
+public/publish
+public/download
 tools/sheet-generator/template.pptx
 
 # Created by https://www.gitignore.io/api/node,macos,windows,firebase,intellij+all

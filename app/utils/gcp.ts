@@ -1,7 +1,6 @@
 import { firestore_v1, google } from "googleapis";
-import { CredentialBody } from "google-auth-library";
 
-import * as dateFormat from "dateformat";
+import { format as dateFormat } from "date-fns";
 
 import ExportDocuments = firestore_v1.Params$Resource$Projects$Databases$Exportdocuments;
 import Firestore = firestore_v1.Firestore;
@@ -10,13 +9,12 @@ const projectId = process.env.GCLOUD_PROJECT;
 const backupBucket = `gs://${projectId}.appspot.com`;
 const exportCollections = ["auditLogs", "downloadCodeSets", "products"];
 
-export const backupFirestoreData = async (credentialBody: CredentialBody) => {
+export const backupFirestoreData = async () => {
   const timestamp = dateFormat(new Date(), "yyyy-mm-dd_hh-MM");
 
   // https://cloud.google.com/functions/docs/concepts/services#using_services_with_cloud_functions
   const auth = await google.auth.getClient({
     projectId,
-    credentials: credentialBody,
     scopes: [
       "https://www.googleapis.com/auth/datastore",
       "https://www.googleapis.com/auth/cloud-platform"

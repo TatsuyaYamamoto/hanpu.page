@@ -1,13 +1,13 @@
 import { firestore } from "firebase/app";
-import DocumentReference = firestore.DocumentReference;
+type DocumentReference = firestore.DocumentReference;
 
-interface ImpressionDocument {
+export interface ImpressionDocument {
   productRef: DocumentReference;
   text: string;
   createdAt: Date | firestore.FieldValue;
 }
 
-class Impression {
+export class Impression {
   public static getColRef() {
     return firestore().collection(`impressions`);
   }
@@ -25,5 +25,3 @@ class Impression {
     await Impression.getColRef().add(newImpression);
   }
 }
-
-export { Impression, ImpressionDocument };

@@ -34,7 +34,31 @@ $ git push origin develop # deploy by CircleCI
 
 ```
 
+- note - firebase app 用ビルドスクリプトの手順は以下の通り(並列に行っている) 1. [client] next build して、成果物を dist/functions に copy 1. [functions] webpack build 1. [deps] package.json yarn.lock(functions にとっての依存ライブラリ)を dist/functions に copy して、yarn install - app/.next にビルドしたものを dist 以下に copy しているのは、node_modules と同階層に next.js の distDir を設定すると、React が Error(Invalid hook call. Hooks can only be called inside of the body of a function component.)を投げる、また`next build`が失敗するから
+
 ## Settings
+
+### Auth0
+
+- Allowed Callback URLs
+
+  ```text
+  http://localhost:3000,http://localhost:3000/callback
+  ```
+
+  - http://localhost:3000 => getTokenSilently 時の redirect_uri の default value
+  - http://localhost:3000/callback => app 側が auth0 に渡す redirect_uri
+
+- Allowed Web Origins
+
+  ```text
+  http://localhost:3000
+  ```
+
+- Allowed Logout URLs
+  ```text
+  http://localhost:3000
+  ```
 
 ### Service Account
 

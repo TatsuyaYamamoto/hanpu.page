@@ -1,18 +1,29 @@
 {
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "firebase/firestore.rules",
+    "indexes": "firebase/firestore.indexes.json"
   },
   "functions": {
     "source": "dist/functions",
     "predeploy": []
   },
   "hosting": {
-    "public": "dist/public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+    "public": "public",
+    // https://firebase.google.com/docs/hosting/full-config#control_html_extensions
+    // true の場合、Hosting はアップロードされたファイルの URL から拡張子 .html を自動的に削除します。
+    "cleanUrls": true,
+    // https://firebase.google.com/docs/hosting/full-config#control_trailing_slashes
+    // true の場合、Hosting は URL のリダイレクトで末尾のスラッシュを追加します。
+    "trailingSlash": true,
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "redirects": [
+      {
+        // next.jsのSSR上で動くrouterはtrailing slashを使用できない
+        // 配布済みDLCodeSheetは末尾に"/"を含んでいるため、redirectして対応する
+        "source": "/d/",
+        "destination": "/d",
+        "type": 302
+      }
     ],
     "rewrites": [
       {
@@ -20,12 +31,12 @@
         "function": "api"
       },
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "**/**",
+        "function": "nextApp"
       }
     ]
   },
   "storage": {
-    "rules": "storage.rules"
+    "rules": "firebase/storage.rules"
   }
 }

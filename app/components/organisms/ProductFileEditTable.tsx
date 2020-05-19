@@ -46,7 +46,7 @@ const TABLE_LOCALIZATION = {
   }
 };
 
-const TABLE_COLUMNS: Column[] = [
+const TABLE_COLUMNS: Column<RowData>[] = [
   { title: "表示ファイル名", field: "displayName" },
   {
     title: "オリジナルファイル名",
@@ -109,19 +109,26 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
     handleProductFileAddDialog();
   };
 
-  const onDownloadButtonClicked = (_: any, { id: productFileId }: RowData) => {
+  const onDownloadButtonClicked = (_: any, rowData: RowData | RowData[]) => {
+    if (Array.isArray(rowData)) {
+      throw new Error(
+        "unexpected error. download button allows single data only."
+      );
+    }
+
+    const { id: productFileId } = rowData;
     const { storageUrl, originalName } = productFiles[productFileId];
     downloadFromFirebaseStorage(storageUrl, originalName);
   };
 
   const onProductFileUpdate = (
     newData: RowData,
-    oldData: RowData
+    oldData?: RowData
   ): Promise<void> => {
     const { id } = newData;
     const edited: Partial<ProductFile> = {};
 
-    if (newData.displayName !== oldData.displayName) {
+    if (newData.displayName !== oldData?.displayName) {
       edited.displayName = newData.displayName;
     }
 

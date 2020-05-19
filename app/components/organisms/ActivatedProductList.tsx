@@ -9,6 +9,7 @@ import {
   CardContent,
   Typography
 } from "@material-ui/core/";
+import { CardProps } from "@material-ui/core/Card";
 
 import LinkButton from "../atoms/LinkButton";
 import ThumbnailImage from "../atoms/ProductImageThumbnailImage";
@@ -18,8 +19,7 @@ import { Product } from "../../domains/Product";
 
 const CARD_WIDTH = 200;
 
-// TODO: resolve types
-const StyledCard = styled<any>(Card)`
+const StyledCard = styled(Card as React.FC<CardProps>)`
   width: ${CARD_WIDTH}px;
 `;
 
@@ -62,7 +62,7 @@ const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
 
 const EmptyInfo = styled.div`
   margin-bottom: 30px;
-  white-space: pre;
+  white-space: pre-wrap;
 `;
 
 interface ActivatedProductListProps {
@@ -86,7 +86,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
         alignItems="center"
         spacing={2 /* TODO: get it from theme */}
       >
-        <Grid item={true} justify="center">
+        <Grid item={true}>
           <EmptyInfo>
             {`ダウンロード可能なコンテンツがありません。以下の理由が考えられます。
 ・ダウンロードコードを入力していない。
@@ -95,7 +95,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
 現在お使いのブラウザからコンテンツをダウンロードするためには、
 ダウンロードコードを再入力する必要があります。`}
           </EmptyInfo>
-          <LinkButton to="/d" variant="contained">
+          <LinkButton href="/download/verify" variant="contained">
             <span>ダウンロードコード入力ページへ</span>
           </LinkButton>
         </Grid>

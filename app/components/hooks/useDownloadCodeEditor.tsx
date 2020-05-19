@@ -5,43 +5,73 @@ import {
   DownloadCodeSetDocument
 } from "../../domains/DownloadCodeSet";
 import { Product } from "../../domains/Product";
-
-const INITIAL_DOWNLOAD_CODE_SETS: DownloadCodeSet[] = [];
+import useDlCodeUser from "./useDlCodeUser";
+import useFirebase from "./useFirebase";
 
 const useDownloadCodeEditor = (product: Product | null) => {
-  const [codeSets, setCodeSets] = useState<DownloadCodeSet[]>(
-    INITIAL_DOWNLOAD_CODE_SETS
-  );
+  const { user } = useDlCodeUser();
+  const { app: firebaseApp } = useFirebase();
+  const [codeSets, setCodeSets] = useState<DownloadCodeSet[]>([]);
 
   useEffect(() => {
     if (!product) {
-      setCodeSets(INITIAL_DOWNLOAD_CODE_SETS);
+      setCodeSets([]);
       return;
     }
 
-    DownloadCodeSet.getByProductRef(product.ref).then(sets => {
-      setCodeSets(sets);
-    });
+    const unsubscribe = DownloadCodeSet.watchListByProductRef(
+      product.ref,
+      sets => {
+        setCodeSets(sets);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
   }, [product]);
 
   const addDownloadCodeSet = async (
     numberOfCodes: number,
     expiredAt: Date
   ): Promise<void> => {
-    if (!product) {
-      return;
+    if (!product || !user) {
+      throw new Error("unexpected.");
     }
 
-    await DownloadCodeSet.create(product.ref, numberOfCodes, expiredAt);
+    const {
+      current: currentRegisteredCount,
+      limit: maxRegisteredCount
+    } = user.user.counters.downloadCode;
 
-    const updatedSets = await DownloadCodeSet.getByProductRef(product.ref);
-    setCodeSets(updatedSets);
+    if (maxRegisteredCount < currentRegisteredCount + numberOfCodes) {
+      throw new Error(
+        `exceeded. max count. current: ${currentRegisteredCount},  requested: ${numberOfCodes}, limit: ${maxRegisteredCount}`
+      );
+    }
+
+    await Promise.all([
+      user.editCounter(
+        "downloadCode",
+        currentRegisteredCount + numberOfCodes,
+        firebaseApp.firestore()
+      ),
+      await DownloadCodeSet.create(product.ref, numberOfCodes, expiredAt)
+    ]);
   };
 
+  /**
+   * DownloadCodeSetを更新する
+   *
+   * 更新可能param
+   *   - description
+   *
+   * @param id
+   * @param edited
+   */
   const updateDownloadCodeSet = async (
     id: string,
-    // TODO: 今の所、"description"以外は更新を許さないはずなので、それがわかる型定義を、、、、
-    edited: Partial<DownloadCodeSetDocument>
+    edited: Pick<DownloadCodeSetDocument, "description">
   ) => {
     if (!product) {
       return;
@@ -49,9 +79,6 @@ const useDownloadCodeEditor = (product: Product | null) => {
 
     const ref = await DownloadCodeSet.getDocRef(id);
     await ref.update(edited);
-
-    const updatedSets = await DownloadCodeSet.getByProductRef(product.ref);
-    setCodeSets(updatedSets);
   };
 
   return {

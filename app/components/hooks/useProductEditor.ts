@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { storage } from "firebase";
+import { useEffect, useState, useCallback } from "react";
+import { firestore, storage, app as _app } from "firebase";
+type DocumentReference = firestore.DocumentReference;
 
+import useFirebase from "./useFirebase";
 import {
   Product,
   ProductDescription,
@@ -9,111 +11,189 @@ import {
   ProductFileDisplayName,
   ProductName
 } from "../../domains/Product";
+import useDlCodeUser from "./useDlCodeUser";
 
-const useProductEditor = (productId: string) => {
+const useProductEditor = (productId?: string) => {
+  const { app: firebaseApp } = useFirebase();
+  const { user: dlCodeUser } = useDlCodeUser();
   const [product, setProduct] = useState<Product | null>(null);
 
-  const addProduct = (
-    name: ProductName,
-    description: ProductDescription
-  ): Promise<void> => {
-    return Product.createNew({ name, description });
-  };
-
-  const updateProduct = (values: Partial<ProductDocument>) => {
-    if (!product) {
+  /**
+   * @param nullableProduct
+   * @private
+   */
+  const shouldProductRefLoaded = (nullableProduct: Product | null): Product => {
+    if (!nullableProduct) {
       throw new Error("unexpected error. no product is ready.");
     }
 
-    // TODO validate provided params
-
-    return product
-      .partialUpdateFields(values)
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
-  };
-
-  const updateProductIcon = (icon: File): Promise<void> => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
-
-    // TODO validate provided params
-
-    const { promise } = product.uploadIconToStorage(icon);
-
-    return promise
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
-  };
-
-  const addProductFile = (
-    displayName: ProductFileDisplayName,
-    file: File
-  ): {
-    task: storage.UploadTask;
-    promise: Promise<void>;
-  } => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
-
-    const { task, promise } = product.addProductFile(displayName, file);
-    const refreshPromise = promise
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
-
-    return {
-      task,
-      promise: refreshPromise
-    };
-  };
-
-  const updateProductFile = (
-    id: string,
-    edited: Partial<ProductFile>
-  ): Promise<void> => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
-
-    return product
-      .partialUpdateFile(id, edited)
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
-  };
-
-  const deleteProductFile = (productFileId: string): Promise<void> => {
-    if (!product) {
-      throw new Error("unexpected error. no product is ready.");
-    }
-
-    return product
-      .deleteProductFile(productFileId)
-      .then(() => Product.getById(productId))
-      .then(newProduct => {
-        setProduct(newProduct);
-      });
+    return nullableProduct;
   };
 
   useEffect(() => {
-    if (!productId) {
-      setProduct(null);
+    if (!dlCodeUser) {
       return;
     }
 
-    Product.getById(productId).then(p => {
-      setProduct(p);
-    });
-  }, [productId]);
+    if (!productId) {
+      return;
+    }
+
+    const unsubscribe = Product.watchOne(
+      productId,
+      firebaseApp.firestore(),
+      one => {
+        setProduct(one);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [firebaseApp, dlCodeUser, productId]);
+
+  const addProduct = useCallback(
+    async (
+      name: ProductName,
+      description: ProductDescription
+    ): Promise<[DocumentReference | void, DocumentReference | void]> => {
+      if (!dlCodeUser) {
+        throw new Error(
+          "unexpected. firebase and user haven't benn initialized."
+        );
+      }
+
+      const {
+        current: currentRegisteredCount,
+        limit: maxRegisteredCount
+      } = dlCodeUser.user.counters.product;
+
+      if (maxRegisteredCount <= currentRegisteredCount) {
+        throw new Error(
+          `exceeded. max count. current: ${currentRegisteredCount}, limit: ${maxRegisteredCount}`
+        );
+      }
+
+      // current countを改めて計算する、冗長だけれど、、
+      const current = await Product.getCount(
+        dlCodeUser.uid,
+        firebaseApp.firestore()
+      );
+
+      // TODO アトミックな処理に実装を変更する
+      return Promise.all([
+        dlCodeUser.editCounter("product", current + 1, firebaseApp.firestore()),
+        Product.createNew({ name, description }, firebaseApp.firestore())
+      ]);
+    },
+    [firebaseApp, dlCodeUser]
+  );
+
+  const updateProduct = useCallback(
+    async (values: Partial<ProductDocument>) => {
+      const loadedProduct = shouldProductRefLoaded(product);
+
+      // TODO validate provided params
+      await loadedProduct.partialUpdateFields(values);
+    },
+    [product]
+  );
+
+  const updateProductIcon = useCallback(
+    async (icon: File) => {
+      const loadedProduct = shouldProductRefLoaded(product);
+
+      // TODO validate provided params
+      const { promise } = loadedProduct.uploadIconToStorage(icon);
+
+      return promise;
+    },
+    [product]
+  );
+
+  const addProductFile = useCallback(
+    (
+      displayName: ProductFileDisplayName,
+      file: File
+    ): {
+      task: storage.UploadTask;
+      promise: Promise<void>;
+    } => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      if (!dlCodeUser) {
+        throw new Error("non auth user logged-in.");
+      }
+
+      // check allowed host file size.
+      const fileSizeByteTrying = file.size;
+
+      const {
+        current: currentFileSizeByte,
+        limit: maxFileSizeByte
+      } = dlCodeUser.user.counters.totalFileSizeByte;
+
+      if (maxFileSizeByte < currentFileSizeByte + fileSizeByteTrying) {
+        throw new Error(
+          `exceeded. max count. current: ${currentFileSizeByte},  requested: ${fileSizeByteTrying}, limit: ${maxFileSizeByte}`
+        );
+      }
+
+      const { task, promise } = loadedProduct.addProductFile(
+        dlCodeUser.uid,
+        displayName,
+        file
+      );
+
+      return {
+        task,
+        // TODO アトミックな処理に実装を変更する
+        promise: Promise.all([
+          promise,
+          dlCodeUser.editCounter(
+            "totalFileSizeByte",
+            currentFileSizeByte + fileSizeByteTrying,
+            firebaseApp.firestore()
+          )
+        ]).then()
+      };
+    },
+    [firebaseApp, product, dlCodeUser]
+  );
+
+  const updateProductFile = useCallback(
+    (id: string, edited: Partial<ProductFile>): Promise<void> => {
+      const loadedProduct = shouldProductRefLoaded(product);
+      return loadedProduct.partialUpdateFile(id, edited);
+    },
+    [product]
+  );
+
+  const deleteProductFile = useCallback(
+    async (productFileId: string) => {
+      if (!dlCodeUser) {
+        throw new Error("non auth user logged-in.");
+      }
+
+      const loadedProduct = shouldProductRefLoaded(product);
+      const deletingFileSizeByte =
+        loadedProduct.productFiles[productFileId].size;
+
+      const {
+        current: currentFileSizeByte
+      } = dlCodeUser.user.counters.totalFileSizeByte;
+
+      // TODO アトミックな処理に実装を変更する
+      return Promise.all([
+        loadedProduct.deleteProductFile(productFileId),
+        dlCodeUser.editCounter(
+          "totalFileSizeByte",
+          currentFileSizeByte - deletingFileSizeByte,
+          firebaseApp.firestore()
+        )
+      ]);
+    },
+    [product, dlCodeUser, firebaseApp]
+  );
 
   return {
     product,

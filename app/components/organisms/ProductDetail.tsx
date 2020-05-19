@@ -3,12 +3,13 @@ const { useMemo } = React;
 
 import styled from "styled-components";
 
-import { Grid, Chip, Avatar } from "@material-ui/core";
-import Typography, { TypographyProps } from "@material-ui/core/Typography";
+import { Grid, Typography } from "@material-ui/core";
+import { TypographyProps } from "@material-ui/core/Typography";
 // tslint:disable-next-line:no-var-requires
 const reactStringReplace = require("react-string-replace");
 
 import ProductThumbnail from "../atoms/ProductImageThumbnailImage";
+import TextAvatarChip from "../atoms/TextAvatarChip";
 
 const URL_REGEXP = /(https?:\/\/\S+)/g;
 
@@ -22,14 +23,6 @@ const ProductDescription = styled(Typography as React.FC<TypographyProps>)`
 
 const StyledA = styled.a`
   word-break: break-all;
-`;
-
-// TODO 動的にwidth radiusを調整する
-const LetterAvatar = styled(Avatar)`
-  && {
-    width: 94px;
-    border-radius: 32px;
-  }
 `;
 
 interface ProductDetailProps {
@@ -65,9 +58,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         <ProductDescription variant="body1">
           {linkifyDescription}
         </ProductDescription>
-        <Chip
-          variant="outlined"
-          avatar={<LetterAvatar>有効期限</LetterAvatar>}
+        <TextAvatarChip
+          avatar={`有効期限`}
           label={downloadCodeExpiredAt.toLocaleDateString()}
         />
       </Grid>

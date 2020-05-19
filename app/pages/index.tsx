@@ -1,17 +1,16 @@
 import * as React from "react";
-const { useEffect } = React;
-import { Link, RouteComponentProps } from "react-router-dom";
+const { useMemo } = React;
 
 import { Container, Grid, Typography } from "@material-ui/core";
 import Icon, { IconProps } from "@material-ui/core/Icon";
 
 import styled from "styled-components";
 
-import useDate from "../hooks/useDate";
-import LinkButton from "../atoms/LinkButton";
-import Logo from "../atoms/Logo";
-import useGa from "../hooks/useGa";
-import Footer from "../organisms/Footer";
+import { format as dateFormat } from "date-fns";
+
+import LinkButton from "../components/atoms/LinkButton";
+import Logo from "../components/atoms/Logo";
+import Footer from "../components/organisms/Footer";
 
 const Root = styled.div``;
 
@@ -25,20 +24,29 @@ const Space = styled.div`
 
 const Hero = () => {
   return (
-    <Grid item={true}>
-      <Typography variant="h1">
-        <Logo />
-      </Typography>
-
-      <LinkButton to="/d">
-        <LeftIcon>cloud_download</LeftIcon>
-        <span>ダウンロードページへ</span>
-      </LinkButton>
-      <LinkButton disabled={true} to="/">
-        <LeftIcon>publish</LeftIcon>
-        <span>配信管理ページへ</span>
-      </LinkButton>
-    </Grid>
+    <>
+      <Grid item={true}>
+        <Typography variant="h1">
+          <Logo />
+        </Typography>
+        <Typography variant="subtitle2">{process.env.version}</Typography>
+      </Grid>
+      <Grid
+        item={true}
+        style={{
+          marginTop: 20
+        }}
+      >
+        <LinkButton href="/download/verify">
+          <LeftIcon>cloud_download</LeftIcon>
+          <span>ダウンロードページへ</span>
+        </LinkButton>
+        <LinkButton href="/publish">
+          <LeftIcon>publish</LeftIcon>
+          <span>配信管理ページへ</span>
+        </LinkButton>
+      </Grid>
+    </>
   );
 };
 
@@ -46,11 +54,8 @@ const AboutAppSection = () => {
   const logo = <Logo />;
   const book = <Icon>book</Icon>;
   const disk = <Icon>album</Icon>;
-  const { formattedNow } = useDate();
-  const now = formattedNow("yyyy/mm/dd");
-  const t28Link = (
-    <Link to={`https://twitter.com/T28_tatsuya`}>@T28_tatsuya</Link>
-  );
+  const now = useMemo(() => dateFormat(new Date(), "yyyy/MM/dd"), []);
+  const t28Link = <a href={`https://twitter.com/T28_tatsuya`}>@T28_tatsuya</a>;
 
   return (
     <>
@@ -73,19 +78,16 @@ const AboutAppSection = () => {
         </Typography>
         <Typography variant="h6">ファイル配信</Typography>
         <Typography variant="body1">
-          >> {now}時点では、{t28Link}のみです。
+          {`>> ${now}時点では誰でも管理ページを使用することが出来ますが、無保証(`}
+          {t28Link}
+          {`が使用する品質まで)です。`}
         </Typography>
       </Grid>
     </>
   );
 };
 
-const RootPage = (props: RouteComponentProps) => {
-  const { gtagPageView } = useGa();
-  useEffect(() => {
-    gtagPageView(props.location.pathname);
-  }, []);
-
+const RootIndexPage = () => {
   return (
     <Root>
       <Grid
@@ -109,4 +111,4 @@ const RootPage = (props: RouteComponentProps) => {
   );
 };
 
-export default RootPage;
+export default RootIndexPage;

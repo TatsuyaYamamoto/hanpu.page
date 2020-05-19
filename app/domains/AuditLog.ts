@@ -1,12 +1,12 @@
-import { auth, firestore } from "firebase/app";
+import { firestore } from "firebase/app";
 
-enum LogType {
+export enum LogType {
   ACTIVATE_WITH_DOWNLOAD_CODE = "ACTIVATE_WITH_DOWNLOAD_CODE",
   DOWNLOAD_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE",
   PLAY_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE"
 }
 
-interface AuditLogDocument {
+export interface AuditLogDocument {
   // who
   userId:
     | string // login user
@@ -27,38 +27,13 @@ interface AuditLogDocument {
 
   // results
   ok: boolean;
-  error?: any;
+  error?: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
 }
 
-class AuditLog {
-  public static getColRef() {
-    return firestore().collection(`auditLogs`);
-  }
-
-  public static async write(log: {
-    type: LogType;
-    params: any;
-    ok: boolean;
-    error?: any;
-  }): Promise<void> {
-    const { currentUser } = auth();
-    const userId = currentUser ? currentUser.uid : null;
-    const newLog: Partial<AuditLogDocument> = {
-      userId,
-      type: log.type,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-      href: location.href,
-      userAgent: navigator.userAgent,
-      params: log.params,
-      ok: log.ok
-    };
-
-    if (log.error) {
-      newLog.error = log.error;
-    }
-
-    await AuditLog.getColRef().add(newLog);
-  }
-}
-
-export { LogType, AuditLog, AuditLogDocument };
+export const getColRef = () => {
+  return firestore().collection(`auditLogs`);
+};
