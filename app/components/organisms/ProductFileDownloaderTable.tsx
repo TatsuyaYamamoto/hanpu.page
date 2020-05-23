@@ -221,7 +221,9 @@ const ProductFileDownloaderTable: React.FC<ProductFileDownloaderTableProps> = ({
             contentType: file.contentType,
             size: formatFileSize(file.size),
             // TODO!
-            canPlay: ["audio/mp3", "audio/x-m4a"].includes(file.contentType)
+            canPlay: ["audio/mp3", "audio/x-m4a", "audio/mpeg"].includes(
+              file.contentType
+            )
           };
         }),
     [files]
