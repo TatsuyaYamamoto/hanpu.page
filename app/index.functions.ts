@@ -9,6 +9,7 @@ import next from "next";
 
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
+import { sendToSlack } from "./functions/utils/slack";
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
@@ -158,4 +159,33 @@ export const initUser = functions
     }
 
     await newUserDocRef.set(newUserDoc);
+  });
+
+export const cloudFunctionsErrorLog = functions.pubsub
+  .topic("cloud-functions-error-log")
+  .onPublish(async (message, context) => {
+    try {
+      const data = JSON.parse(new Buffer(message.data, "base64").toString());
+      const { function_name, project_id } = data.resource.labels;
+      const executionId = context.eventId;
+
+      const logUrl =
+        `https://console.cloud.google.com/logs/viewer` +
+        `?project=${project_id}` +
+        `&advancedFilter=labels."execution_id"%3D"${executionId}"`;
+
+      const title = `Catch unhandled error! *${function_name}* <${logUrl}|Open log>`;
+      const text = JSON.stringify(data, null, "\t");
+      const result = await sendToSlack({
+        title,
+        text,
+        color: "danger"
+      });
+
+      console.log(
+        `it's success to send slack message. slack text: ${result.text}, pubsub message: ${message}, context: ${context}`
+      );
+    } catch (e) {
+      console.info("FATAL ERROR! Could not send slack webhook!", e);
+    }
   });

@@ -5,6 +5,7 @@ public/next
 public/publish
 public/download
 tools/sheet-generator/template.pptx
+.runtimeconfig.*
 
 # Created by https://www.gitignore.io/api/node,macos,windows,firebase,intellij+all
 # Edit at https://www.gitignore.io/?templates=node,macos,windows,firebase,intellij+all

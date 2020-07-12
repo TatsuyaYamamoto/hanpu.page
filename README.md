@@ -38,6 +38,32 @@ $ git push origin develop # deploy by CircleCI
 
 ## Settings
 
+### Operation Logging
+
+- GCP Console > Operation Logging > Log Viewer > シンクを作成
+  - シンク名: cloud-functions-error-log
+  - シンクサービス: Pub/Sub
+  - シンクのエクスポート先: firebase functions 上の`cloud-functions-error-log`
+  - フィルタ
+
+    ```
+    resource.type="cloud_function"
+    severity>=WARNING
+    ```
+
+### firebase functions config
+
+```shell script
+// dev
+$ KEY=slack            ; firebase functions:config:set $KEY="$(cat .runtimeconfig.json | jq ".$KEY")" --project dl-code-dev
+```
+
+```shell script
+// pro
+$ KEY=slack            ; firebase functions:config:set $KEY="$(cat .runtimeconfig.pro.json | jq ".$KEY")" --project dl-code
+
+```
+
 ### Auth0
 
 - Allowed Callback URLs
