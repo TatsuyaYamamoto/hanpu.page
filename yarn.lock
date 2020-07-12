@@ -753,10 +753,10 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/rc-slider@^8.6.4":
-  version "8.6.4"
-  resolved "https://registry.yarnpkg.com/@types/rc-slider/-/rc-slider-8.6.4.tgz#e29e21771b195b008eff8235c3c2b5f0c04dab92"
-  integrity sha512-KMWVUWW5iKtYxNb+or77l0Ru9FGqerRM18noWf7GB/ptgv3Kdu6gI3WHHkppfn3gQUMT/9jkaVa/6Zx1Pq/6wA==
+"@types/rc-slider@^8.6.6":
+  version "8.6.6"
+  resolved "https://registry.yarnpkg.com/@types/rc-slider/-/rc-slider-8.6.6.tgz#961ccfd0b8c632a9d8cdcc28b54d6be4781c419f"
+  integrity sha512-2Q3vwKrSm3PbgiMNwzxMkOaMtcAGi0xQ8WPeVKoabk1vNYHiVR44DMC3mr9jC2lhbxCBgGBJWF9sBhmnSDQ8Bg==
   dependencies:
     "@types/rc-tooltip" "*"
     "@types/react" "*"
