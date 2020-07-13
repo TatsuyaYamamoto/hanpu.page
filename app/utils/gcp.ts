@@ -5,7 +5,8 @@ import { format as dateFormat } from "date-fns";
 import ExportDocuments = firestore_v1.Params$Resource$Projects$Databases$Exportdocuments;
 import Firestore = firestore_v1.Firestore;
 
-const projectId = process.env.GCLOUD_PROJECT;
+import { projectId } from "../functions/processEnv";
+
 const backupBucket = `gs://${projectId}.appspot.com`;
 const exportCollections = ["auditLogs", "downloadCodeSets", "products"];
 
