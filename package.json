@@ -12,8 +12,8 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "start": "next dev app",
-    "serve": "firebase serve",
+    "dev": "next dev app",
+    "start": "firebase emulators:start",
     "build:client": "run-s build:client:*",
     "build:client:clean": "rm -rf public/*.html public/{_next,download,publish}",
     "build:client:build": "next build app",
