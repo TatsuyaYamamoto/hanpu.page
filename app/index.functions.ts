@@ -22,13 +22,13 @@ const nextServer = next({
   dir: isUnderFirebaseFunction
     ? // default value
       "."
-    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")が、nextの実装を読み込むルートパスがproject rootなのでエラーが発生する。
+    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")
       // local実行時のみ、ビルド済みnext dirの相対パスを教える。
-      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokontokoro/apps/dl-code_web_app/next' directory! Try building your app with 'next build' before starting the server.
+      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokon
       "dist/functions",
-
   conf: { distDir: "next" }
 });
+
 const handle = nextServer.getRequestHandler();
 
 export const nextApp = functions.https.onRequest((req, res) => {

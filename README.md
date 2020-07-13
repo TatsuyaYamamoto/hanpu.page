@@ -23,6 +23,10 @@ hosted in [https://dl-code.web.app/]()
 ## Dev and Deploy
 
 ```bash
+// start next.js dev server
+$ yarn dev
+
+// start firebase emulator
 $ yarn start
 
 // some commits...
@@ -41,6 +45,7 @@ $ git push origin develop # deploy by CircleCI
 ### Operation Logging
 
 - GCP Console > Operation Logging > Log Viewer > シンクを作成
+
   - シンク名: cloud-functions-error-log
   - シンクサービス: Pub/Sub
   - シンクのエクスポート先: firebase functions 上の`cloud-functions-error-log`
