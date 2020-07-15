@@ -1,5 +1,5 @@
-// tslint:disable:no-console
 import * as functions from "firebase-functions";
+const { logger } = functions;
 import * as firebaseAdmin from "firebase-admin";
 
 // Initial Firebase App
@@ -53,7 +53,7 @@ export const scheduledFirestoreBackup = functions
   .pubsub.schedule("00 09 * * *")
   .timeZone("Asia/Tokyo")
   .onRun(async context => {
-    console.log("run firebase scheduled job.", context);
+    logger.log("run firebase scheduled job.", context);
 
     // Backup済みのファイルをカウントして、`MAX_BACKUP_DATE_LENGTH`を超過した分を削除する
     // 先に削除してからexportを実行しているのは、export後にBucket#getFilesを実行すると、直前のexportされたFileが含まれないため
@@ -81,10 +81,10 @@ export const scheduledFirestoreBackup = functions
       // make desc
       .reverse();
 
-    console.log(`dates backed-up: ${backupDates}`);
+    logger.log(`dates backed-up: ${backupDates}`);
 
     const deleteDates = backupDates.slice(MAX_BACKUP_DATE_LENGTH);
-    console.log(`dates to be deleted: ${deleteDates}`);
+    logger.log(`dates to be deleted: ${deleteDates}`);
 
     const deleteFilePromises: Promise<any>[] = [];
     const deleteFileKeys: string[] = [];
@@ -103,17 +103,16 @@ export const scheduledFirestoreBackup = functions
 
     await Promise.all(deleteFilePromises);
 
-    const deleteLength = deleteFileKeys.length;
-    console.log(
-      `success to delete ${deleteLength} backup date files.`,
+    logger.log(
+      `success to delete ${deleteFileKeys.length} backup date files.`,
       deleteFileKeys
     );
 
     try {
       const result = await backupFirestoreData();
-      console.log("success to backup-export.", result);
+      logger.log("success to backup-export.", result);
     } catch (error) {
-      console.error("fail to backup-export.", error);
+      logger.error("fail to backup-export.", error);
     }
   });
 
@@ -170,7 +169,7 @@ export const cloudFunctionsErrorLog = functions.pubsub
       const executionId = context.eventId;
 
       const logUrl =
-        `https://console.cloud.google.com/logs/viewer` +
+        `https://logger.cloud.google.com/logs/viewer` +
         `?project=${project_id}` +
         `&advancedFilter=labels."execution_id"%3D"${executionId}"`;
 
@@ -182,10 +181,10 @@ export const cloudFunctionsErrorLog = functions.pubsub
         color: "danger"
       });
 
-      console.log(
+      logger.log(
         `it's success to send slack message. slack text: ${result.text}, pubsub message: ${message}, context: ${context}`
       );
     } catch (e) {
-      console.info("FATAL ERROR! Could not send slack webhook!", e);
+      logger.info("FATAL ERROR! Could not send slack webhook!", e);
     }
   });
