@@ -1,5 +1,5 @@
-// tslint:disable:no-console
 import * as functions from "firebase-functions";
+const { logger } = functions;
 import * as firebaseAdmin from "firebase-admin";
 
 // Initial Firebase App
@@ -9,6 +9,7 @@ import next from "next";
 
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
+import { sendToSlack } from "./functions/utils/slack";
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
@@ -21,13 +22,13 @@ const nextServer = next({
   dir: isUnderFirebaseFunction
     ? // default value
       "."
-    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")が、nextの実装を読み込むルートパスがproject rootなのでエラーが発生する。
+    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")
       // local実行時のみ、ビルド済みnext dirの相対パスを教える。
-      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokontokoro/apps/dl-code_web_app/next' directory! Try building your app with 'next build' before starting the server.
+      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokon
       "dist/functions",
-
   conf: { distDir: "next" }
 });
+
 const handle = nextServer.getRequestHandler();
 
 export const nextApp = functions.https.onRequest((req, res) => {
@@ -52,7 +53,7 @@ export const scheduledFirestoreBackup = functions
   .pubsub.schedule("00 09 * * *")
   .timeZone("Asia/Tokyo")
   .onRun(async context => {
-    console.log("run firebase scheduled job.", context);
+    logger.log("run firebase scheduled job.", context);
 
     // Backup済みのファイルをカウントして、`MAX_BACKUP_DATE_LENGTH`を超過した分を削除する
     // 先に削除してからexportを実行しているのは、export後にBucket#getFilesを実行すると、直前のexportされたFileが含まれないため
@@ -80,10 +81,10 @@ export const scheduledFirestoreBackup = functions
       // make desc
       .reverse();
 
-    console.log(`dates backed-up: ${backupDates}`);
+    logger.log(`dates backed-up: ${backupDates}`);
 
     const deleteDates = backupDates.slice(MAX_BACKUP_DATE_LENGTH);
-    console.log(`dates to be deleted: ${deleteDates}`);
+    logger.log(`dates to be deleted: ${deleteDates}`);
 
     const deleteFilePromises: Promise<any>[] = [];
     const deleteFileKeys: string[] = [];
@@ -102,17 +103,16 @@ export const scheduledFirestoreBackup = functions
 
     await Promise.all(deleteFilePromises);
 
-    const deleteLength = deleteFileKeys.length;
-    console.log(
-      `success to delete ${deleteLength} backup date files.`,
+    logger.log(
+      `success to delete ${deleteFileKeys.length} backup date files.`,
       deleteFileKeys
     );
 
     try {
       const result = await backupFirestoreData();
-      console.log("success to backup-export.", result);
+      logger.log("success to backup-export.", result);
     } catch (error) {
-      console.error("fail to backup-export.", error);
+      logger.error("fail to backup-export.", error);
     }
   });
 
@@ -158,4 +158,33 @@ export const initUser = functions
     }
 
     await newUserDocRef.set(newUserDoc);
+  });
+
+export const cloudFunctionsErrorLog = functions.pubsub
+  .topic("cloud-functions-error-log")
+  .onPublish(async (message, context) => {
+    try {
+      const data = JSON.parse(new Buffer(message.data, "base64").toString());
+      const { function_name, project_id } = data.resource.labels;
+      const executionId = context.eventId;
+
+      const logUrl =
+        `https://logger.cloud.google.com/logs/viewer` +
+        `?project=${project_id}` +
+        `&advancedFilter=labels."execution_id"%3D"${executionId}"`;
+
+      const title = `Catch unhandled error! *${function_name}* <${logUrl}|Open log>`;
+      const text = JSON.stringify(data, null, "\t");
+      const result = await sendToSlack({
+        title,
+        text,
+        color: "danger"
+      });
+
+      logger.log(
+        `it's success to send slack message. slack text: ${result.text}, pubsub message: ${message}, context: ${context}`
+      );
+    } catch (e) {
+      logger.info("FATAL ERROR! Could not send slack webhook!", e);
+    }
   });
