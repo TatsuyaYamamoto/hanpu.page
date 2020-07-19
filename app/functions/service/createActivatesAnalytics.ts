@@ -30,7 +30,13 @@ const analyticsColRef = firestore().collection(AnalyticsCollectionPath) as Colle
 // prettier-ignore
 const productColRef = firestore().collection(`products`) as CollectionReference<ProductDocument>;
 
-const upsertAnalytics = async (
+/**
+ * @private
+ *
+ * @param datum
+ * @param formattedTargetDate
+ */
+const upsertSimpleActivateCountAnalytics = async (
   datum: NewAnalyticsDatum,
   formattedTargetDate: string
 ) => {
@@ -122,7 +128,15 @@ const createActivatesAnalyticsData = async (
   return newAnalyticsData;
 };
 
-const createActivatesAnalytics = async (date: Date = new Date()) => {
+/**
+ * {@link AnalyticsType.SIMPLE_ACTIVATE_COUNT}のanalytics dataを作成する。
+ * 基準日(引数のDate、または new Date())から1日前の00:00-23:59が対象の範囲
+ *
+ * @param date
+ */
+export const createSimpleActivateCountAnalytics = async (
+  date: Date = new Date()
+) => {
   const providedDate = moment(date).tz("Asia/Tokyo");
   logger.log(`provided date: ${providedDate}`);
 
@@ -157,9 +171,7 @@ const createActivatesAnalytics = async (date: Date = new Date()) => {
   await Promise.all(
     Object.keys(newAnalyticsData).map(key => {
       const datum = newAnalyticsData[key];
-      return upsertAnalytics(datum, formattedTargetDate);
+      return upsertSimpleActivateCountAnalytics(datum, formattedTargetDate);
     })
   );
 };
-
-export default createActivatesAnalytics;

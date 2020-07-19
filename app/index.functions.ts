@@ -10,7 +10,7 @@ import next from "next";
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
 import { sendToSlack } from "./functions/utils/slack";
-import createActivatesAnalytics from "./functions/service/createActivatesAnalytics";
+import { createSimpleActivateCountAnalytics } from "./functions/service/createActivatesAnalytics";
 
 const logger = new Logger("index");
 logger.logLevel = LogLevel.DEBUG;
@@ -62,7 +62,7 @@ export const pubsubDebugger = functions.https.onRequest(async (req, res) => {
   }
 
   const supportedTopics: { [topic: string]: () => void } = {
-    createActivatesAnalytics
+    createSimpleActivateCountAnalytics
   };
 
   if (!supportedTopics[topic]) {
@@ -83,7 +83,7 @@ export const scheduledCreateActivatesAnalytics = functions
   .region("asia-northeast1")
   .pubsub.schedule("00 01 * * *")
   .timeZone("Asia/Tokyo")
-  .onRun(() => createActivatesAnalytics());
+  .onRun(() => createSimpleActivateCountAnalytics());
 
 /**
  * FirestoreのバックアップをstorageにexportするScheduledJob
