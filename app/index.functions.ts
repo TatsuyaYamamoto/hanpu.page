@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
-const { logger } = functions;
 import * as firebaseAdmin from "firebase-admin";
+import { Logger, LogLevel } from "@firebase/logger";
 
 // Initial Firebase App
 const firebaseApp = firebaseAdmin.initializeApp();
@@ -10,6 +10,10 @@ import next from "next";
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
 import { sendToSlack } from "./functions/utils/slack";
+import createActivatesAnalytics from "./functions/service/createActivatesAnalytics";
+
+const logger = new Logger("index");
+logger.logLevel = LogLevel.DEBUG;
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
@@ -43,6 +47,43 @@ export const api = functions.https.onRequest((_, res) => {
     message: "api!"
   });
 });
+
+export const pubsubDebugger = functions.https.onRequest(async (req, res) => {
+  let topic = req.query.topic ?? "";
+  if (typeof topic !== "string") {
+    topic = topic.toString();
+  }
+
+  if (!process.env.FUNCTIONS_EMULATOR) {
+    res.json({
+      message: "pubsub debugger is executable in local only."
+    });
+    return;
+  }
+
+  const supportedTopics: { [topic: string]: () => void } = {
+    createActivatesAnalytics
+  };
+
+  if (!supportedTopics[topic]) {
+    res.status(404).json({
+      message: "not found debug topic"
+    });
+    return;
+  }
+
+  await supportedTopics[topic]();
+
+  res.json({
+    ok: true
+  });
+});
+
+export const scheduledCreateActivatesAnalytics = functions
+  .region("asia-northeast1")
+  .pubsub.schedule("00 01 * * *")
+  .timeZone("Asia/Tokyo")
+  .onRun(() => createActivatesAnalytics());
 
 /**
  * FirestoreのバックアップをstorageにexportするScheduledJob
