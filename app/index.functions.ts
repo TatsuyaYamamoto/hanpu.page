@@ -84,7 +84,15 @@ export const scheduledCreateActivatesAnalytics = functions
   .region("asia-northeast1")
   .pubsub.schedule("00 01 * * *")
   .timeZone("Asia/Tokyo")
-  .onRun(() => createSimpleActivateCountAnalytics());
+  .onRun(() => {
+    const now = new Date();
+    const yesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1
+    );
+    return createSimpleActivateCountAnalytics(yesterday);
+  });
 
 /**
  * FirestoreのバックアップをstorageにexportするScheduledJob

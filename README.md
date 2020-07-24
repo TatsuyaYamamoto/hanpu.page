@@ -136,3 +136,9 @@ $ gsutil cors set firebase/cors.json gs://dl-code-dev.appspot.com
 ```
 
 Ref: [https://firebase.google.com/docs/storage/web/download-files#cors_configuration](https://firebase.google.com/docs/storage/web/download-files#cors_configuration)
+
+### GOOGLE_APPLICATION_CREDENTIALS
+
+```shell script
+$ export GOOGLE_APPLICATION_CREDENTIALS="../../config/service_account/dl-code-dev-firebase-adminsdk-h1f43-b771e573b7.json"
+```

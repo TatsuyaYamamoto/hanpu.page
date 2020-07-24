@@ -130,7 +130,7 @@ const createActivatesAnalyticsData = async (
 
 /**
  * {@link AnalyticsType.SIMPLE_ACTIVATE_COUNT}のanalytics dataを作成する。
- * 基準日(引数のDate、または new Date())から1日前の00:00-23:59が対象の範囲
+ * 基準日(引数のDate、または new Date())の00:00-23:59が対象の範囲
  *
  * @param date
  */
@@ -141,16 +141,10 @@ export const createSimpleActivateCountAnalytics = async (
   logger.log(`provided date: ${providedDate}`);
 
   const range = {
-    from: providedDate
-      .clone()
-      .subtract(1, "day")
-      .startOf("day"),
-    to: providedDate
-      .clone()
-      .subtract(1, "day")
-      .endOf("day")
+    from: providedDate.clone().startOf("day"),
+    to: providedDate.clone().endOf("day")
   };
-  logger.log(`target date range`, range);
+  logger.log(`target date range: ${range}`);
 
   const formattedTargetDate = range.from.format("YYYY-MM-DD");
   logger.log(`formatted target date: ${formattedTargetDate}`);
