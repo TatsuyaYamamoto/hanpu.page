@@ -7,15 +7,65 @@ import {
   VictoryTheme,
   VictoryBrushContainer,
   VictoryAxis,
-  VictoryZoomContainer,
-  DomainTuple
+  VictoryTooltip,
+  DomainTuple,
+  createContainer,
+  VictoryZoomContainerProps,
+  VictoryVoronoiContainerProps,
+  VictoryTooltipProps
 } from "victory";
 import { Paper, Tabs, Tab } from "@material-ui/core";
 import { useDebouncedCallback } from "use-debounce";
+import moment from "moment-timezone";
 
 import useAnalytics from "../../hooks/useAnalytics";
 
-const ChartRoot = styled.div`
+const zoomableGraphWidth = 550;
+const zoomableGraphHeight = 300;
+const fullScaleGraphWidth = zoomableGraphWidth;
+const fullScaleGraphHeight = 100;
+
+/**
+ * @see https://formidable.com/open-source/victory/docs/create-container/
+ */
+const VictoryZoomVoronoiContainer = createContainer<
+  VictoryZoomContainerProps,
+  VictoryVoronoiContainerProps
+>("zoom", "voronoi");
+
+interface GraphData {
+  timeline: { x: Date; y: number; type: "timeline" }[];
+  cumulative: { x: Date; y: number; type: "cumulative" }[];
+}
+
+const CustomTooltip: FC<VictoryTooltipProps> = props => {
+  const { datum, x, y } = props;
+  const d = datum as any;
+  const date = moment(d.x)
+    .tz("Asia/Tokyo")
+    .format("YYYY-MM-DD");
+  // @ts-ignore
+  const { activePoints } = props;
+
+  return (
+    <g style={{ pointerEvents: "none" }}>
+      <foreignObject x={x} y={y} width="150" height="100">
+        <div className="graph-tooltip">
+          <div>{date}</div>
+          <div>
+            {activePoints.map((point: any) => (
+              <div key={point.type}>
+                {point.type === "timeline" ? "日別" : "累計"}: {point.y}
+              </div>
+            ))}
+          </div>
+        </div>
+      </foreignObject>
+    </g>
+  );
+};
+
+const AnalyticsGraphRoot = styled.div`
   svg {
     max-height: calc(20rem);
     max-width: 100%;
@@ -23,20 +73,106 @@ const ChartRoot = styled.div`
   }
 `;
 
-const zoomableGraphWidth = 550;
-const zoomableGraphHeight = 300;
-const fullScaleGraphWidth = zoomableGraphWidth;
-const fullScaleGraphHeight = 100;
+const AnalyticsGraph: FC<{ data: GraphData }> = props => {
+  const { data } = props;
+  const [zoomDomain, setZoomDomain] = useState<
+    { x?: DomainTuple; y: DomainTuple } | undefined
+  >(undefined);
+  const [handleBrush] = useDebouncedCallback(
+    (domain: { x?: DomainTuple; y: DomainTuple }) => {
+      setZoomDomain(domain);
+    },
+    500
+  );
 
-interface VisibleData {
-  timeline: { x: Date; y: number }[];
-  cumulative: { x: Date; y: number }[];
-}
+  const dummyLabels = () => `_`;
+
+  return (
+    <AnalyticsGraphRoot>
+      <VictoryChart
+        scale={{ x: "time" }}
+        width={zoomableGraphWidth}
+        height={zoomableGraphHeight}
+        theme={VictoryTheme.material}
+        containerComponent={
+          <VictoryZoomVoronoiContainer
+            // zoom
+            responsive={false}
+            zoomDimension="x"
+            zoomDomain={zoomDomain}
+            // voronoi
+            voronoiDimension="x"
+            labels={dummyLabels}
+            labelComponent={
+              <VictoryTooltip
+                constrainToVisibleArea={true}
+                flyoutComponent={<CustomTooltip />}
+              />
+            }
+          />
+        }
+      >
+        <VictoryLine
+          data={data.timeline}
+          style={{
+            data: { stroke: "tomato" },
+            labels: { fill: "tomato" }
+          }}
+          labelComponent={<VictoryTooltip />}
+        />
+        <VictoryLine
+          data={data.cumulative}
+          style={{
+            data: { stroke: "blue" }
+          }}
+          labelComponent={<VictoryTooltip />}
+        />
+      </VictoryChart>
+      <VictoryChart
+        width={fullScaleGraphWidth}
+        height={fullScaleGraphHeight}
+        scale={{ x: "time" }}
+        padding={{ top: 0, left: 50, right: 50, bottom: 30 }}
+        containerComponent={
+          <VictoryBrushContainer
+            responsive={false}
+            brushDimension="x"
+            // @ts-ignore
+            onBrushDomainChange={handleBrush}
+          />
+        }
+      >
+        <VictoryAxis
+          tickValues={[
+            new Date(2019, 1, 1),
+            new Date(2020, 1, 1),
+            new Date(2021, 1, 1)
+          ]}
+          // TODO
+          // tslint:disable-next-line
+          tickFormat={x => new Date(x).getFullYear()}
+        />
+        <VictoryLine
+          style={{
+            data: { stroke: "tomato" }
+          }}
+          data={data.timeline}
+        />
+        <VictoryLine
+          style={{
+            data: { stroke: "blue" }
+          }}
+          data={data.cumulative}
+        />
+      </VictoryChart>
+    </AnalyticsGraphRoot>
+  );
+};
 
 const UsageGraph: FC = () => {
   const analytics = useAnalytics();
   const [total, setTotal] = useState("");
-  const [visibleData, setVisibleData] = useState<VisibleData>({
+  const [graphData, setGraphData] = useState<GraphData>({
     timeline: [],
     cumulative: []
   });
@@ -58,17 +194,21 @@ const UsageGraph: FC = () => {
           })
           .sort((a, b) => (a.x < b.x ? -1 : 1));
 
-        const timelineData: { x: Date; y: number }[] = [];
-        const cumulativeData: { x: Date; y: number }[] = [];
+        const timelineData: { x: Date; y: number; type: "timeline" }[] = [];
+        const cumulativeData: { x: Date; y: number; type: "cumulative" }[] = [];
 
         rowTimelineData.forEach(({ x, y }, index) => {
           const prevCount = cumulativeData[index - 1]?.y ?? 0;
 
-          timelineData.push({ x: new Date(x), y });
-          cumulativeData.push({ x: new Date(x), y: y + prevCount });
+          timelineData.push({ x: new Date(x), y, type: "timeline" });
+          cumulativeData.push({
+            x: new Date(x),
+            y: y + prevCount,
+            type: "cumulative"
+          });
         });
 
-        setVisibleData({
+        setGraphData({
           timeline: timelineData,
           cumulative: cumulativeData
         });
@@ -76,16 +216,6 @@ const UsageGraph: FC = () => {
       }
     })();
   }, []);
-
-  const [zoomDomain, setZoomDomain] = useState<
-    { x?: DomainTuple; y: DomainTuple } | undefined
-  >(undefined);
-  const [handleBrush] = useDebouncedCallback(
-    (domain: { x?: DomainTuple; y: DomainTuple }) => {
-      setZoomDomain(domain);
-    },
-    500
-  );
 
   return (
     <Paper>
@@ -97,72 +227,7 @@ const UsageGraph: FC = () => {
       >
         <Tab label={`アクティベーション数 (${total})`} />
       </Tabs>
-
-      <ChartRoot>
-        <VictoryChart
-          scale={{ x: "time" }}
-          width={zoomableGraphWidth}
-          height={zoomableGraphHeight}
-          theme={VictoryTheme.material}
-          containerComponent={
-            <VictoryZoomContainer
-              responsive={false}
-              zoomDimension="x"
-              zoomDomain={zoomDomain}
-            />
-          }
-        >
-          <VictoryLine
-            data={visibleData.timeline}
-            style={{
-              data: { stroke: "tomato" }
-            }}
-          />
-          <VictoryLine
-            data={visibleData.cumulative}
-            style={{
-              data: { stroke: "blue" }
-            }}
-          />
-        </VictoryChart>
-        <VictoryChart
-          width={fullScaleGraphWidth}
-          height={fullScaleGraphHeight}
-          scale={{ x: "time" }}
-          padding={{ top: 0, left: 50, right: 50, bottom: 30 }}
-          containerComponent={
-            <VictoryBrushContainer
-              responsive={false}
-              brushDimension="x"
-              // @ts-ignore
-              onBrushDomainChange={handleBrush}
-            />
-          }
-        >
-          <VictoryAxis
-            tickValues={[
-              new Date(2019, 1, 1),
-              new Date(2020, 1, 1),
-              new Date(2021, 1, 1)
-            ]}
-            // TODO
-            // tslint:disable-next-line
-            tickFormat={x => new Date(x).getFullYear()}
-          />
-          <VictoryLine
-            style={{
-              data: { stroke: "tomato" }
-            }}
-            data={visibleData.timeline}
-          />
-          <VictoryLine
-            style={{
-              data: { stroke: "blue" }
-            }}
-            data={visibleData.cumulative}
-          />
-        </VictoryChart>
-      </ChartRoot>
+      <AnalyticsGraph data={graphData} />
     </Paper>
   );
 };
