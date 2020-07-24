@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, ChangeEvent } from "react";
 import styled from "styled-components";
 
 import {
@@ -14,11 +14,22 @@ import {
   VictoryVoronoiContainerProps,
   VictoryTooltipProps
 } from "victory";
-import { Paper, Tabs, Tab } from "@material-ui/core";
+import {
+  Paper,
+  Tabs,
+  Tab,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from "@material-ui/core";
 import { useDebouncedCallback } from "use-debounce";
 import moment from "moment-timezone";
 
 import useAnalytics from "../../hooks/useAnalytics";
+import { Product } from "../../../domains/Product";
+import useFirebase from "../../hooks/useFirebase";
+import useDlCodeUser from "../../hooks/useDlCodeUser";
 
 const zoomableGraphWidth = 550;
 const zoomableGraphHeight = 300;
@@ -171,16 +182,30 @@ const AnalyticsGraph: FC<{ data: GraphData }> = props => {
 
 const UsageGraph: FC = () => {
   const analytics = useAnalytics();
+  const { app: firebaseApp } = useFirebase();
+  const { user: dlCodeUser } = useDlCodeUser();
+
   const [total, setTotal] = useState("");
+  const [loadedProducts, setLoadedProducts] = React.useState<Product[]>([]);
+  const [selectedProductId, setSelectedProductId] = React.useState<
+    string | null
+  >(null);
   const [graphData, setGraphData] = useState<GraphData>({
     timeline: [],
     cumulative: []
   });
 
   useEffect(() => {
+    if (!selectedProductId) {
+      return;
+    }
+
     (async () => {
-      const simpleActivateCount = await analytics.loadSimpleActivateCount();
-      if (simpleActivateCount) {
+      const simpleActivateCount = await analytics.loadSimpleActivateCount(
+        selectedProductId
+      );
+
+      if (1 <= simpleActivateCount.length) {
         const {
           total: rowTimeline,
           timeline: rowTimelineDatumMap
@@ -215,10 +240,50 @@ const UsageGraph: FC = () => {
         setTotal(rowTimeline.toString(10));
       }
     })();
-  }, []);
+  }, [selectedProductId]);
+
+  useEffect(() => {
+    if (!dlCodeUser) {
+      return;
+    }
+
+    const unsubscribe = Product.watchList(
+      dlCodeUser.uid,
+      firebaseApp.firestore(),
+      owns => {
+        setLoadedProducts(owns);
+        if (0 < owns.length) {
+          setSelectedProductId(owns[0].id);
+        }
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [firebaseApp, dlCodeUser]);
+
+  const onSelectProduct = (event: ChangeEvent<{ value: unknown }>) => {
+    setSelectedProductId(event.target.value as string);
+  };
 
   return (
-    <Paper>
+    <Paper style={{ margin: "0 auto" }}>
+      <FormControl variant="outlined" style={{ minWidth: 200 }}>
+        <InputLabel>プロダクト</InputLabel>
+        <Select
+          value={selectedProductId ?? "loading"}
+          onChange={onSelectProduct}
+        >
+          <MenuItem value="loading">Loading...</MenuItem>
+          {loadedProducts.map(p => (
+            <MenuItem key={p.id} value={p.id}>
+              {p.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <Tabs
         value={0}
         indicatorColor="primary"

@@ -18,14 +18,15 @@ const useAnalytics = () => {
   // prettier-ignore
   const analyticsColRef = firestore().collection(AnalyticsCollectionPath) as firestore.CollectionReference<AnalyticsDocument>;
 
-  const loadSimpleActivateCount = async () => {
+  const loadSimpleActivateCount = async (productId: string) => {
     if (!user) {
-      return;
+      throw new Error("firebase user is not initialized");
     }
 
     const snap = await analyticsColRef
       .where("type", "==", AnalyticsType.SIMPLE_ACTIVATE_COUNT)
       .where("ownerUid", "==", user.uid)
+      .where("productId", "==", productId)
       .get();
 
     return snap.docs.map(doc => doc.data());
