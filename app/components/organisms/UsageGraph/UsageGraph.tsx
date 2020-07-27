@@ -275,7 +275,9 @@ const UsageGraph: FC = () => {
           value={selectedProductId ?? "loading"}
           onChange={onSelectProduct}
         >
-          <MenuItem value="loading">Loading...</MenuItem>
+          {loadedProducts.length === 0 && (
+            <MenuItem value="loading">Loading...</MenuItem>
+          )}
           {loadedProducts.map(p => (
             <MenuItem key={p.id} value={p.id}>
               {p.name}
