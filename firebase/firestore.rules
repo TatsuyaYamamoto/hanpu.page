@@ -13,16 +13,21 @@ service cloud.firestore {
     }
 
     match /downloadCodeSets/{id} {
+      // TODO: verifyをWebAPI化
+      // 一般ユーザーに downloadCodeSetのDocを読み込ませるべきでない
+      allow read;
       allow create: if get(request.resource.data.productRef).data.ownerUid == request.auth.uid;
-      allow read, update: if get(resource.data.productRef).data.ownerUid == request.auth.uid;
+      allow update: if get(resource.data.productRef).data.ownerUid == request.auth.uid;
     }
+
     match /impressions/{id} {
       allow create;
     }
 
     match /products/{id} {
+      allow read;
       allow create: if request.resource.data.ownerUid == request.auth.uid;
-      allow read, update: if resource.data.ownerUid == request.auth.uid;
+      allow update: if resource.data.ownerUid == request.auth.uid;
     }
 
     match /users/{userId} {
