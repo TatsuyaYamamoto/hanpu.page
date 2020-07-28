@@ -98,6 +98,14 @@ const AnalyticsGraph: FC<{ data: GraphData }> = props => {
 
   const dummyLabels = () => `_`;
 
+  const maxTimelineY = Math.max(...data.timeline.map(d => d.y));
+  const normalizeTimelineY = (datum: any) => datum.y / maxTimelineY;
+  const timelineTickFormat = (t: any) => Math.round(t * maxTimelineY);
+
+  const maxCumulativeY = Math.max(...data.cumulative.map(d => d.y));
+  const normalizeCumulativeY = (datum: any) => datum.y / maxCumulativeY;
+  const cumulativeTickFormat = (t: any) => Math.round(t * maxCumulativeY);
+
   return (
     <AnalyticsGraphRoot>
       <VictoryChart
@@ -123,20 +131,41 @@ const AnalyticsGraph: FC<{ data: GraphData }> = props => {
           />
         }
       >
+        <VictoryAxis
+          dependentAxis={true}
+          tickValues={[0, 0.5, 1]}
+          tickFormat={timelineTickFormat}
+          offsetX={50}
+          style={{
+            ticks: { padding: 0 },
+            tickLabels: { textAnchor: "end" }
+          }}
+        />
+        <VictoryAxis
+          dependentAxis={true}
+          tickValues={[0, 0.5, 1]}
+          tickFormat={cumulativeTickFormat}
+          offsetX={500}
+          style={{
+            ticks: { padding: -50 },
+            tickLabels: { textAnchor: "end" }
+          }}
+        />
+        <VictoryAxis dependentAxis={false} />
         <VictoryLine
           data={data.timeline}
           style={{
             data: { stroke: "tomato" },
             labels: { fill: "tomato" }
           }}
-          labelComponent={<VictoryTooltip />}
+          y={normalizeTimelineY}
         />
         <VictoryLine
           data={data.cumulative}
           style={{
             data: { stroke: "blue" }
           }}
-          labelComponent={<VictoryTooltip />}
+          y={normalizeCumulativeY}
         />
       </VictoryChart>
       <VictoryChart
@@ -153,27 +182,20 @@ const AnalyticsGraph: FC<{ data: GraphData }> = props => {
           />
         }
       >
-        <VictoryAxis
-          tickValues={[
-            new Date(2019, 1, 1),
-            new Date(2020, 1, 1),
-            new Date(2021, 1, 1)
-          ]}
-          // TODO
-          // tslint:disable-next-line
-          tickFormat={x => new Date(x).getFullYear()}
-        />
+        <VictoryAxis />
         <VictoryLine
           style={{
             data: { stroke: "tomato" }
           }}
           data={data.timeline}
+          y={normalizeTimelineY}
         />
         <VictoryLine
           style={{
             data: { stroke: "blue" }
           }}
           data={data.cumulative}
+          y={normalizeCumulativeY}
         />
       </VictoryChart>
     </AnalyticsGraphRoot>
