@@ -38,6 +38,30 @@ $ git push origin develop # deploy by CircleCI
 
 ```
 
+## start with emulator
+
+```shell script
+$ gsutil rm -r gs://dl-code-dev.appspot.com/firestore_export
+$ gcloud firestore export gs://dl-code-dev.appspot.com/firestore_export
+
+$ firebase emulators:export ./emulator_data
+
+$ gsutil cp -r gs://dl-code-dev.appspot.com/firestore_export ./emulator_data
+
+$ find emulator_data -maxdepth 2
+emulator_data
+emulator_data/firebase-export-metadata.json
+emulator_data/firestore_export
+emulator_data/firestore_export/firestore_export.overall_export_metadata
+emulator_data/firestore_export/all_namespaces
+
+# start firebase emulator
+$ yarn start --import ./emulator_data
+```
+
+- ref.
+  - [データをエクスポートする](https://firebase.google.com/docs/firestore/manage-data/export-import?hl=ja#export_data)
+
 ## Settings
 
 ### Operation Logging
@@ -112,3 +136,9 @@ $ gsutil cors set firebase/cors.json gs://dl-code-dev.appspot.com
 ```
 
 Ref: [https://firebase.google.com/docs/storage/web/download-files#cors_configuration](https://firebase.google.com/docs/storage/web/download-files#cors_configuration)
+
+### GOOGLE_APPLICATION_CREDENTIALS
+
+```shell script
+$ export GOOGLE_APPLICATION_CREDENTIALS="../../config/service_account/dl-code-dev-firebase-adminsdk-h1f43-b771e573b7.json"
+```

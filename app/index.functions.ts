@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
-const { logger } = functions;
 import * as firebaseAdmin from "firebase-admin";
+import { Logger, LogLevel } from "@firebase/logger";
 
 // Initial Firebase App
 const firebaseApp = firebaseAdmin.initializeApp();
@@ -10,6 +10,10 @@ import next from "next";
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
 import { sendToSlack } from "./functions/utils/slack";
+import { createSimpleActivateCountAnalytics } from "./functions/service/createActivatesAnalytics";
+
+const logger = new Logger("index");
+logger.logLevel = LogLevel.DEBUG;
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
@@ -19,13 +23,14 @@ const isUnderFirebaseFunction =
   process.env.PWD && process.env.PWD.startsWith("/srv");
 
 const nextServer = next({
-  dir: isUnderFirebaseFunction
-    ? // default value
-      "."
-    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")
-      // local実行時のみ、ビルド済みnext dirの相対パスを教える。
-      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokon
-      "dist/functions",
+  dir:
+    isUnderFirebaseFunction || process.env.FUNCTIONS_EMULATOR
+      ? // default value
+        "."
+      : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")
+        // local実行時のみ、ビルド済みnext dirの相対パスを教える。
+        // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokon
+        "dist/functions",
   conf: { distDir: "next" }
 });
 
@@ -43,6 +48,51 @@ export const api = functions.https.onRequest((_, res) => {
     message: "api!"
   });
 });
+
+export const pubsubDebugger = functions.https.onRequest(async (req, res) => {
+  let topic = req.query.topic ?? "";
+  if (typeof topic !== "string") {
+    topic = topic.toString();
+  }
+
+  if (!process.env.FUNCTIONS_EMULATOR) {
+    res.json({
+      message: "pubsub debugger is executable in local only."
+    });
+    return;
+  }
+
+  const supportedTopics: { [topic: string]: () => void } = {
+    createSimpleActivateCountAnalytics
+  };
+
+  if (!supportedTopics[topic]) {
+    res.status(404).json({
+      message: "not found debug topic"
+    });
+    return;
+  }
+
+  await supportedTopics[topic]();
+
+  res.json({
+    ok: true
+  });
+});
+
+export const scheduledCreateActivatesAnalytics = functions
+  .region("asia-northeast1")
+  .pubsub.schedule("00 01 * * *")
+  .timeZone("Asia/Tokyo")
+  .onRun(() => {
+    const now = new Date();
+    const yesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1
+    );
+    return createSimpleActivateCountAnalytics(yesterday);
+  });
 
 /**
  * FirestoreのバックアップをstorageにexportするScheduledJob

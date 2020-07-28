@@ -1,3 +1,4 @@
+emulator_data/
 dist/
 public/*.html
 public/_next

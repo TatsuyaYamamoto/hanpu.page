@@ -42,7 +42,28 @@ const LogoLink = styled(({ className }) => (
   cursor: pointer;
 `;
 
-type TabValue = "home" | "product";
+const tabs = [
+  {
+    value: "home",
+    url: `/publish`,
+    label: "ホーム",
+    match: (path: string) => path === `/publish`
+  },
+  {
+    value: "product",
+    url: `/publish/product/list`,
+    label: "プロダクト",
+    match: (path: string) => path.startsWith(`/publish/product`)
+  },
+  {
+    value: "analytics",
+    url: `/publish/analytics`,
+    label: "アナリティクス",
+    match: (path: string) => path === `/publish/analytics`
+  }
+] as const;
+
+type TabValue = typeof tabs[number]["value"];
 
 interface AppBarProps {
   onBack?: () => void;
@@ -55,9 +76,12 @@ const AppBar: FC<AppBarProps> = props => {
   const router = useRouter();
 
   const [tabValue, setTabValue] = useState<TabValue>(() => {
-    if (router.pathname.startsWith(`/publish/product`)) {
-      return "product";
+    const currentTab = tabs.find(tab => tab.match(router.pathname));
+
+    if (currentTab) {
+      return currentTab.value;
     }
+
     return "home";
   });
 
@@ -73,20 +97,18 @@ const AppBar: FC<AppBarProps> = props => {
 
   const onTabMenuChanged = (_: ChangeEvent<{}>, newValue: TabValue) => {
     setTabValue(newValue);
-    switch (newValue) {
-      case "home":
-        router.push(`/publish`);
-        break;
-      case "product":
-        router.push(`/publish/product/list`);
-        break;
+    const nextTab = tabs.find(tab => tab.value === newValue);
+
+    if (nextTab) {
+      router.push(nextTab.url);
     }
   };
 
   const menuTabs = (
     <Tabs value={tabValue} onChange={onTabMenuChanged}>
-      <Tab label="ホーム" value={"home"} />
-      <Tab label="プロダクト" value={"product"} />
+      {tabs.map(tab => (
+        <Tab key={tab.value} label={tab.label} value={tab.value} />
+      ))}
     </Tabs>
   );
 

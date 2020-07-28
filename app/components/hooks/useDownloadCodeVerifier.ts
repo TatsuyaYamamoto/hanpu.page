@@ -105,27 +105,29 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     const db = new DlCodeDb();
     const targetProduct = await db.getProductById(verifiedProductId);
 
+    let params: {} = {
+      code,
+      productId: verifiedProductId
+    };
+
     if (!!targetProduct /* exists */) {
       log("requested product is already registered.");
 
-      okAudit({
-        type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
-        params: {
-          code,
-          alreadyRegistered: true
-        }
-      });
-
-      return;
+      params = {
+        ...params,
+        alreadyRegistered: true
+      };
     }
 
-    okAudit({
+    await okAudit({
       type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
-      params: { code }
+      params
     });
 
-    await db.addNewProduct(code, verifiedProductId, expiredAt);
-    await loadActives(firebaseApp, db);
+    if (!targetProduct /* NOT exists */) {
+      await db.addNewProduct(code, verifiedProductId, expiredAt);
+      await loadActives(firebaseApp, db);
+    }
   };
 
   /**
