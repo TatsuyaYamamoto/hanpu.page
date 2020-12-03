@@ -1,6 +1,6 @@
 # DLCode.web.app
 
-[![CircleCI](https://circleci.com/gh/TatsuyaYamamoto/dl-code.web.app/tree/develop.svg?style=svg)](https://circleci.com/gh/TatsuyaYamamoto/dl-code.web.app/tree/develop)
+![ci-develop](https://github.com/TatsuyaYamamoto/dl-code.web.app/workflows/ci-develop/badge.svg?branch=develop)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 hosted in [https://dl-code.web.app/]()
