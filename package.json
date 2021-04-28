@@ -64,7 +64,7 @@
     "jsqr": "^1.2.0",
     "material-table": "^1.36.6",
     "moment-timezone": "^0.5.31",
-    "next": "^9.3.6",
+    "next": "^10.2.0",
     "notistack": "^0.8.6",
     "nprogress": "^0.2.0",
     "rc-slider": "^8.6.13",
