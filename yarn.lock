@@ -6668,10 +6668,10 @@ firebase-functions-test@^0.2.1:
     "@types/lodash" "^4.14.104"
     lodash "^4.17.5"
 
-firebase-functions@^3.7.0:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/firebase-functions/-/firebase-functions-3.7.0.tgz#e9df62f2a46775eb887835839d8b3f39139ba113"
-  integrity sha512-+ROj2Gs2/KyM+T8jYo7AKaHynFsN49sXbgZMll3zuGa9/8oiDsXp9e1Iy2JMkFmSZg67jeYw5Ue2OSpz0XiqFQ==
+firebase-functions@^3.14.1:
+  version "3.14.1"
+  resolved "https://registry.yarnpkg.com/firebase-functions/-/firebase-functions-3.14.1.tgz#3ac5bc70989365874f41d06bca3b42a233dd6039"
+  integrity sha512-hL/qm+i5i1qKYmAFMlQ4mwRngDkP+3YT3F4E4Nd5Hj2QKeawBdZiMGgEt6zqTx08Zq04vHiSnSM0z75UJRSg6Q==
   dependencies:
     "@types/express" "4.17.3"
     cors "^2.8.5"
