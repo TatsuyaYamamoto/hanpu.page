@@ -65,7 +65,7 @@
     "material-table": "^1.36.6",
     "moment-timezone": "^0.5.31",
     "next": "^9.3.6",
-    "notistack": "^0.8.6",
+    "notistack": "^1.0.8",
     "nprogress": "^0.2.0",
     "rc-slider": "^8.6.13",
     "react": "^16.8.6",
