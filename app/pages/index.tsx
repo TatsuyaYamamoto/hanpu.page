@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useMemo } = React;
+import React, { useMemo } from "react";
 
 import { Container, Grid, Typography } from "@material-ui/core";
 import Icon, { IconProps } from "@material-ui/core/Icon";

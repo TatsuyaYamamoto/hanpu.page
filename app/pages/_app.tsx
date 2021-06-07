@@ -54,7 +54,7 @@ const MyApp: React.FC<AppProps> = props => {
       logError(JSON.stringify(info), true);
 
       if (
-        confirm(
+        window.confirm(
           "予期せぬエラーが発生してしまいました。\n\n恐れ入りますが、問い合わせフォームを起動してエラーの詳細を送信して頂けませんでしょうか？(エラーの情報は自動で入力されます。)"
         )
       ) {
@@ -91,7 +91,7 @@ const MyApp: React.FC<AppProps> = props => {
     Router.events.on("routeChangeStart", NProgress.start);
     Router.events.on("routeChangeComplete", NProgress.done);
     Router.events.on("routeChangeError", NProgress.done);
-  }, []);
+  }, [initGa, logPageView, requestErrorDetailContact, router.events]);
 
   return (
     <>

@@ -84,7 +84,7 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
     return () => {
       unsubscribe();
     };
-  }, [firebaseApp, isAuth0Initialized, auth0User]);
+  }, [firebaseApp, isAuth0Initialized, auth0User, initUser]);
 
   return (
     <dlCodeUserContext.Provider value={contextValue}>

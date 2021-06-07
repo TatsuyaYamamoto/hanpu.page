@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useEffect, useRef, useState } = React;
+import React, { useEffect, useRef, useState } from "react";
 
 import styled from "styled-components";
 
@@ -55,7 +54,7 @@ const DownloadCodeCheckCamera: React.FC = () => {
     return function teardown() {
       stopPreview();
     };
-  }, []);
+  }, [startPreview, startLoopCapture, stopPreview]);
 
   useEffect(() => {
     if (detectedQrcode) {
@@ -139,7 +138,7 @@ const DownloadCodeCheckCamera: React.FC = () => {
         }
       });
     }
-  }, [detectedQrcode]);
+  }, [checkFormat, detectedQrcode, checkLinkedResources, stopLoopCapture]);
 
   const handleCloseDialog = () => {
     handleDialogOpen(false);

@@ -21,7 +21,7 @@ const useAuditLogger = () => {
       params,
       ok,
       createdAt: firestore.FieldValue.serverTimestamp(),
-      href: location.href,
+      href: window.location.href,
       userAgent: navigator.userAgent
     };
 

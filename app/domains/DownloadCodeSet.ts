@@ -1,8 +1,8 @@
 import { firestore } from "firebase/app";
+import * as base32 from "hi-base32";
+
 type DocumentReference = firestore.DocumentReference;
 type Timestamp = firestore.Timestamp;
-
-import * as base32 from "hi-base32";
 
 export interface DownloadCodeSetDocument {
   productRef: DocumentReference;

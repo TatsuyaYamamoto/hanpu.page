@@ -11,6 +11,6 @@ export default config;
 
 // validate config is set or on when trying `firebase deploy`.
 (() => {
-  // tslint:disable:no-unused-expression
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   config.slack.webhook_url;
 })();

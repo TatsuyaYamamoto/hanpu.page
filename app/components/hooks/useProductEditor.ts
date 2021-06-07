@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { firestore, storage, app as _app } from "firebase";
-type DocumentReference = firestore.DocumentReference;
+import { firestore, storage } from "firebase";
 
 import useFirebase from "./useFirebase";
 import {
@@ -12,6 +11,8 @@ import {
   ProductName
 } from "../../domains/Product";
 import useDlCodeUser from "./useDlCodeUser";
+
+type DocumentReference = firestore.DocumentReference;
 
 const useProductEditor = (productId?: string) => {
   const { app: firebaseApp } = useFirebase();

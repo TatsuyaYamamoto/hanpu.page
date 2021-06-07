@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useState, useMemo, useCallback } = React;
+import React, { useState, useMemo, useCallback } from "react";
 
 import {
   Button,
@@ -40,29 +39,23 @@ const ImpressionForm: React.FC<ImpressionFormProps> = props => {
     return submitState === "success";
   }, [submitState]);
 
-  const onSubmitClicked = useCallback(
-    (_: React.MouseEvent<HTMLButtonElement>) => {
-      if (!text) {
-        return;
-      }
-      setSubmitState("sending");
+  const onSubmitClicked = (_: React.MouseEvent<HTMLButtonElement>) => {
+    if (!text) {
+      return;
+    }
+    setSubmitState("sending");
 
-      postImpression(productId, text).then(() => {
-        setSubmitState("success");
+    postImpression(productId, text).then(() => {
+      setSubmitState("success");
 
-        // 送信が成功したら、テキストボックスは空欄になるのが自然との意見もあるが、実際はどっちだろうか
-        setText("");
-      });
-    },
-    [productId, text]
-  );
+      // 送信が成功したら、テキストボックスは空欄になるのが自然との意見もあるが、実際はどっちだろうか
+      setText("");
+    });
+  };
 
-  const handleCloseDialog = useCallback(
-    (_: React.MouseEvent<HTMLButtonElement>) => {
-      setSubmitState("waiting");
-    },
-    [productId, text]
-  );
+  const handleCloseDialog = (_: React.MouseEvent<HTMLButtonElement>) => {
+    setSubmitState("waiting");
+  };
 
   return (
     <>

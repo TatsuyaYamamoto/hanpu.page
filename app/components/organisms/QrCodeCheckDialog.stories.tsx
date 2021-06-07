@@ -4,20 +4,17 @@ import QrCodeCheckDialog, {
   CheckStatus
 } from "./QrCodeCheckDialog";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { title: "QrCodeCheckDialog" };
 
-export const withNull = () => {
+export const WithNull = () => {
   const isDialogOpen = true;
 
-  const [decordingIcon] = React.useState<CheckStatus>(
-    "progressing"
-  );
+  const [decordingIcon] = React.useState<CheckStatus>("progressing");
   const [formatIcon, setFormatIcon] = React.useState<CheckStatus>(
     "progressing"
   );
-  const [existingIcon] = React.useState<CheckStatus>(
-    "progressing"
-  );
+  const [existingIcon] = React.useState<CheckStatus>("progressing");
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
@@ -65,7 +62,7 @@ export const withNull = () => {
   );
 };
 
-export const withAllValidProps = () => {
+export const WithAllValidProps = () => {
   const isDialogOpen = true;
   const decodeResult: DecodeResult = {
     checkList: {

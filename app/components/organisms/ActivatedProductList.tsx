@@ -34,7 +34,7 @@ const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
     product.getIconUrl().then(url => {
       setIconUrl(url);
     });
-  }, []);
+  }, [product]);
 
   const onCardClicked = () => {
     onClick(product.id);

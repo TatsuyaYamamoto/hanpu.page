@@ -1,9 +1,9 @@
 import { firestore, storage, auth } from "firebase/app";
+import { v4 as uuid } from "uuid";
+
 type DocumentReference = firestore.DocumentReference;
 type Timestamp = firestore.Timestamp;
 type UpdateData = firestore.UpdateData;
-
-import { v4 as uuid } from "uuid";
 
 // NominalTypings
 // @link https://basarat.gitbooks.io/typescript/docs/tips/nominalTyping.html

@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useState, useMemo } = React;
+import React, { useState, useMemo } from "react";
 
 import MaterialTable, {
   Options as TableOptions,

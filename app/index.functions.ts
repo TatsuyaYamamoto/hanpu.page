@@ -1,15 +1,17 @@
 import * as functions from "firebase-functions";
-const { logger } = functions;
 import * as firebaseAdmin from "firebase-admin";
 
 // Initial Firebase App
 const firebaseApp = firebaseAdmin.initializeApp();
 
+/* eslint-disable import/first */
 import next from "next";
 
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
 import { sendToSlack } from "./functions/utils/slack";
+
+const { logger } = functions;
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;

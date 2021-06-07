@@ -106,7 +106,7 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
         log(`client is initialized. NOT authenticated.`);
       }
     })();
-  }, []);
+  }, [auth0ClientOptions, router]);
 
   return (
     <Auth0Context.Provider value={contextValue}>
@@ -121,7 +121,7 @@ const useAuth0 = () => {
   const loginWithRedirect = useCallback(
     async (options: RedirectLoginOptions = {}) => {
       if (auth0Client) {
-        const { origin, href } = location;
+        const { origin, href } = window.location;
 
         await auth0Client.loginWithRedirect({
           ...options,

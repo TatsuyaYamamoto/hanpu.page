@@ -23,7 +23,7 @@ const ProductDetailContent: FC<DetailPageProps> = ({
     product.getIconUrl().then(url => {
       setIconUrl(url || "");
     });
-  }, []);
+  }, [product]);
 
   return (
     <Grid container={true} direction={"column"} spacing={5}>

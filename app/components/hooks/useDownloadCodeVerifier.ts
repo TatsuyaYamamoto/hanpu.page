@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import Dexie from "dexie";
 
 import { firestore, app as _app } from "firebase";
-type FirebaseApp = _app.App;
 
 import { LogType } from "../../domains/AuditLog";
 import {
@@ -13,6 +12,8 @@ import {
 import { Product } from "../../domains/Product";
 import useAuditLogger from "./useAuditLogger";
 import useFirebase from "./useFirebase";
+
+type FirebaseApp = _app.App;
 
 interface ActiveProductSchema {
   downloadCode: string;
@@ -79,7 +80,7 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     } else {
       log(`not loaded active products according to preventLoadActives flag.`);
     }
-  }, [firebaseApp]);
+  }, [firebaseApp, preventLoadActives]);
 
   /**
    * DownloadCodeを検証する。正常な文字列の場合、productを読み込む

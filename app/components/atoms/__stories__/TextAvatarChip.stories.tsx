@@ -1,6 +1,7 @@
 import * as React from "react";
 import TextAvatarChip from "../TextAvatarChip";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { title: "TextAvatarChip" };
 
 export const withSmall = () => (

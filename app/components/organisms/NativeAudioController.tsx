@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useRef, useCallback } = React;
+import React, { useRef, useCallback } from "react";
 
 import {
   IconButton,
@@ -30,14 +29,14 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
 }) => {
   const audioEl = useRef<HTMLAudioElement | null>(null);
 
-  const onAudioPlay = useCallback(() => {
+  const onAudioPlay = () => {
     onPlay();
-  }, []);
-  const onAudioPause = useCallback(() => {
+  };
+  const onAudioPause = () => {
     onPause();
-  }, []);
+  };
 
-  const audioRef = useCallback((el: HTMLAudioElement) => {
+  const audioRef = (el: HTMLAudioElement) => {
     if (el) {
       el.addEventListener("play", onAudioPlay);
       el.addEventListener("pause", onAudioPause);
@@ -50,7 +49,7 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
 
     // save previous element
     audioEl.current = el;
-  }, []);
+  };
 
   const onCloseClicked = useCallback(() => {
     if (!audioEl.current) {

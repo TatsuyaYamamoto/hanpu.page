@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useEffect, useMemo } = React;
+import React, { useEffect, useMemo } from "react";
 
 import { Paper } from "@material-ui/core";
 import { PaperProps } from "@material-ui/core/Paper";

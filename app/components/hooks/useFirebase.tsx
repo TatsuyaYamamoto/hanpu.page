@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-const { useEffect, createContext, useContext } = React;
+import React, { useState, useEffect, createContext, useContext } from "react";
 
 import {
   initializeApp,
@@ -59,7 +58,7 @@ const FirebaseContextProvider: React.FC<FirebaseContextProviderProps> = props =>
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [contextValue.app]);
 
   useEffect(() => {
     log(`start flow of sign-in firebase auth.`);

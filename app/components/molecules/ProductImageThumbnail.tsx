@@ -27,7 +27,7 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
     setSelectedFileErrorMessage
   ] = React.useState<string | null>(null);
 
-  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[]) => {
     const acceptedFile = acceptedFiles[0];
 
     if (1 * MB < acceptedFile.size) {
@@ -36,7 +36,7 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
     }
 
     onChange(acceptedFile);
-  }, []);
+  };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,

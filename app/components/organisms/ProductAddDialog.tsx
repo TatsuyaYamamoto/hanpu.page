@@ -1,4 +1,4 @@
-import { default as React, useCallback } from "react";
+import React from "react";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -36,9 +36,9 @@ const ProductAddDialog: React.FC<ProductAddDialogProps> = props => {
     setDescription(e.target.value.trim() as ProductDescription);
   };
 
-  const onSubmitClicked = useCallback(() => {
+  const onSubmitClicked = () => {
     onSubmit(productEditor.addProduct(name, description));
-  }, [name, description]);
+  };
 
   return (
     <Dialog open={open} onClose={handleClose}>

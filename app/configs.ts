@@ -1,6 +1,6 @@
 const isProduction = process.env.nodeEnv === "production";
 
-export default {
+const configs = {
   isProduction,
   contactFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSe5bSPvJ5XQM0IACqZ9NKoHuRUAcC_V1an16JGwHh6HeGd-oQ/viewform?usp=pp_url&entry.326070868=DLCode",
@@ -37,3 +37,5 @@ export default {
         clientId: "0Eq2eNT2Orybe2B24TvBKdsqnHQDYHJo"
       }
 };
+
+export default configs;
