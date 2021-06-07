@@ -31,12 +31,8 @@
     "deploy-dev": "firebase deploy --project dl-code-dev",
     "deploy-dev:hosting": "firebase deploy --project dl-code-dev --only hosting",
     "deploy-pro": "firebase deploy --project dl-code",
-    "storybook": "start-storybook"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "storybook": "start-storybook",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{css,json,md}": [
@@ -95,7 +91,7 @@
     "css-loader": "^3.0.0",
     "firebase-functions-test": "^0.2.1",
     "firebase-tools": "^8.5.0",
-    "husky": "^2.4.1",
+    "husky": "^6.0.0",
     "lint-staged": "^8.1.7",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.17.1",
