@@ -74,7 +74,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.4",
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-links": "^5.2.5",
     "@storybook/addons": "^5.2.5",
@@ -85,7 +84,6 @@
     "@types/react-dom": "^16.8.4",
     "@types/styled-components": "^4.4.3",
     "@types/uuid": "^8.3.0",
-    "babel-loader": "^8.0.6",
     "cross-env": "^7.0.3",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
