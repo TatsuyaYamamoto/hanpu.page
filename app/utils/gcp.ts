@@ -1,4 +1,4 @@
-import moment from "moment-timezone";
+import { DateTime } from "luxon";
 
 import { projectId } from "../functions/processEnv";
 
@@ -11,7 +11,9 @@ const firestore = require("@google-cloud/firestore");
  * @see https://firebase.google.com/docs/firestore/solutions/schedule-export?hl=ja
  */
 export const backupFirestoreData = async () => {
-  const timestamp = moment.tz("Asia/Tokyo").format("YYYY-MM-DD_HH-mm");
+  const timestamp = DateTime.now()
+    .setZone("Asia/Tokyo")
+    .toFormat("YYYY-MM-DD_HH-mm");
   const firestoreClient = new firestore.v1.FirestoreAdminClient();
 
   // https://googleapis.dev/nodejs/firestore/latest/v1.FirestoreAdminClient.html#databasePath

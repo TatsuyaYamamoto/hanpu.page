@@ -7,7 +7,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 
-import DateFnsUtils from "@date-io/date-fns";
+import LuxonUtils from "@date-io/luxon";
+import { DateTime } from "luxon";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import { MaterialUiPickersDate as PickersDate } from "@material-ui/pickers/typings/date";
 
@@ -24,7 +25,7 @@ const DownloadCodeSetAddDialog: FC<DownloadCodeSetAddDialogProps> = ({
 }) => {
   const [numberOfCodes, setNumberOfCodes] = useState<number>(1);
 
-  const [expiredAt, handleExpiredAt] = useState<PickersDate>(new Date());
+  const [expiredAt, handleExpiredAt] = useState<PickersDate>(DateTime.now());
 
   const onDisplayFileNameChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumberOfCodes(parseInt(e.target.value, 10));
@@ -35,7 +36,7 @@ const DownloadCodeSetAddDialog: FC<DownloadCodeSetAddDialogProps> = ({
       return;
     }
 
-    onSubmit(numberOfCodes, expiredAt);
+    onSubmit(numberOfCodes, expiredAt.toJSDate());
   };
 
   return (
@@ -48,7 +49,7 @@ const DownloadCodeSetAddDialog: FC<DownloadCodeSetAddDialogProps> = ({
           value={numberOfCodes}
           onChange={onDisplayFileNameChanged}
         />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MuiPickersUtilsProvider utils={LuxonUtils}>
           <DatePicker
             label="有効期限"
             format="yyyy/MM/dd"
