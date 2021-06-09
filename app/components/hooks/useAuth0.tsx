@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 
 import createAuth0Client, {
   Auth0ClientOptions,
-  IdToken,
   RedirectLoginOptions
 } from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
@@ -86,13 +85,10 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
         });
       }
 
-      const isAuthenticated = await auth0Client.isAuthenticated();
+      const user = await auth0Client.getUser<Auth0TwitterUser>();
 
-      if (isAuthenticated) {
-        const [user, idTokenClaims] = await Promise.all<
-          Auth0TwitterUser,
-          IdToken
-        >([auth0Client.getUser(), auth0Client.getIdTokenClaims()]);
+      if (!!user) {
+        const idTokenClaims = await auth0Client.getIdTokenClaims();
 
         setContextValue(prev => ({
           ...prev,
