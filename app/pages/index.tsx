@@ -73,7 +73,7 @@ const AboutAppSection = () => {
         <Typography variant="h5">だれが使えるの？</Typography>
         <Typography variant="h6">ダウンロード</Typography>
         <Typography variant="body1">
-          <span>>> 誰でも！</span>
+          <span>{`>> 誰でも！`}</span>
         </Typography>
         <Typography variant="h6">ファイル配信</Typography>
         <Typography variant="body1">

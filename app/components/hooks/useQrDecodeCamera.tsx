@@ -45,7 +45,7 @@ const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
     // https://developer.mozilla.org/ja/docs/Web/API/URL/createObjectURL#Usage_notes
     // videoRef.src = window.URL.createObjectURL(mediaStream);
 
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       videoRef.addEventListener("loadedmetadata", () => {
         const { videoWidth, videoHeight } = videoRef;
         const videoDeviceRatio = videoHeight / videoWidth;
