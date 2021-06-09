@@ -84,7 +84,9 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
     return () => {
       unsubscribe();
     };
-  }, [firebaseApp, isAuth0Initialized, auth0User, initUser]);
+    // TODO
+    // eslint-disable-next-line
+  }, [firebaseApp, isAuth0Initialized, auth0User]);
 
   return (
     <dlCodeUserContext.Provider value={contextValue}>

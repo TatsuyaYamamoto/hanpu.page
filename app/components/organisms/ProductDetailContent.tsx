@@ -23,7 +23,9 @@ const ProductDetailContent: FC<DetailPageProps> = ({
     product.getIconUrl().then(url => {
       setIconUrl(url || "");
     });
-  }, [product]);
+    // TODO
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Grid container={true} direction={"column"} spacing={5}>

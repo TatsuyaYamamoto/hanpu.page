@@ -54,7 +54,9 @@ const DownloadCodeCheckCamera: React.FC = () => {
     return function teardown() {
       stopPreview();
     };
-  }, [startPreview, startLoopCapture, stopPreview]);
+    // TODO
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (detectedQrcode) {
@@ -138,7 +140,9 @@ const DownloadCodeCheckCamera: React.FC = () => {
         }
       });
     }
-  }, [checkFormat, detectedQrcode, checkLinkedResources, stopLoopCapture]);
+    // TODO
+    // eslint-disable-next-line
+  }, [detectedQrcode]);
 
   const handleCloseDialog = () => {
     handleDialogOpen(false);

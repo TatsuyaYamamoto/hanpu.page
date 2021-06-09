@@ -58,7 +58,9 @@ const FirebaseContextProvider: React.FC<FirebaseContextProviderProps> = props =>
     return () => {
       unsubscribe();
     };
-  }, [contextValue.app]);
+    // TODO
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     log(`start flow of sign-in firebase auth.`);

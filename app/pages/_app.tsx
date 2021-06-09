@@ -91,7 +91,9 @@ const MyApp: React.FC<AppProps> = props => {
     Router.events.on("routeChangeStart", NProgress.start);
     Router.events.on("routeChangeComplete", NProgress.done);
     Router.events.on("routeChangeError", NProgress.done);
-  }, [initGa, logPageView, requestErrorDetailContact, router.events]);
+    // TODO
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <>

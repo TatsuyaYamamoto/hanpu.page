@@ -102,7 +102,9 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
         log(`client is initialized. NOT authenticated.`);
       }
     })();
-  }, [auth0ClientOptions, router]);
+    // TODO
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Auth0Context.Provider value={contextValue}>

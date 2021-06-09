@@ -80,7 +80,9 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     } else {
       log(`not loaded active products according to preventLoadActives flag.`);
     }
-  }, [firebaseApp, preventLoadActives]);
+    // TODO
+    // eslint-disable-next-line
+  }, [firebaseApp]);
 
   /**
    * DownloadCodeを検証する。正常な文字列の場合、productを読み込む
