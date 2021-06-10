@@ -85,7 +85,7 @@ const ProductList: FC<ProductListProps> = props => {
       {products.map(p => {
         return (
           <Item
-            key={p.name}
+            key={p.id}
             onClick={onSelected(p.id)}
             id={p.id}
             name={p.name}
