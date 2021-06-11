@@ -1,4 +1,4 @@
-import { auth, firestore } from "firebase/app";
+import firebase from "firebase/app";
 
 import {
   AuditLogDocument,
@@ -13,14 +13,14 @@ const useAuditLogger = () => {
     ok: boolean,
     error?: E
   ) => {
-    const { currentUser } = auth();
+    const { currentUser } = firebase.auth();
     const userId = currentUser ? currentUser.uid : null;
     const newLog: Partial<AuditLogDocument> = {
       userId,
       type,
       params,
       ok,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       href: window.location.href,
       userAgent: navigator.userAgent
     };

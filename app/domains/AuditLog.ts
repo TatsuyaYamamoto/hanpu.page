@@ -1,4 +1,6 @@
-import { firestore } from "firebase/app";
+import firebase from "firebase/app";
+
+type FieldValue = firebase.firestore.FieldValue;
 
 export enum LogType {
   ACTIVATE_WITH_DOWNLOAD_CODE = "ACTIVATE_WITH_DOWNLOAD_CODE",
@@ -16,7 +18,7 @@ export interface AuditLogDocument {
   type: LogType;
 
   // when
-  createdAt: Date | firestore.FieldValue;
+  createdAt: Date | FieldValue;
 
   // where
   href: string;
@@ -35,5 +37,5 @@ export interface AuditLogDocument {
 }
 
 export const getColRef = () => {
-  return firestore().collection(`auditLogs`);
+  return firebase.firestore().collection(`auditLogs`);
 };

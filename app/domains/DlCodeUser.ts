@@ -1,4 +1,4 @@
-import { firestore } from "firebase/app";
+import firebase from "firebase/app";
 
 import { Auth0User } from "../components/hooks/useAuth0";
 
@@ -52,7 +52,7 @@ export class DlCodeUser {
   public async editCounter(
     counter: CounterType,
     newValue: number,
-    firestoreInstance: firestore.Firestore
+    firestoreInstance: firebase.firestore.Firestore
   ) {
     const { limit } = this.user.counters[counter];
 
@@ -75,7 +75,7 @@ export class DlCodeUser {
     });
   }
 
-  public static getColRef(firestoreInstance: firestore.Firestore) {
+  public static getColRef(firestoreInstance: firebase.firestore.Firestore) {
     return firestoreInstance.collection(`users`);
   }
 }

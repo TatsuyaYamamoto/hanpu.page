@@ -1,8 +1,9 @@
-import { firestore } from "firebase/app";
+import firebase from "firebase/app";
 import * as base32 from "hi-base32";
 
-type DocumentReference = firestore.DocumentReference;
-type Timestamp = firestore.Timestamp;
+type DocumentReference = firebase.firestore.DocumentReference;
+type Timestamp = firebase.firestore.Timestamp;
+type FieldValue = firebase.firestore.FieldValue;
 
 export interface DownloadCodeSetDocument {
   productRef: DocumentReference;
@@ -11,14 +12,14 @@ export interface DownloadCodeSetDocument {
     [value: string]: boolean;
   };
   description: string | null;
-  createdAt: Date | firestore.FieldValue;
-  expiredAt: Date | firestore.FieldValue;
+  createdAt: Date | FieldValue;
+  expiredAt: Date | FieldValue;
 }
 
 export class DownloadCodeSet implements DownloadCodeSetDocument {
   // TODO: remove dependency of firestore instance.
   public static getColRef() {
-    return firestore().collection(`downloadCodeSets`);
+    return firebase.firestore().collection(`downloadCodeSets`);
   }
 
   public static getDocRef(id: string) {

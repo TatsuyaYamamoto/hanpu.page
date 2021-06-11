@@ -1,4 +1,4 @@
-import { storage } from "firebase/app";
+import firebase from "firebase/app";
 import { DownloadCodeSet } from "../domains/DownloadCodeSet";
 
 export const saveDownloadCodeSetAsCsvFile = (codeSet: DownloadCodeSet) => {
@@ -18,7 +18,8 @@ export const saveDownloadCodeSetAsCsvFile = (codeSet: DownloadCodeSet) => {
 };
 
 export const getStorageObjectDownloadUrl = (storageUrl: string) => {
-  return storage()
+  return firebase
+    .storage()
     .refFromURL(storageUrl)
     .getDownloadURL();
 };

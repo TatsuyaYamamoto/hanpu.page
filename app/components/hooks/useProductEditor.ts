@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { firestore, storage } from "firebase";
+import firebase from "firebase/app";
 
 import useFirebase from "./useFirebase";
 import {
@@ -12,7 +12,8 @@ import {
 } from "../../domains/Product";
 import useDlCodeUser from "./useDlCodeUser";
 
-type DocumentReference = firestore.DocumentReference;
+type DocumentReference = firebase.firestore.DocumentReference;
+type UploadTask = firebase.storage.UploadTask;
 
 const useProductEditor = (productId?: string) => {
   const { app: firebaseApp } = useFirebase();
@@ -117,7 +118,7 @@ const useProductEditor = (productId?: string) => {
       displayName: ProductFileDisplayName,
       file: File
     ): {
-      task: storage.UploadTask;
+      task: UploadTask;
       promise: Promise<void>;
     } => {
       const loadedProduct = shouldProductRefLoaded(product);

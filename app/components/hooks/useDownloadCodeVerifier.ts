@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Dexie from "dexie";
 
-import { firestore, app as _app } from "firebase";
+import firebase from "firebase/app";
 
 import { LogType } from "../../domains/AuditLog";
 import {
@@ -13,7 +13,8 @@ import { Product } from "../../domains/Product";
 import useAuditLogger from "./useAuditLogger";
 import useFirebase from "./useFirebase";
 
-type FirebaseApp = _app.App;
+type FirebaseApp = firebase.app.App;
+type Timestamp = firebase.firestore.Timestamp;
 
 interface ActiveProductSchema {
   downloadCode: string;
@@ -200,8 +201,8 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
       return {
         productId: product.id,
         productName: product.name,
-        downloadCodeCreatedAt: (downloadCodeSetDoc.createdAt as firestore.Timestamp).toDate(),
-        downloadCodeExpireAt: (downloadCodeSetDoc.expiredAt as firestore.Timestamp).toDate()
+        downloadCodeCreatedAt: (downloadCodeSetDoc.createdAt as Timestamp).toDate(),
+        downloadCodeExpireAt: (downloadCodeSetDoc.expiredAt as Timestamp).toDate()
       };
     },
     [firebaseApp]

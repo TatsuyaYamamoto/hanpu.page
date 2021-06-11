@@ -1,16 +1,12 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 
-import {
-  initializeApp,
-  app as firebaseApp,
-  apps as initializedFirebaseApps,
-  User as FirebaseUser
-} from "firebase/app";
+import firebase from "firebase/app";
 
 import useAuth0 from "./useAuth0";
 import configs from "../../configs";
 
-type FirebaseApp = firebaseApp.App;
+type FirebaseApp = firebase.app.App;
+type FirebaseUser = firebase.User;
 
 interface IFirebaseContext {
   app: FirebaseApp;
@@ -28,8 +24,8 @@ const FirebaseContextProvider: React.FC<FirebaseContextProviderProps> = props =>
   const { initParams } = props;
   const [contextValue, setContextValue] = useState<IFirebaseContext>(() => {
     const app =
-      initializedFirebaseApps[0] ??
-      initializeApp(initParams.options, initParams.name);
+      firebase.apps[0] ??
+      firebase.initializeApp(initParams.options, initParams.name);
     // @ts-ignore
     const { projectId } = app.options;
 

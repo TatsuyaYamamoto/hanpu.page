@@ -1,15 +1,16 @@
-import { firestore } from "firebase/app";
-type DocumentReference = firestore.DocumentReference;
+import firebase from "firebase/app";
+type DocumentReference = firebase.firestore.DocumentReference;
+type FieldValue = firebase.firestore.FieldValue;
 
 export interface ImpressionDocument {
   productRef: DocumentReference;
   text: string;
-  createdAt: Date | firestore.FieldValue;
+  createdAt: Date | FieldValue;
 }
 
 export class Impression {
   public static getColRef() {
-    return firestore().collection(`impressions`);
+    return firebase.firestore().collection(`impressions`);
   }
 
   public static async post(
@@ -19,7 +20,7 @@ export class Impression {
     const newImpression: ImpressionDocument = {
       productRef,
       text,
-      createdAt: firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     await Impression.getColRef().add(newImpression);
