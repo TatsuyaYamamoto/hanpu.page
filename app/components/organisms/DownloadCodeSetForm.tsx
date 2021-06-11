@@ -45,7 +45,7 @@ const EditComponent = (props: EditComponentProps<CodeData>) => {
   );
 };
 
-const TABLE_OPTIONS: TableOptions = {
+const TABLE_OPTIONS: TableOptions<CodeData> = {
   addRowPosition: "first",
   paging: false,
   search: false,

@@ -27,7 +27,7 @@ import { downloadFromFirebaseStorage } from "../../utils/network";
 const SortableMTableBodyRow = SortableElement(MTableBodyRow);
 const SortableMTableBody = SortableContainer(MTableBody);
 
-const TABLE_OPTIONS: TableOptions = {
+const TABLE_OPTIONS: TableOptions<RowData> = {
   addRowPosition: "first",
   paging: false,
   search: false,
