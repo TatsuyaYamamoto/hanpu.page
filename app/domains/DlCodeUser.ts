@@ -71,7 +71,7 @@ export class DlCodeUser {
     const nestedUpdateObjectKey = keyElements.join(".");
 
     return colRef.doc(this.uid).update({
-      [nestedUpdateObjectKey]: newValue
+      [nestedUpdateObjectKey]: newValue,
     });
   }
 

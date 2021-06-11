@@ -26,6 +26,6 @@ export const backupFirestoreData = async () => {
   return firestoreClient.exportDocuments({
     name: databaseName,
     outputUriPrefix,
-    collectionIds: exportCollections
+    collectionIds: exportCollections,
   });
 };

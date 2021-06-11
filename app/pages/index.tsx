@@ -33,7 +33,7 @@ const Hero = () => {
       <Grid
         item={true}
         style={{
-          marginTop: 20
+          marginTop: 20,
         }}
       >
         <LinkButton href="/download/verify">

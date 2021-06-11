@@ -32,11 +32,11 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
   ): () => void {
     const query = DownloadCodeSet.getColRef().where("productRef", "==", ref);
 
-    return query.onSnapshot(querySnap => {
-      const downloadCodeSets = querySnap.docs.map(snap => {
+    return query.onSnapshot((querySnap) => {
+      const downloadCodeSets = querySnap.docs.map((snap) => {
         const id = snap.id;
         const data = snap.data({
-          serverTimestamps: "estimate"
+          serverTimestamps: "estimate",
         }) as DownloadCodeSetDocument;
 
         return new DownloadCodeSet(
@@ -59,9 +59,7 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
    *
    * @param code
    */
-  public static async verify(
-    code: string
-  ): Promise<{
+  public static async verify(code: string): Promise<{
     productId: string;
     expiredAt: Date;
   } | null> {
@@ -77,7 +75,7 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
 
     return {
       productId: doc.productRef.id,
-      expiredAt: (doc.expiredAt as Timestamp).toDate()
+      expiredAt: (doc.expiredAt as Timestamp).toDate(),
     };
   }
 
@@ -109,7 +107,7 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
       codes: newCodes,
       createdAt: now,
       description: null,
-      expiredAt
+      expiredAt,
     };
     await DownloadCodeSet.getColRef().add(newSetDocDate);
   }

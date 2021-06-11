@@ -5,7 +5,7 @@ type FieldValue = firebase.firestore.FieldValue;
 export enum LogType {
   ACTIVATE_WITH_DOWNLOAD_CODE = "ACTIVATE_WITH_DOWNLOAD_CODE",
   DOWNLOAD_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE",
-  PLAY_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE"
+  PLAY_PRODUCT_FILE = "DOWNLOAD_PRODUCT_FILE",
 }
 
 export interface AuditLogDocument {

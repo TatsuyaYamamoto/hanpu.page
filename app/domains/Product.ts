@@ -97,7 +97,7 @@ export class Product implements ProductDocument {
   ): () => void {
     const query = Product.getColRef(firestoreInstance).doc(productId);
 
-    return query.onSnapshot(querySnap => {
+    return query.onSnapshot((querySnap) => {
       if (!querySnap.exists) {
         callback(null);
         return;
@@ -109,7 +109,7 @@ export class Product implements ProductDocument {
         description,
         ownerUid,
         productFiles,
-        createdAt
+        createdAt,
       } = querySnap.data({ serverTimestamps: "estimate" }) as ProductDocument;
 
       callback(
@@ -138,15 +138,15 @@ export class Product implements ProductDocument {
       uid
     );
 
-    return query.onSnapshot(querySnap => {
-      const products = querySnap.docs.map(docSnap => {
+    return query.onSnapshot((querySnap) => {
+      const products = querySnap.docs.map((docSnap) => {
         const {
           name,
           iconStorageUrl,
           description,
           ownerUid,
           productFiles,
-          createdAt
+          createdAt,
         } = docSnap.data({ serverTimestamps: "estimate" }) as ProductDocument;
 
         return new Product(
@@ -169,9 +169,7 @@ export class Product implements ProductDocument {
     id: string,
     firestoreInstance: Firestore
   ): Promise<Product | null> {
-    const snap = await Product.getColRef(firestoreInstance)
-      .doc(id)
-      .get();
+    const snap = await Product.getColRef(firestoreInstance).doc(id).get();
 
     if (!snap.exists) {
       return null;
@@ -182,7 +180,7 @@ export class Product implements ProductDocument {
       description,
       ownerUid,
       productFiles,
-      createdAt
+      createdAt,
     } = snap.data() as ProductDocument;
 
     return new Product(
@@ -217,7 +215,7 @@ export class Product implements ProductDocument {
       description,
       ownerUid: owner.uid,
       productFiles: {},
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
     return await Product.getColRef(firestoreInstance).add(newProductDoc);
@@ -268,10 +266,7 @@ export class Product implements ProductDocument {
     const originalFileName = file.name as ProductFileOriginalName;
     // @ts-ignore
     // TODO: handle file having no extension
-    const extension = originalFileName
-      .split(".")
-      .pop()
-      .toLowerCase();
+    const extension = originalFileName.split(".").pop().toLowerCase();
 
     const fileId = Product.createNewFileName();
 
@@ -280,13 +275,13 @@ export class Product implements ProductDocument {
     );
 
     const task = storageRef.put(file, {});
-    const promise = new Promise<void>(resolve => {
+    const promise = new Promise<void>((resolve) => {
       task.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
         () => {
           //
         },
-        e => {
+        (e) => {
           // TODO
           // tslint:disable-next-line
           console.error(e);
@@ -301,14 +296,14 @@ export class Product implements ProductDocument {
             size: file.size,
             contentType: file.type,
             originalName: originalFileName,
-            index: currentProductFilesSize
+            index: currentProductFilesSize,
           };
 
           const partialNewDoc: Partial<ProductDocument> = {
             productFiles: {
               ...this.productFiles,
-              [newProductFileId]: newProductFile
-            }
+              [newProductFileId]: newProductFile,
+            },
           };
           await this.ref.update(partialNewDoc);
 
@@ -319,7 +314,7 @@ export class Product implements ProductDocument {
 
     return {
       task,
-      promise
+      promise,
     };
   };
 
@@ -327,7 +322,7 @@ export class Product implements ProductDocument {
     const newProductFileMap: ProductFileMap = {};
     Object.keys(this.productFiles)
       // filter
-      .filter(id => {
+      .filter((id) => {
         return id !== deleteTargetId;
       })
       // sort remaining elements
@@ -341,12 +336,12 @@ export class Product implements ProductDocument {
       .forEach((id, index) => {
         newProductFileMap[id] = {
           ...this.productFiles[id],
-          index
+          index,
         };
       });
 
     const deleteDoc: Partial<ProductDocument> = {
-      productFiles: newProductFileMap
+      productFiles: newProductFileMap,
     };
     await this.ref.update(deleteDoc);
 
@@ -398,9 +393,10 @@ export class Product implements ProductDocument {
     return this.cachedIconUrl;
   }
 
-  public uploadIconToStorage(
-    file: File
-  ): { task: UploadTask; promise: Promise<void> } {
+  public uploadIconToStorage(file: File): {
+    task: UploadTask;
+    promise: Promise<void>;
+  } {
     const { currentUser } = firebase.auth();
 
     if (!currentUser) {
@@ -417,10 +413,7 @@ export class Product implements ProductDocument {
 
     // @ts-ignore
     // TODO: handle file having no extension
-    const extension = originalFileName
-      .split(".")
-      .pop()
-      .toLowerCase();
+    const extension = originalFileName.split(".").pop().toLowerCase();
 
     const fileId = Product.createNewFileName();
 
@@ -430,13 +423,13 @@ export class Product implements ProductDocument {
 
     const task = storageRef.put(file, {});
 
-    const promise = new Promise<void>(resolve => {
+    const promise = new Promise<void>((resolve) => {
       const unsubscribe = task.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
         () => {
           //
         },
-        e => {
+        (e) => {
           // TODO
           // tslint:disable-next-line
           console.error(e);
@@ -445,7 +438,7 @@ export class Product implements ProductDocument {
           unsubscribe();
 
           const partialNewDoc: Partial<ProductDocument> = {
-            iconStorageUrl: storageRef.toString()
+            iconStorageUrl: storageRef.toString(),
           };
           await this.ref.update(partialNewDoc);
 
@@ -461,7 +454,7 @@ export class Product implements ProductDocument {
 
     return {
       task,
-      promise
+      promise,
     };
   }
 
@@ -469,7 +462,7 @@ export class Product implements ProductDocument {
     values: Partial<ProductDocument>
   ): Promise<void> {
     await this.ref.update({
-      ...values
+      ...values,
     });
   }
 
@@ -480,7 +473,7 @@ export class Product implements ProductDocument {
     const updateData: UpdateData = {};
     const productFilesKey: keyof Product = "productFiles";
 
-    (Object.keys(edited) as (keyof ProductFile)[]).forEach(key => {
+    (Object.keys(edited) as (keyof ProductFile)[]).forEach((key) => {
       updateData[`${productFilesKey}.${updateId}.${key}`] = edited[key];
     });
 
@@ -490,7 +483,7 @@ export class Product implements ProductDocument {
     if (typeof newIndex !== "undefined") {
       const oldIndex = this.productFiles[updateId].index;
 
-      Object.keys(this.productFiles).forEach(sortTargetId => {
+      Object.keys(this.productFiles).forEach((sortTargetId) => {
         if (sortTargetId === updateId) {
           return;
         }
@@ -533,9 +526,6 @@ export class Product implements ProductDocument {
    * @link https://github.com/firebase/firebase-js-sdk/blob/master/packages/firestore/src/api/database.ts#L2162
    */
   private static getAutoNewId() {
-    return firebase
-      .firestore()
-      .collection("any")
-      .doc().id;
+    return firebase.firestore().collection("any").doc().id;
   }
 }

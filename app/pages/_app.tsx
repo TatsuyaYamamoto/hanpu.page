@@ -35,7 +35,7 @@ body {
 }
 `;
 
-const MyApp: React.FC<AppProps> = props => {
+const MyApp: React.FC<AppProps> = (props) => {
   const { Component, pageProps, router } = props;
   const { init: initGa, logPageView, logError } = useGa();
 
@@ -48,7 +48,7 @@ const MyApp: React.FC<AppProps> = props => {
         error: errorDetail,
         userAgent,
         language,
-        location
+        location,
       };
 
       logError(JSON.stringify(info), true);
@@ -83,7 +83,7 @@ const MyApp: React.FC<AppProps> = props => {
       requestErrorDetailContact(errorDetail);
     };
 
-    window.addEventListener("unhandledrejection", e => {
+    window.addEventListener("unhandledrejection", (e) => {
       requestErrorDetailContact(e.reason);
     });
 
@@ -140,7 +140,7 @@ const MyApp: React.FC<AppProps> = props => {
         <Auth0Provider
           auth0ClientOptions={{
             domain: configs.auth0.domain,
-            client_id: configs.auth0.clientId
+            client_id: configs.auth0.clientId,
           }}
         >
           <FirebaseContextProvider

@@ -20,7 +20,7 @@ export class Impression {
     const newImpression: ImpressionDocument = {
       productRef,
       text,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
     await Impression.getColRef().add(newImpression);

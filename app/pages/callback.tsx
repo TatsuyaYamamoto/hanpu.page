@@ -7,7 +7,7 @@ const CallbackPage: NextPage = () => {
   return <></>;
 };
 
-CallbackPage.getInitialProps = context => {
+CallbackPage.getInitialProps = (context) => {
   const { res, query } = context;
   const { to, ...otherQueries } = query;
   const redirectUri = Array.isArray(to) ? to[0] : to || "/";
@@ -15,7 +15,7 @@ CallbackPage.getInitialProps = context => {
 
   if (res) {
     res.writeHead(302, {
-      Location: `${redirectUri}?${queryString}`
+      Location: `${redirectUri}?${queryString}`,
     });
     res.end();
   }
