@@ -31,7 +31,8 @@
     "deploy-dev": "firebase deploy --project dl-code-dev",
     "deploy-dev:hosting": "firebase deploy --project dl-code-dev --only hosting",
     "deploy-pro": "firebase deploy --project dl-code",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook",
+    "e2e": "codeceptjs run --config test/e2e --steps"
   },
   "husky": {
     "hooks": {
