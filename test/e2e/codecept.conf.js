@@ -1,5 +1,7 @@
 require("ts-node").register({
-  project: __dirname + "/tsconfig.json"
+  project: __dirname + "/tsconfig.json",
+  // ファイルスコープに定義した import moduleや変数がトランスパイル時に "redeclare" でerrorが発生する
+  transpileOnly: true
 });
 const { setHeadlessWhen } = require("@codeceptjs/configure");
 

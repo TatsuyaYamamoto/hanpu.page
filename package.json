@@ -32,7 +32,8 @@
     "deploy-dev:hosting": "firebase deploy --project dl-code-dev --only hosting",
     "deploy-pro": "firebase deploy --project dl-code",
     "storybook": "start-storybook",
-    "e2e": "codeceptjs run --config test/e2e --steps"
+    "e2e": "codeceptjs run --config test/e2e --steps",
+    "e2e-ui": "codecept-ui --config test/e2e --app"
   },
   "husky": {
     "hooks": {
@@ -80,6 +81,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
+    "@codeceptjs/ui": "^0.4.6",
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-links": "^5.2.5",
     "@storybook/addons": "^5.2.5",
