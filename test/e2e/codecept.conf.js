@@ -18,12 +18,14 @@ exports.config = {
       show: true,
       browser: "chromium",
       restart: false
-    }
+    },
+    FileSystem: {}
   },
   include: {
     I: "./steps_file.ts",
     topPage: "./pages/topPage.ts",
-    verifyPage: "./pages/verifyPage.ts"
+    verifyPage: "./pages/verifyPage.ts",
+    downloadProductListPage: "./pages/downloadProductListPage.ts"
   },
   bootstrap: null,
   mocha: {},

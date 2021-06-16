@@ -1,7 +1,6 @@
-Feature(`ダウンロードコード検証`).tag(`verifyDownloadCode`);
+import config from "../config";
 
-const TEST_DOWNLOAD_CODE = "GFSTKZRR";
-const TEST_PRODUCT_NAME = "e2e test content";
+Feature(`ダウンロードコード検証`).tag(`verifyDownloadCode`);
 
 Scenario(`topPageからverifyPageへ遷移する`, ({ I, topPage, verifyPage }) => {
   I.say("Given I am in topPage");
@@ -26,12 +25,12 @@ Scenario(
 
     I.say("When I insert download code and click button");
     I.seeElement("button[type=button]:disabled/*[text()='実行']");
-    I.fillField("input[type=text]", TEST_DOWNLOAD_CODE);
+    I.fillField("input[type=text]", config.TEST_PRODUCT.downloadCode);
     I.click("実行");
 
     I.say("Then I am on DownloadProductListPage and the product is displayed");
     I.seeCurrentUrlEquals(`/download/list`);
-    I.see(TEST_PRODUCT_NAME, "button");
+    I.see(config.TEST_PRODUCT.name, "button");
   }
 );
 

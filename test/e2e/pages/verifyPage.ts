@@ -6,5 +6,9 @@ export = {
   },
   isDisplayed: () => {
     I.seeCurrentUrlEquals("/download/verify");
+  },
+  verify: (downloadCode: string) => {
+    I.fillField("input[type=text]", downloadCode);
+    I.click("実行");
   }
 };
