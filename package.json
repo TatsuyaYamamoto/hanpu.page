@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": "10"
+    "node": "12"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -31,7 +31,9 @@
     "deploy-dev": "firebase deploy --project dl-code-dev",
     "deploy-dev:hosting": "firebase deploy --project dl-code-dev --only hosting",
     "deploy-pro": "firebase deploy --project dl-code",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook",
+    "e2e": "codeceptjs run --config test/e2e --steps",
+    "e2e-ui": "codecept-ui --config test/e2e --app"
   },
   "husky": {
     "hooks": {
@@ -79,6 +81,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
+    "@codeceptjs/ui": "^0.4.6",
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-links": "^5.2.5",
     "@storybook/addons": "^5.2.5",
@@ -90,6 +93,7 @@
     "@types/styled-components": "^4.4.3",
     "@types/uuid": "^3.4.6",
     "babel-loader": "^8.0.6",
+    "codeceptjs": "^3.0.7",
     "cpx": "^1.5.0",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
@@ -98,9 +102,11 @@
     "husky": "^2.4.1",
     "lint-staged": "^8.1.7",
     "npm-run-all": "^4.1.5",
+    "playwright": "^1.12.1",
     "prettier": "^1.17.1",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.0.1",
+    "ts-node": "^10.0.0",
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-prettier": "^1.18.0",
