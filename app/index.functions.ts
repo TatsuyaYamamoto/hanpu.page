@@ -5,36 +5,12 @@ import * as firebaseAdmin from "firebase-admin";
 // Initial Firebase App
 const firebaseApp = firebaseAdmin.initializeApp();
 
-import next from "next";
-
 import { backupFirestoreData } from "./utils/gcp";
 import { DlCodeUserDocument } from "./domains/DlCodeUser";
 import { sendToSlack } from "./functions/utils/slack";
 
 // TODO: 保存期間の方針を検討してちょうだい
 const MAX_BACKUP_DATE_LENGTH = 30;
-
-// https://blog.katsubemakito.net/firebase/functions-environmentvariable
-const isUnderFirebaseFunction =
-  process.env.PWD && process.env.PWD.startsWith("/srv");
-
-const nextServer = next({
-  dir: isUnderFirebaseFunction
-    ? // default value
-      "."
-    : // firebase deployのときにlocalでfunctionを実行する(確認: "firebase-tools": "^7.14.0")
-      // local実行時のみ、ビルド済みnext dirの相対パスを教える。
-      // Error: Could not find a valid build in the '/Users/fx30328/workspace/projects/sokon
-      "dist/functions",
-  conf: { distDir: "next" }
-});
-
-const handle = nextServer.getRequestHandler();
-
-export const nextApp = functions.https.onRequest((req, res) => {
-  // @ts-ignore
-  return nextServer.prepare().then(() => handle(req, res));
-});
 
 export const api = functions.https.onRequest((_, res) => {
   // TODO

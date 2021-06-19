@@ -66,7 +66,7 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
       const query = parseQuery(
         window.location.search.trim().replace(/^[?#&]/, "")
       );
-      const { code, state, ...otherQueries } = query;
+      const { code, state, nextPath, ...otherQueries } = query;
       const isAuth0Redirected = !!code && !!state;
       if (isAuth0Redirected) {
         await auth0Client
@@ -79,11 +79,6 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
               "location.search has invalid code or state of auth0. remove them."
             );
           });
-
-        router.replace({
-          pathname: window.location.pathname,
-          query: otherQueries
-        });
       }
 
       const isAuthenticated = await auth0Client.isAuthenticated();
@@ -101,6 +96,13 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
           initialized: true
         }));
         log(`client is initialized. authenticated. uid: ${user.sub}`);
+
+        if (typeof nextPath === "string") {
+          router.replace({
+            pathname: nextPath,
+            query: otherQueries
+          });
+        }
       } else {
         setContextValue(prev => ({ ...prev, initialized: true }));
         log(`client is initialized. NOT authenticated.`);
@@ -121,11 +123,11 @@ const useAuth0 = () => {
   const loginWithRedirect = useCallback(
     async (options: RedirectLoginOptions = {}) => {
       if (auth0Client) {
-        const { origin, href } = location;
-
+        const { origin, pathname, search } = location;
+        const nextPath = encodeURIComponent(pathname + search);
         await auth0Client.loginWithRedirect({
           ...options,
-          redirect_uri: `${origin}/callback?to=${href}`
+          redirect_uri: `${origin}/callback?nextPath=${nextPath}`
         });
       }
     },
