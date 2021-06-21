@@ -7,7 +7,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  Typography
+  Typography,
 } from "@material-ui/core/";
 import { CardProps } from "@material-ui/core/Card";
 
@@ -31,9 +31,11 @@ const PanelItem: React.FC<PanelItemProps> = ({ product, onClick }) => {
   const [iconUrl, setIconUrl] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    product.getIconUrl().then(url => {
+    product.getIconUrl().then((url) => {
       setIconUrl(url);
     });
+    // TODO
+    // eslint-disable-next-line
   }, []);
 
   const onCardClicked = () => {
@@ -72,7 +74,7 @@ interface ActivatedProductListProps {
 
 const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
   products,
-  onPanelClicked
+  onPanelClicked,
 }) => {
   const onClick = (id: string) => () => {
     onPanelClicked(id);
@@ -109,7 +111,7 @@ const ActivatedProductList: React.FC<ActivatedProductListProps> = ({
       justify="flex-start"
       spacing={2 /* TODO: get it from theme */}
     >
-      {products.map(p => (
+      {products.map((p) => (
         <Grid key={p.id} item={true}>
           <PanelItem product={p} onClick={onClick(p.id)} />
         </Grid>

@@ -15,14 +15,16 @@ interface DetailPageProps {
 
 const ProductDetailContent: FC<DetailPageProps> = ({
   product,
-  downloadCodeExpiredAt
+  downloadCodeExpiredAt,
 }) => {
   const [iconUrl, setIconUrl] = useState("");
 
   useEffect(() => {
-    product.getIconUrl().then(url => {
+    product.getIconUrl().then((url) => {
       setIconUrl(url || "");
     });
+    // TODO
+    // eslint-disable-next-line
   }, []);
 
   return (

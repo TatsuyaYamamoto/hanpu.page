@@ -1,9 +1,9 @@
-import { auth, firestore } from "firebase/app";
+import firebase from "firebase/app";
 
 import {
   AuditLogDocument,
   LogType,
-  getColRef as getAuditLogColRef
+  getColRef as getAuditLogColRef,
 } from "../../domains/AuditLog";
 
 const useAuditLogger = () => {
@@ -13,16 +13,16 @@ const useAuditLogger = () => {
     ok: boolean,
     error?: E
   ) => {
-    const { currentUser } = auth();
+    const { currentUser } = firebase.auth();
     const userId = currentUser ? currentUser.uid : null;
     const newLog: Partial<AuditLogDocument> = {
       userId,
       type,
       params,
       ok,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-      href: location.href,
-      userAgent: navigator.userAgent
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      href: window.location.href,
+      userAgent: navigator.userAgent,
     };
 
     if (error) {
@@ -30,7 +30,7 @@ const useAuditLogger = () => {
       newLog.error = {
         name,
         message,
-        stack
+        stack,
       };
     }
 

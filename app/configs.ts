@@ -1,6 +1,6 @@
 const isProduction = process.env.nodeEnv === "production";
 
-export default {
+const configs = {
   isProduction,
   contactFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSe5bSPvJ5XQM0IACqZ9NKoHuRUAcC_V1an16JGwHh6HeGd-oQ/viewform?usp=pp_url&entry.326070868=DLCode",
@@ -13,7 +13,7 @@ export default {
         projectId: "dl-code",
         storageBucket: "dl-code.appspot.com",
         messagingSenderId: "60887072982",
-        appId: "1:60887072982:web:174e519749625525"
+        appId: "1:60887072982:web:174e519749625525",
       }
     : {
         apiKey: "AIzaSyDkyIH-immHfoQY59kbEfWi9T1npPTUv0k",
@@ -22,7 +22,7 @@ export default {
         projectId: "dl-code-dev",
         storageBucket: "dl-code-dev.appspot.com",
         messagingSenderId: "170382784624",
-        appId: "1:170382784624:web:42b794526ad81a74"
+        appId: "1:170382784624:web:42b794526ad81a74",
       },
   apiServerOrigin: isProduction
     ? "https://api.sokontokoro-factory.net"
@@ -30,10 +30,12 @@ export default {
   auth0: isProduction
     ? {
         domain: "sokontokoro-factory.auth0.com",
-        clientId: "WAOD4VnlKF6koFjtdi6sK2mIBKuCGkZK"
+        clientId: "WAOD4VnlKF6koFjtdi6sK2mIBKuCGkZK",
       }
     : {
         domain: "sokontokoro-factory-develop.auth0.com",
-        clientId: "0Eq2eNT2Orybe2B24TvBKdsqnHQDYHJo"
-      }
+        clientId: "0Eq2eNT2Orybe2B24TvBKdsqnHQDYHJo",
+      },
 };
+
+export default configs;

@@ -8,7 +8,7 @@
     "predeploy": []
   },
   "hosting": {
-    "public": "public",
+    "public": "dist/public",
     // https://firebase.google.com/docs/hosting/full-config#control_html_extensions
     // true の場合、Hosting はアップロードされたファイルの URL から拡張子 .html を自動的に削除します。
     // Next.jsのSSGを使用しているため、htmlとその他のリソースのURLの形式を合わせるために、.htmlを削除する

@@ -3,7 +3,7 @@ import {
   createContext,
   useEffect,
   useState,
-  useContext
+  useContext,
 } from "react";
 
 import useFirebase from "./useFirebase";
@@ -24,26 +24,26 @@ interface IDlCodeUserContext {
 
 export const dlCodeUserContext = createContext<IDlCodeUserContext>({} as any);
 
-export const DlCodeUserContextProvider: React.FC<{}> = props => {
+export const DlCodeUserContextProvider: React.FC<{}> = (props) => {
   const [contextValue, setContextValue] = useState<IDlCodeUserContext>({
-    sessionState: "processing"
+    sessionState: "processing",
   });
   const { app: firebaseApp, initUser } = useFirebase();
   const { initialized: isAuth0Initialized, user: auth0User } = useAuth0();
 
   const handleLogout = () => {
-    setContextValue(prev => ({
+    setContextValue((prev) => ({
       ...prev,
       sessionState: "loggedOut",
-      user: undefined
+      user: undefined,
     }));
   };
 
   const handleLogin = (user: DlCodeUser) => {
-    setContextValue(prev => ({
+    setContextValue((prev) => ({
       ...prev,
       sessionState: "loggedIn",
-      user
+      user,
     }));
   };
 
@@ -66,7 +66,7 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
 
     const unsubscribe = DlCodeUser.getColRef(firebaseApp.firestore())
       .doc(uid)
-      .onSnapshot(snap => {
+      .onSnapshot((snap) => {
         if (snap.exists) {
           const dlCodeUserDoc = snap.data() as DlCodeUserDocument;
           const user = new DlCodeUser(dlCodeUserDoc, auth0User);
@@ -84,6 +84,8 @@ export const DlCodeUserContextProvider: React.FC<{}> = props => {
     return () => {
       unsubscribe();
     };
+    // TODO
+    // eslint-disable-next-line
   }, [firebaseApp, isAuth0Initialized, auth0User]);
 
   return (

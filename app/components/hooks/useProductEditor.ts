@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { firestore, storage, app as _app } from "firebase";
-type DocumentReference = firestore.DocumentReference;
+import firebase from "firebase/app";
 
 import useFirebase from "./useFirebase";
 import {
@@ -9,9 +8,12 @@ import {
   ProductDocument,
   ProductFile,
   ProductFileDisplayName,
-  ProductName
+  ProductName,
 } from "../../domains/Product";
 import useDlCodeUser from "./useDlCodeUser";
+
+type DocumentReference = firebase.firestore.DocumentReference;
+type UploadTask = firebase.storage.UploadTask;
 
 const useProductEditor = (productId?: string) => {
   const { app: firebaseApp } = useFirebase();
@@ -42,7 +44,7 @@ const useProductEditor = (productId?: string) => {
     const unsubscribe = Product.watchOne(
       productId,
       firebaseApp.firestore(),
-      one => {
+      (one) => {
         setProduct(one);
       }
     );
@@ -63,10 +65,8 @@ const useProductEditor = (productId?: string) => {
         );
       }
 
-      const {
-        current: currentRegisteredCount,
-        limit: maxRegisteredCount
-      } = dlCodeUser.user.counters.product;
+      const { current: currentRegisteredCount, limit: maxRegisteredCount } =
+        dlCodeUser.user.counters.product;
 
       if (maxRegisteredCount <= currentRegisteredCount) {
         throw new Error(
@@ -83,7 +83,7 @@ const useProductEditor = (productId?: string) => {
       // TODO アトミックな処理に実装を変更する
       return Promise.all([
         dlCodeUser.editCounter("product", current + 1, firebaseApp.firestore()),
-        Product.createNew({ name, description }, firebaseApp.firestore())
+        Product.createNew({ name, description }, firebaseApp.firestore()),
       ]);
     },
     [firebaseApp, dlCodeUser]
@@ -116,7 +116,7 @@ const useProductEditor = (productId?: string) => {
       displayName: ProductFileDisplayName,
       file: File
     ): {
-      task: storage.UploadTask;
+      task: UploadTask;
       promise: Promise<void>;
     } => {
       const loadedProduct = shouldProductRefLoaded(product);
@@ -127,10 +127,8 @@ const useProductEditor = (productId?: string) => {
       // check allowed host file size.
       const fileSizeByteTrying = file.size;
 
-      const {
-        current: currentFileSizeByte,
-        limit: maxFileSizeByte
-      } = dlCodeUser.user.counters.totalFileSizeByte;
+      const { current: currentFileSizeByte, limit: maxFileSizeByte } =
+        dlCodeUser.user.counters.totalFileSizeByte;
 
       if (maxFileSizeByte < currentFileSizeByte + fileSizeByteTrying) {
         throw new Error(
@@ -153,8 +151,8 @@ const useProductEditor = (productId?: string) => {
             "totalFileSizeByte",
             currentFileSizeByte + fileSizeByteTrying,
             firebaseApp.firestore()
-          )
-        ]).then()
+          ),
+        ]).then(),
       };
     },
     [firebaseApp, product, dlCodeUser]
@@ -178,9 +176,8 @@ const useProductEditor = (productId?: string) => {
       const deletingFileSizeByte =
         loadedProduct.productFiles[productFileId].size;
 
-      const {
-        current: currentFileSizeByte
-      } = dlCodeUser.user.counters.totalFileSizeByte;
+      const { current: currentFileSizeByte } =
+        dlCodeUser.user.counters.totalFileSizeByte;
 
       // TODO アトミックな処理に実装を変更する
       return Promise.all([
@@ -189,7 +186,7 @@ const useProductEditor = (productId?: string) => {
           "totalFileSizeByte",
           currentFileSizeByte - deletingFileSizeByte,
           firebaseApp.firestore()
-        )
+        ),
       ]);
     },
     [product, dlCodeUser, firebaseApp]
@@ -202,7 +199,7 @@ const useProductEditor = (productId?: string) => {
     updateProductIcon,
     addProductFile,
     updateProductFile,
-    deleteProductFile
+    deleteProductFile,
   };
 };
 

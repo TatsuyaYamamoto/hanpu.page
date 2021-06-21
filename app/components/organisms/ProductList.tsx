@@ -7,7 +7,7 @@ import styled from "styled-components";
 import useFirebase from "../hooks/useFirebase";
 import useDlCodeUser from "../hooks/useDlCodeUser";
 import ProductListItem, {
-  ProductListAddItem
+  ProductListAddItem,
 } from "../organisms/ProductListItem";
 
 import { Product } from "../../domains/Product";
@@ -25,7 +25,7 @@ const AddItem = styled(ProductListAddItem)`
 interface ProductListProps {
   onAdd: () => void;
 }
-const ProductList: FC<ProductListProps> = props => {
+const ProductList: FC<ProductListProps> = (props) => {
   const { onAdd } = props;
 
   const [products, setProducts] = React.useState<Product[]>([]);
@@ -41,7 +41,7 @@ const ProductList: FC<ProductListProps> = props => {
     const unsubscribe = Product.watchList(
       dlCodeUser.uid,
       firebaseApp.firestore(),
-      owns => {
+      (owns) => {
         setProducts(owns);
       }
     );
@@ -55,8 +55,8 @@ const ProductList: FC<ProductListProps> = props => {
     router.push({
       pathname: `/publish/product/edit`,
       query: {
-        id
-      }
+        id,
+      },
     });
   };
 
@@ -69,7 +69,7 @@ const ProductList: FC<ProductListProps> = props => {
       const map: { [id: string]: string } = {};
 
       await Promise.all(
-        products.map(async product => {
+        products.map(async (product) => {
           map[product.id] = (await product.getIconUrl()) || "none";
         })
       );
@@ -82,10 +82,10 @@ const ProductList: FC<ProductListProps> = props => {
     <Root>
       <AddItem onClick={onAdd} />
 
-      {products.map(p => {
+      {products.map((p) => {
         return (
           <Item
-            key={p.name}
+            key={p.id}
             onClick={onSelected(p.id)}
             id={p.id}
             name={p.name}

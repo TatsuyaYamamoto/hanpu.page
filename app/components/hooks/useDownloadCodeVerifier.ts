@@ -1,18 +1,20 @@
 import { useEffect, useState, useCallback } from "react";
 import Dexie from "dexie";
 
-import { firestore, app as _app } from "firebase";
-type FirebaseApp = _app.App;
+import firebase from "firebase/app";
 
 import { LogType } from "../../domains/AuditLog";
 import {
   DownloadCodeSet,
-  DownloadCodeSetDocument
+  DownloadCodeSetDocument,
 } from "../../domains/DownloadCodeSet";
 
 import { Product } from "../../domains/Product";
 import useAuditLogger from "./useAuditLogger";
 import useFirebase from "./useFirebase";
+
+type FirebaseApp = firebase.app.App;
+type Timestamp = firebase.firestore.Timestamp;
 
 interface ActiveProductSchema {
   downloadCode: string;
@@ -29,14 +31,14 @@ class DlCodeDb extends Dexie {
   public constructor() {
     super("dlCodeDb");
     this.version(1).stores({
-      activeProducts: "productId,downloadCode"
+      activeProducts: "productId,downloadCode",
     });
     this.activeProducts = this.table("activeProducts");
   }
 
   public getProductById(id: string) {
     return this.activeProducts.get({
-      productId: id
+      productId: id,
     });
   }
 
@@ -49,7 +51,7 @@ class DlCodeDb extends Dexie {
       return this.activeProducts.add({
         downloadCode,
         productId,
-        expiredAt
+        expiredAt,
       });
     });
   }
@@ -79,6 +81,8 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     } else {
       log(`not loaded active products according to preventLoadActives flag.`);
     }
+    // TODO
+    // eslint-disable-next-line
   }, [firebaseApp]);
 
   /**
@@ -95,7 +99,7 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
       errorAudit({
         type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
         params: { code },
-        error: e
+        error: e,
       });
       throw e;
     }
@@ -112,8 +116,8 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
         type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
         params: {
           code,
-          alreadyRegistered: true
-        }
+          alreadyRegistered: true,
+        },
       });
 
       return;
@@ -121,7 +125,7 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
 
     okAudit({
       type: LogType.ACTIVATE_WITH_DOWNLOAD_CODE,
-      params: { code }
+      params: { code },
     });
 
     await db.addNewProduct(code, verifiedProductId, expiredAt);
@@ -197,8 +201,12 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
       return {
         productId: product.id,
         productName: product.name,
-        downloadCodeCreatedAt: (downloadCodeSetDoc.createdAt as firestore.Timestamp).toDate(),
-        downloadCodeExpireAt: (downloadCodeSetDoc.expiredAt as firestore.Timestamp).toDate()
+        downloadCodeCreatedAt: (
+          downloadCodeSetDoc.createdAt as Timestamp
+        ).toDate(),
+        downloadCodeExpireAt: (
+          downloadCodeSetDoc.expiredAt as Timestamp
+        ).toDate(),
       };
     },
     [firebaseApp]
@@ -234,7 +242,7 @@ const useDownloadCodeVerifier = (preventLoadActives: boolean = false) => {
     verifyDownloadCode,
     getByProductId,
     checkFormat,
-    checkLinkedResources
+    checkLinkedResources,
   };
 };
 

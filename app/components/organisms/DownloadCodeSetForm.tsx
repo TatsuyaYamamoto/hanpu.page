@@ -1,12 +1,11 @@
-import * as React from "react";
-const { useState, useMemo } = React;
+import React, { useState, useMemo } from "react";
 
 import MaterialTable, {
   Options as TableOptions,
   Localization as TableLocalization,
   Column as TableColumn,
   Action,
-  EditComponentProps
+  EditComponentProps,
 } from "material-table";
 import TextField from "@material-ui/core/TextField";
 import styled from "styled-components";
@@ -17,7 +16,7 @@ import { saveDownloadCodeSetAsCsvFile } from "../../utils/network";
 
 import {
   DownloadCodeSet,
-  DownloadCodeSetDocument
+  DownloadCodeSetDocument,
 } from "../../domains/DownloadCodeSet";
 
 const DescriptionTextField = styled.div`
@@ -46,22 +45,22 @@ const EditComponent = (props: EditComponentProps<CodeData>) => {
   );
 };
 
-const TABLE_OPTIONS: TableOptions = {
+const TABLE_OPTIONS: TableOptions<CodeData> = {
   addRowPosition: "first",
   paging: false,
   search: false,
-  actionsColumnIndex: -1
+  actionsColumnIndex: -1,
 };
 
 const TABLE_LOCALIZATION: TableLocalization = {
   header: {
-    actions: ""
+    actions: "",
   },
   body: {
     editRow: {
-      deleteText: "けします"
-    }
-  }
+      deleteText: "けします",
+    },
+  },
 };
 
 const TABLE_COLUMNS: TableColumn<CodeData>[] = [
@@ -70,34 +69,34 @@ const TABLE_COLUMNS: TableColumn<CodeData>[] = [
     field: "id",
     editable: "never",
     cellStyle: {
-      maxWidth: 200
-    }
+      maxWidth: 200,
+    },
   },
   {
     title: "発行数",
     field: "length",
     type: "numeric",
     editable: "never",
-    cellStyle: {}
+    cellStyle: {},
   },
   {
     title: "作成日",
     field: "createdAt",
     type: "datetime",
-    editable: "never"
+    editable: "never",
   },
   {
     title: "有効期限",
     field: "expiredAt",
     type: "datetime",
-    editable: "never"
+    editable: "never",
   },
   {
     title: "説明",
     field: "description",
     render: PreviewComponentRender,
-    editComponent: EditComponent
-  }
+    editComponent: EditComponent,
+  },
 ];
 
 interface CodeData {
@@ -120,7 +119,7 @@ interface DownloadCodeSetFormProps {
 const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
   downloadCodeSets,
   onAdd,
-  onUpdate
+  onUpdate,
 }) => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
@@ -165,7 +164,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
 
     const { id } = newData;
     const edited: Pick<DownloadCodeSetDocument, "description"> = {
-      description: newData.description
+      description: newData.description,
     };
 
     return onUpdate(id, edited);
@@ -173,12 +172,12 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
 
   const tableData: CodeData[] = useMemo(
     () =>
-      downloadCodeSets.map(set => ({
+      downloadCodeSets.map((set) => ({
         id: set.id,
         length: Object.keys(set.codes).length,
         createdAt: set.createdAt,
         expiredAt: set.expiredAt,
-        description: set.description
+        description: set.description,
       })),
     [downloadCodeSets]
   );
@@ -189,14 +188,14 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
     {
       icon: "arrow_downward",
       tooltip: "Download",
-      onClick: onDownloadButtonClicked
+      onClick: onDownloadButtonClicked,
     },
     {
       icon: "add",
       tooltip: "追加",
       isFreeAction: true,
-      onClick: onAddButtonClicked
-    }
+      onClick: onAddButtonClicked,
+    },
   ];
 
   return (
@@ -209,7 +208,7 @@ const DownloadCodeSetForm: React.FC<DownloadCodeSetFormProps> = ({
         data={tableData}
         actions={actions}
         editable={{
-          onRowUpdate
+          onRowUpdate,
         }}
       />
       <DownloadCodeSetAddDialog
