@@ -2,15 +2,14 @@ import React, { useEffect, useContext, useCallback, FC, useState } from "react";
 import { useRouter } from "next/router";
 
 import createAuth0Client, {
+  User as _Auth0User,
   Auth0ClientOptions,
   RedirectLoginOptions,
 } from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import { parse as parseQuery } from "querystring";
 
-export type Auth0User = Auth0TwitterUser;
-
-export interface Auth0TwitterUser {
+export interface Auth0User extends _Auth0User {
   /**
    * twitterの表示名
    */
@@ -32,7 +31,7 @@ export interface Auth0TwitterUser {
 
 interface IAuth0Context {
   initialized: boolean;
-  user?: Auth0TwitterUser;
+  user?: Auth0User;
   auth0Client?: Auth0Client;
   idToken?: string;
 }
@@ -80,7 +79,7 @@ export const Auth0Provider: FC<Auth0ProviderProps> = (props) => {
           });
       }
 
-      const user = await auth0Client.getUser();
+      const user = await auth0Client.getUser<Auth0User>();
 
       if (!!user) {
         const idTokenClaims = await auth0Client.getIdTokenClaims();
