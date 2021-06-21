@@ -1,3 +1,5 @@
+import format from "date-fns/format";
+
 /**
  * Convert file size to human-readable
  *
@@ -15,4 +17,8 @@ export const formatFileSize = (bytes: number, decimalPoint: number = 2) => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const sizeValue = parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint));
   return `${sizeValue} ${units[i]}`;
+};
+
+export const formatyyyyMMdd = (date: Date) => {
+  return format(date, "yyyy/MM/dd");
 };

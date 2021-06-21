@@ -10,7 +10,7 @@ https://www.google.com/search?q=hogehoge&oq=hogehoge&aqs=chrome..69i57j69i60j0l4
 説明文が長すぎて適切に改行されているべきなのだがなぜか現状は中途半端な長佐で画面外へ領域を引き伸ばしてから改行している。
 
 なぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだなぜだ`,
-    expireDate: "2019/6/18",
+    expireDate: "2019/06/18",
     products: [
       {
         name: "0_Step! ZERO to ONE",
