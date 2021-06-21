@@ -18,7 +18,8 @@ https://www.google.com/search?q=hogehoge&oq=hogehoge&aqs=chrome..69i57j69i60j0l4
       },
       {
         name: "download_target_file",
-        info: "application/zip: 16.81 MB"
+        info: "application/zip: 16.81 MB",
+        rawFileName: "Cafe Aqours Vol. 1 君のこころは輝いているかい？(mp3).zip"
       },
       {
         name: "1_君のこころは輝いてるかい？（ハイレゾ音質）",

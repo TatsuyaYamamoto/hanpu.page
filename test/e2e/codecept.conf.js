@@ -5,7 +5,33 @@ require("ts-node").register({
 });
 const { setHeadlessWhen } = require("@codeceptjs/configure");
 
-const { HEADLESS, TEST_BASE_URL = "https://dl-code-dev.web.app" } = process.env;
+const {
+  HEADLESS,
+  BROWSER_TARGET = "chromium",
+  TEST_BASE_URL = "https://dl-code-dev.web.app"
+} = process.env;
+
+const browserHelpers = {
+  chromium: {
+    Playwright: {
+      url: TEST_BASE_URL,
+      show: true,
+      browser: "chromium",
+      restart: false
+    }
+  },
+  ios_13_5: {
+    Appium: {
+      platform: "iOS",
+      url: TEST_BASE_URL,
+      desiredCapabilities: {
+        deviceName: "iPhone Simulator",
+        platformVersion: "13.5",
+        browserName: "safari"
+      }
+    }
+  }
+};
 
 // turn on headless mode when running with HEADLESS=true environment variable
 // export HEADLESS=true && npx codeceptjs run
@@ -15,12 +41,7 @@ exports.config = {
   tests: "./tests/*.test.ts",
   output: "./output",
   helpers: {
-    Playwright: {
-      url: TEST_BASE_URL,
-      show: true,
-      browser: "chromium",
-      restart: false
-    },
+    ...browserHelpers[BROWSER_TARGET],
     FileSystem: {}
   },
   include: {

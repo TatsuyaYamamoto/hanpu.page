@@ -16,7 +16,7 @@ declare namespace CodeceptJS {
     verifyPage;
     downloadProductListPage;
   }
-  interface Methods extends Playwright, FileSystem {}
+  interface Methods extends Playwright, Appium, FileSystem {}
   interface I extends ReturnType<steps_file> {}
   namespace Translation {
     interface Actions {}

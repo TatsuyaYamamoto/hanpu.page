@@ -76,7 +76,11 @@ Scenario(
 Scenario(
   "プロダクトのファイルをダウンロードする",
   async ({ I, verifyPage, downloadProductListPage }) => {
+    const targetIndex = 1;
     const testFileName = `download_test_${Date.now()}.zip`;
+    const sourceFileName =
+      config.TEST_PRODUCT.products[targetIndex].rawFileName;
+    const iosMessage = `Do you want to download “${sourceFileName}”?`;
 
     I.say("Given verify済みのプロダクト詳細画面を表示している");
     // TODO defined expected indexeddb state
@@ -87,15 +91,25 @@ Scenario(
     I.see(config.TEST_PRODUCT.description);
 
     I.say(`When ダウンロードアイコンをクリックする`);
-    I.see("download_target_file", `ul li:nth-child(${2})`);
-    I.click(`ul li:nth-child(${2}) button`);
+    I.see("download_target_file", `ul li:nth-child(${targetIndex + 1})`);
+    I.click(`ul li:nth-child(${targetIndex + 1}) button`);
 
-    I.say(`Then ファイルがダウンロードされる(output/${testFileName})`);
-    I.handleDownloads(testFileName);
-    I.see(
-      "Cafe Aqours Vol. 1 君のこころは輝いているかい？(mp3).zipをダウンロード中..."
-    );
-    I.waitForFile(`output/${testFileName}`, 10);
+    if (!(await I.isOnIOS())) {
+      I.say(`Then ファイルがダウンロードされる(output/${testFileName})`);
+      I.handleDownloads(testFileName);
+      I.see(`${sourceFileName}をダウンロード中...`);
+      I.waitForFile(`output/${testFileName}`, 10);
+    }
+
+    if (await I.isOnIOS()) {
+      I.see(`${sourceFileName}をダウンロード中...`);
+      // @ts-ignore
+      I.switchToNative();
+      // XPathはAppium desktopで確認した
+      I.seeElement(`//XCUIElementTypeStaticText[@name="${iosMessage}"]`);
+      I.click(`(//XCUIElementTypeButton[@name="Download"])[1]`);
+      I.dontSeeElement(`//XCUIElementTypeStaticText[@name="${iosMessage}"]`);
+    }
   }
 );
 
@@ -113,8 +127,15 @@ Scenario(
     I.say(`When 文字を入力してクリックする`);
     I.see("ご感想はこちらへ！");
     I.fillField("textarea", `テスト感想 ${new Date()}`);
-    I.click("送信");
 
+    if (await I.isOnIOS()) {
+      I.say(`iOS Simulatorのためのworkaround。
+fillFieldで文字列を入力しても、iOS Simulator上のReactでonChange eventが発生しない(多分)ため、textareaを選択 => 適当な文字列を入力のステップを追加することで
+手動でonChange eventを発生させてから後続の処理につなげる。`);
+      I.click("//textarea[1]");
+      "_ios_dummy".split("").map(t => I.pressKey(t));
+    }
+    I.click("送信");
     I.say(`Then 感謝ダイアログが表示される`);
     I.see("ありがとうございました（・８・）");
   }
