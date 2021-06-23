@@ -1,6 +1,6 @@
 {
   "name": "dl-code",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "web app for product hositng and download code generating",
   "main": "index.functions.js",
   "repository": "https://github.com/TatsuyaYamamoto/dl-code.git",
