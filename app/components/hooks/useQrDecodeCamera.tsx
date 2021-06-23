@@ -26,7 +26,7 @@ const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
 
     console.log("media devices", devices);
 
-    const videoDevices = devices.filter(deviceInfo => {
+    const videoDevices = devices.filter((deviceInfo) => {
       return deviceInfo.kind === "videoinput";
     });
 
@@ -36,8 +36,8 @@ const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
       audio: false,
       video: {
         // TODO: make handlable video inputs
-        deviceId: videoDevices.reverse()[0].deviceId
-      }
+        deviceId: videoDevices.reverse()[0].deviceId,
+      },
     });
 
     console.log("mediaStream", mediaStream);
@@ -45,7 +45,7 @@ const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
     // https://developer.mozilla.org/ja/docs/Web/API/URL/createObjectURL#Usage_notes
     // videoRef.src = window.URL.createObjectURL(mediaStream);
 
-    return new Promise(resolve => {
+    return new Promise<void>((resolve) => {
       videoRef.addEventListener("loadedmetadata", () => {
         const { videoWidth, videoHeight } = videoRef;
         const videoDeviceRatio = videoHeight / videoWidth;
@@ -153,7 +153,7 @@ const useQrDecodeCamera = (ref: RefObject<HTMLVideoElement>) => {
     stopPreview,
     startLoopCapture,
     stopLoopCapture,
-    detected
+    detected,
   };
 };
 

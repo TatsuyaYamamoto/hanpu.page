@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useState, useMemo, useCallback } = React;
+import { FC, useState, ChangeEvent, MouseEvent } from "react";
 
 import {
   Button,
@@ -17,52 +16,28 @@ export interface ImpressionFormProps {
   productId: string;
 }
 
-const ImpressionForm: React.FC<ImpressionFormProps> = props => {
+const ImpressionForm: FC<ImpressionFormProps> = props => {
   const { productId } = props;
-
-  const [text, setText] = useState<string>("");
-
-  const [submitState, setSubmitState] = useState<
-    "waiting" | "sending" | "success"
-  >("waiting");
-
+  const [text, setText] = useState("");
+  const [isDialogOpen, handleDialog] = useState(false);
   const { postImpression } = useImpression();
+  const disableSubmit = text.length === 0;
 
-  const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
-  }, []);
+  };
 
-  const canSubmit = useMemo(() => {
-    return text !== "" && submitState === "waiting";
-  }, [text, submitState]);
+  const onSubmitClicked = (_: MouseEvent<HTMLButtonElement>) => {
+    postImpression(productId, text).then(() => {
+      // 送信が成功したら、テキストボックスは空欄になるのが自然との意見もあるが、実際はどっちだろうか
+      setText("");
+      handleDialog(true);
+    });
+  };
 
-  const openDialog = useMemo(() => {
-    return submitState === "success";
-  }, [submitState]);
-
-  const onSubmitClicked = useCallback(
-    (_: React.MouseEvent<HTMLButtonElement>) => {
-      if (!text) {
-        return;
-      }
-      setSubmitState("sending");
-
-      postImpression(productId, text).then(() => {
-        setSubmitState("success");
-
-        // 送信が成功したら、テキストボックスは空欄になるのが自然との意見もあるが、実際はどっちだろうか
-        setText("");
-      });
-    },
-    [productId, text]
-  );
-
-  const handleCloseDialog = useCallback(
-    (_: React.MouseEvent<HTMLButtonElement>) => {
-      setSubmitState("waiting");
-    },
-    [productId, text]
-  );
+  const handleCloseDialog = (_: MouseEvent<HTMLButtonElement>) => {
+    handleDialog(false);
+  };
 
   return (
     <>
@@ -76,12 +51,12 @@ const ImpressionForm: React.FC<ImpressionFormProps> = props => {
           value={text}
           onChange={onChange}
         />
-        <Button disabled={!canSubmit} onClick={onSubmitClicked}>
+        <Button disabled={disableSubmit} onClick={onSubmitClicked}>
           送信
         </Button>
       </Paper>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
+      <Dialog open={isDialogOpen}>
         <DialogTitle>ありがとうございました（・８・）</DialogTitle>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">

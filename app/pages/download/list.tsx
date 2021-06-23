@@ -40,21 +40,17 @@ const DownloadProductListPage: NextPage = () => {
       return <ProgressContent />;
     }
 
-    if (!showingProductId) {
-      return (
-        <ActivatedProductList
-          products={actives.map(a => a.product)}
-          onPanelClicked={onProductSelected}
-        />
-      );
-    }
-
     const showingActiveProduct = actives.find(
       ({ product }) => product.id === showingProductId
     );
 
     if (!showingActiveProduct) {
-      return;
+      return (
+        <ActivatedProductList
+          products={actives.map((a) => a.product)}
+          onPanelClicked={onProductSelected}
+        />
+      );
     }
 
     const { product: showingProduct, expiredAt } = showingActiveProduct;

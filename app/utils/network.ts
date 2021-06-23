@@ -1,12 +1,12 @@
-import { storage } from "firebase/app";
+import firebase from "firebase/app";
 import { DownloadCodeSet } from "../domains/DownloadCodeSet";
 
 export const saveDownloadCodeSetAsCsvFile = (codeSet: DownloadCodeSet) => {
   const id = codeSet.id;
-  const codes = Object.keys(codeSet.codes).map(value => value);
+  const codes = Object.keys(codeSet.codes).map((value) => value);
 
   let csvContent = "data:text/csv;charset=utf-8,";
-  codes.forEach(code => {
+  codes.forEach((code) => {
     csvContent += `${code}\r\n`;
   });
 
@@ -18,9 +18,7 @@ export const saveDownloadCodeSetAsCsvFile = (codeSet: DownloadCodeSet) => {
 };
 
 export const getStorageObjectDownloadUrl = (storageUrl: string) => {
-  return storage()
-    .refFromURL(storageUrl)
-    .getDownloadURL();
+  return firebase.storage().refFromURL(storageUrl).getDownloadURL();
 };
 
 export const downloadFromFirebaseStorage = async (

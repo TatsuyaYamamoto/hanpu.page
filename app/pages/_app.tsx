@@ -35,7 +35,7 @@ body {
 }
 `;
 
-const MyApp: React.FC<AppProps> = props => {
+const MyApp: React.FC<AppProps> = (props) => {
   const { Component, pageProps, router } = props;
   const { init: initGa, logPageView, logError } = useGa();
 
@@ -48,13 +48,13 @@ const MyApp: React.FC<AppProps> = props => {
         error: errorDetail,
         userAgent,
         language,
-        location
+        location,
       };
 
       logError(JSON.stringify(info), true);
 
       if (
-        confirm(
+        window.confirm(
           "予期せぬエラーが発生してしまいました。\n\n恐れ入りますが、問い合わせフォームを起動してエラーの詳細を送信して頂けませんでしょうか？(エラーの情報は自動で入力されます。)"
         )
       ) {
@@ -83,7 +83,7 @@ const MyApp: React.FC<AppProps> = props => {
       requestErrorDetailContact(errorDetail);
     };
 
-    window.addEventListener("unhandledrejection", e => {
+    window.addEventListener("unhandledrejection", (e) => {
       requestErrorDetailContact(e.reason);
     });
 
@@ -91,6 +91,8 @@ const MyApp: React.FC<AppProps> = props => {
     Router.events.on("routeChangeStart", NProgress.start);
     Router.events.on("routeChangeComplete", NProgress.done);
     Router.events.on("routeChangeError", NProgress.done);
+    // TODO
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -138,7 +140,7 @@ const MyApp: React.FC<AppProps> = props => {
         <Auth0Provider
           auth0ClientOptions={{
             domain: configs.auth0.domain,
-            client_id: configs.auth0.clientId
+            client_id: configs.auth0.clientId,
           }}
         >
           <FirebaseContextProvider

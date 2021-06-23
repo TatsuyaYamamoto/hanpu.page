@@ -44,10 +44,6 @@ if (isProduction) {
 
 module.exports = {
   env,
-  distDir:
-    isNextBuildCommand || isNextExportCommand
-      ? "../dist/functions/next"
-      : /*default*/ ".next",
   exportPathMap: async defaultPathMap => {
     const pathMap = { ...defaultPathMap };
 

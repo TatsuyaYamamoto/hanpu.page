@@ -1,8 +1,9 @@
-import { firestore } from "firebase/app";
-type DocumentReference = firestore.DocumentReference;
-type Timestamp = firestore.Timestamp;
-
+import firebase from "firebase/app";
 import * as base32 from "hi-base32";
+
+type DocumentReference = firebase.firestore.DocumentReference;
+type Timestamp = firebase.firestore.Timestamp;
+type FieldValue = firebase.firestore.FieldValue;
 
 export interface DownloadCodeSetDocument {
   productRef: DocumentReference;
@@ -11,14 +12,14 @@ export interface DownloadCodeSetDocument {
     [value: string]: boolean;
   };
   description: string | null;
-  createdAt: Date | firestore.FieldValue;
-  expiredAt: Date | firestore.FieldValue;
+  createdAt: Date | FieldValue;
+  expiredAt: Date | FieldValue;
 }
 
 export class DownloadCodeSet implements DownloadCodeSetDocument {
   // TODO: remove dependency of firestore instance.
   public static getColRef() {
-    return firestore().collection(`downloadCodeSets`);
+    return firebase.firestore().collection(`downloadCodeSets`);
   }
 
   public static getDocRef(id: string) {
@@ -31,11 +32,11 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
   ): () => void {
     const query = DownloadCodeSet.getColRef().where("productRef", "==", ref);
 
-    return query.onSnapshot(querySnap => {
-      const downloadCodeSets = querySnap.docs.map(snap => {
+    return query.onSnapshot((querySnap) => {
+      const downloadCodeSets = querySnap.docs.map((snap) => {
         const id = snap.id;
         const data = snap.data({
-          serverTimestamps: "estimate"
+          serverTimestamps: "estimate",
         }) as DownloadCodeSetDocument;
 
         return new DownloadCodeSet(
@@ -58,9 +59,7 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
    *
    * @param code
    */
-  public static async verify(
-    code: string
-  ): Promise<{
+  public static async verify(code: string): Promise<{
     productId: string;
     expiredAt: Date;
   } | null> {
@@ -76,7 +75,7 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
 
     return {
       productId: doc.productRef.id,
-      expiredAt: (doc.expiredAt as Timestamp).toDate()
+      expiredAt: (doc.expiredAt as Timestamp).toDate(),
     };
   }
 
@@ -108,7 +107,7 @@ export class DownloadCodeSet implements DownloadCodeSetDocument {
       codes: newCodes,
       createdAt: now,
       description: null,
-      expiredAt
+      expiredAt,
     };
     await DownloadCodeSet.getColRef().add(newSetDocDate);
   }

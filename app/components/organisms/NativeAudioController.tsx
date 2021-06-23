@@ -1,11 +1,10 @@
-import * as React from "react";
-const { useRef, useCallback } = React;
+import React, { useRef, useCallback } from "react";
 
 import {
   IconButton,
   Snackbar,
   SnackbarContent,
-  Slide
+  Slide,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
@@ -26,18 +25,18 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
   src,
   onPlay,
   onPause,
-  onClose
+  onClose,
 }) => {
   const audioEl = useRef<HTMLAudioElement | null>(null);
 
-  const onAudioPlay = useCallback(() => {
+  const onAudioPlay = () => {
     onPlay();
-  }, []);
-  const onAudioPause = useCallback(() => {
+  };
+  const onAudioPause = () => {
     onPause();
-  }, []);
+  };
 
-  const audioRef = useCallback((el: HTMLAudioElement) => {
+  const audioRef = (el: HTMLAudioElement) => {
     if (el) {
       el.addEventListener("play", onAudioPlay);
       el.addEventListener("pause", onAudioPause);
@@ -50,7 +49,7 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
 
     // save previous element
     audioEl.current = el;
-  }, []);
+  };
 
   const onCloseClicked = useCallback(() => {
     if (!audioEl.current) {
@@ -65,7 +64,7 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
     <Snackbar open={open} TransitionComponent={SlideTransition}>
       <SnackbarContent
         style={{
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
         message={
           <audio autoPlay={true} controls={open} src={src} ref={audioRef} />
@@ -73,7 +72,7 @@ const NativeAudioController: React.FC<AudioPlayerProps> = ({
         action={[
           <IconButton key="close" onClick={onCloseClicked}>
             <CloseIcon />
-          </IconButton>
+          </IconButton>,
         ]}
       />
     </Snackbar>

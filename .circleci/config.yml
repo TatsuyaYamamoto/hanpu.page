@@ -46,7 +46,7 @@ jobs:
       - checkout
       - restore_node_cache
       - check_build_environment
-      - run: yarn install
+      - run: npm install
       - save_node_cache
 
   test-dev:
@@ -55,7 +55,7 @@ jobs:
     steps:
       - prepare_build
       - check_build_environment
-      - run: yarn build-dev
+      - run: npm run build-dev
       - save_workspace
 
   deploy-dev:
@@ -64,7 +64,7 @@ jobs:
     steps:
       - restore_workspace
       - check_build_environment
-      - run: yarn --silent deploy-dev --token "$FIREBASE_TOKEN"
+      - run: npm run deploy-dev --token "$FIREBASE_TOKEN"
 
   test-pro:
     executor:
@@ -72,7 +72,7 @@ jobs:
     steps:
       - prepare_build
       - check_build_environment
-      - run: yarn build-pro
+      - run: npm run build-pro
       - save_workspace
 
   deploy-pro:
@@ -81,7 +81,7 @@ jobs:
     steps:
       - restore_workspace
       - check_build_environment
-      - run: yarn --silent deploy-pro --token "$FIREBASE_TOKEN"
+      - run: npm run deploy-pro --token "$FIREBASE_TOKEN"
 
 commands:
   check_build_environment:
@@ -91,31 +91,30 @@ commands:
           command: |
             node -v
             npm -v
-            yarn -v
             pwd
             find . -maxdepth 1 -type d | xargs ls -la
 
-  # https://circleci.com/docs/ja/2.0/caching/#yarn-node
+  # https://circleci.com/docs/ja/2.0/caching/#npm-node
   restore_node_cache:
     steps:
       - restore_cache:
           keys:
-            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-v1-{{ .Branch }}-
-            - yarn-packages-v1-
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node-v1-{{ .Branch }}-
+            - node-v1-
 
   save_node_cache:
     steps:
       - save_cache:
           paths:
-            - ~/.cache/yarn
-          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - ~/usr/local/lib/node_modules
+          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
 
   prepare_build:
     steps:
       - checkout
       - restore_node_cache
-      - run: yarn install
+      - run: npm install
 
   save_workspace:
     steps:

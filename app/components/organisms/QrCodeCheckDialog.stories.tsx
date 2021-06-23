@@ -1,23 +1,19 @@
-import * as React from "react";
+import React from "react";
 import QrCodeCheckDialog, {
   DecodeResult,
-  CheckStatus
+  CheckStatus,
 } from "./QrCodeCheckDialog";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { title: "QrCodeCheckDialog" };
 
-export const withNull = () => {
+export const WithNull = () => {
   const isDialogOpen = true;
 
-  const [decordingIcon] = React.useState<CheckStatus>(
-    "progressing"
-  );
-  const [formatIcon, setFormatIcon] = React.useState<CheckStatus>(
-    "progressing"
-  );
-  const [existingIcon] = React.useState<CheckStatus>(
-    "progressing"
-  );
+  const [decordingIcon] = React.useState<CheckStatus>("progressing");
+  const [formatIcon, setFormatIcon] =
+    React.useState<CheckStatus>("progressing");
+  const [existingIcon] = React.useState<CheckStatus>("progressing");
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
@@ -42,15 +38,15 @@ export const withNull = () => {
     checkList: {
       decoding: decordingIcon,
       format: formatIcon,
-      existing: existingIcon
+      existing: existingIcon,
     },
     detail: {
       decodedText: null,
       productId: null,
       productName: null,
       downloadCodeCreatedAt: null,
-      downloadCodeExpireAt: null
-    }
+      downloadCodeExpireAt: null,
+    },
   };
   const handleCloseDialog = () => {
     //
@@ -65,13 +61,13 @@ export const withNull = () => {
   );
 };
 
-export const withAllValidProps = () => {
+export const WithAllValidProps = () => {
   const isDialogOpen = true;
   const decodeResult: DecodeResult = {
     checkList: {
       decoding: "valid",
       format: "valid",
-      existing: "valid"
+      existing: "valid",
     },
     detail: {
       decodedText: "decoded text",
@@ -79,8 +75,8 @@ export const withAllValidProps = () => {
       productName:
         "とてもながいプロダクトネームを表示する場合、は適切なレイアウトで改行してね",
       downloadCodeCreatedAt: new Date(),
-      downloadCodeExpireAt: new Date()
-    }
+      downloadCodeExpireAt: new Date(),
+    },
   };
   const handleCloseDialog = () => {
     //

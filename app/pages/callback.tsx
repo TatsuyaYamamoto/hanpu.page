@@ -1,26 +1,14 @@
 import { default as React } from "react";
 
 import { NextPage } from "next";
-import { stringify } from "querystring";
 
+/**
+ * auth0のcallbackUrl用のpath
+ * callbackされるとき、auth0用query(state,code), dl-code.web.app用query(nextPath)がURLに付いているが、
+ * {@link useAuth0}で処理を行うため、ここでは何も行わない
+ */
 const CallbackPage: NextPage = () => {
   return <></>;
-};
-
-CallbackPage.getInitialProps = context => {
-  const { res, query } = context;
-  const { to, ...otherQueries } = query;
-  const redirectUri = Array.isArray(to) ? to[0] : to || "/";
-  const queryString = stringify(otherQueries);
-
-  if (res) {
-    res.writeHead(302, {
-      Location: `${redirectUri}?${queryString}`
-    });
-    res.end();
-  }
-
-  return {};
 };
 
 export default CallbackPage;

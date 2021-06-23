@@ -1,15 +1,16 @@
-import * as React from "react";
-const { useMemo } = React;
+import React, { useMemo } from "react";
 
 import styled from "styled-components";
 
 import { Grid, Typography } from "@material-ui/core";
 import { TypographyProps } from "@material-ui/core/Typography";
-// tslint:disable-next-line:no-var-requires
-const reactStringReplace = require("react-string-replace");
 
 import ProductThumbnail from "../atoms/ProductImageThumbnailImage";
 import TextAvatarChip from "../atoms/TextAvatarChip";
+import { formatyyyyMMdd } from "../../utils/format";
+
+// tslint:disable-next-line:no-var-requires
+const reactStringReplace = require("react-string-replace");
 
 const URL_REGEXP = /(https?:\/\/\S+)/g;
 
@@ -36,7 +37,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   name,
   description,
   iconUrl,
-  downloadCodeExpiredAt
+  downloadCodeExpiredAt,
 }) => {
   const linkifyDescription = useMemo(
     () =>
@@ -47,6 +48,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       )),
     [description]
   );
+  const expireDate = formatyyyyMMdd(downloadCodeExpiredAt);
 
   return (
     <Grid container={true}>
@@ -58,10 +60,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         <ProductDescription variant="body1">
           {linkifyDescription}
         </ProductDescription>
-        <TextAvatarChip
-          avatar={`有効期限`}
-          label={downloadCodeExpiredAt.toLocaleDateString()}
-        />
+        <TextAvatarChip avatar={`有効期限`} label={expireDate} />
       </Grid>
     </Grid>
   );

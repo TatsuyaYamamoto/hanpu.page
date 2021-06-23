@@ -2,16 +2,14 @@ import React, { useEffect, useContext, useCallback, FC, useState } from "react";
 import { useRouter } from "next/router";
 
 import createAuth0Client, {
+  User as _Auth0User,
   Auth0ClientOptions,
-  IdToken,
-  RedirectLoginOptions
+  RedirectLoginOptions,
 } from "@auth0/auth0-spa-js";
 import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 import { parse as parseQuery } from "querystring";
 
-export type Auth0User = Auth0TwitterUser;
-
-export interface Auth0TwitterUser {
+export interface Auth0User extends _Auth0User {
   /**
    * twitterの表示名
    */
@@ -33,7 +31,7 @@ export interface Auth0TwitterUser {
 
 interface IAuth0Context {
   initialized: boolean;
-  user?: Auth0TwitterUser;
+  user?: Auth0User;
   auth0Client?: Auth0Client;
   idToken?: string;
 }
@@ -49,29 +47,29 @@ const log = (message?: any, ...optionalParams: any[]): void => {
   console.log(`[useAuth0] ${message}`, ...optionalParams);
 };
 
-export const Auth0Provider: FC<Auth0ProviderProps> = props => {
+export const Auth0Provider: FC<Auth0ProviderProps> = (props) => {
   const { children, auth0ClientOptions } = props;
 
   const router = useRouter();
   const [contextValue, setContextValue] = useState<IAuth0Context>({
-    initialized: false
+    initialized: false,
   });
 
   useEffect(() => {
     (async () => {
       const auth0Client = await createAuth0Client(auth0ClientOptions);
-      setContextValue(prev => ({ ...prev, auth0Client }));
+      setContextValue((prev) => ({ ...prev, auth0Client }));
       log("auth0 client is created.");
 
       const query = parseQuery(
         window.location.search.trim().replace(/^[?#&]/, "")
       );
-      const { code, state, ...otherQueries } = query;
+      const { code, state, nextPath, ...otherQueries } = query;
       const isAuth0Redirected = !!code && !!state;
       if (isAuth0Redirected) {
         await auth0Client
           .handleRedirectCallback()
-          .then(result => {
+          .then((result) => {
             log("this access is redirect. handle redirect callback.", result);
           })
           .catch(() => {
@@ -79,33 +77,34 @@ export const Auth0Provider: FC<Auth0ProviderProps> = props => {
               "location.search has invalid code or state of auth0. remove them."
             );
           });
-
-        router.replace({
-          pathname: window.location.pathname,
-          query: otherQueries
-        });
       }
 
-      const isAuthenticated = await auth0Client.isAuthenticated();
+      const user = await auth0Client.getUser<Auth0User>();
 
-      if (isAuthenticated) {
-        const [user, idTokenClaims] = await Promise.all<
-          Auth0TwitterUser,
-          IdToken
-        >([auth0Client.getUser(), auth0Client.getIdTokenClaims()]);
+      if (!!user) {
+        const idTokenClaims = await auth0Client.getIdTokenClaims();
 
-        setContextValue(prev => ({
+        setContextValue((prev) => ({
           ...prev,
           user,
           idToken: idTokenClaims.__raw,
-          initialized: true
+          initialized: true,
         }));
         log(`client is initialized. authenticated. uid: ${user.sub}`);
+
+        if (typeof nextPath === "string") {
+          router.replace({
+            pathname: nextPath,
+            query: otherQueries,
+          });
+        }
       } else {
-        setContextValue(prev => ({ ...prev, initialized: true }));
+        setContextValue((prev) => ({ ...prev, initialized: true }));
         log(`client is initialized. NOT authenticated.`);
       }
     })();
+    // TODO
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -121,11 +120,11 @@ const useAuth0 = () => {
   const loginWithRedirect = useCallback(
     async (options: RedirectLoginOptions = {}) => {
       if (auth0Client) {
-        const { origin, href } = location;
-
+        const { origin, pathname, search } = window.location;
+        const nextPath = encodeURIComponent(pathname + search);
         await auth0Client.loginWithRedirect({
           ...options,
-          redirect_uri: `${origin}/callback?to=${href}`
+          redirect_uri: `${origin}/callback?nextPath=${nextPath}`,
         });
       }
     },
@@ -146,7 +145,7 @@ const useAuth0 = () => {
     initialized,
     idToken,
     loginWithRedirect,
-    logout
+    logout,
   };
 };
 

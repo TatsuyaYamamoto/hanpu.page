@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useEffect, useRef, useState } = React;
+import React, { useEffect, useRef, useState } from "react";
 
 import styled from "styled-components";
 
@@ -27,15 +26,15 @@ const DownloadCodeCheckCamera: React.FC = () => {
     checkList: {
       decoding: "progressing",
       format: "progressing",
-      existing: "progressing"
+      existing: "progressing",
     },
     detail: {
       decodedText: null,
       productId: null,
       productName: null,
       downloadCodeCreatedAt: null,
-      downloadCodeExpireAt: null
-    }
+      downloadCodeExpireAt: null,
+    },
   });
 
   const { checkFormat, checkLinkedResources } = useDownloadCodeVerifier();
@@ -44,17 +43,17 @@ const DownloadCodeCheckCamera: React.FC = () => {
     stopPreview,
     startLoopCapture,
     stopLoopCapture,
-    detected: detectedQrcode
+    detected: detectedQrcode,
   } = useQrDecodeCamera(videoRef);
 
   useEffect(() => {
-    Promise.resolve()
-      .then(startPreview)
-      .then(startLoopCapture);
+    Promise.resolve().then(startPreview).then(startLoopCapture);
 
     return function teardown() {
       stopPreview();
     };
+    // TODO
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -65,16 +64,16 @@ const DownloadCodeCheckCamera: React.FC = () => {
        * Start verifying QRCode.
        */
       handleDialogOpen(true);
-      setDecodeResult(prev => ({
+      setDecodeResult((prev) => ({
         ...prev,
         checkList: {
           ...prev.checkList,
-          decoding: "valid"
+          decoding: "valid",
         },
         detail: {
           ...prev.detail,
-          decodedText: detectedQrcode.data
-        }
+          decodedText: detectedQrcode.data,
+        },
       }));
 
       /**
@@ -83,21 +82,21 @@ const DownloadCodeCheckCamera: React.FC = () => {
       const downloadCode = checkFormat(detectedQrcode.data);
 
       if (downloadCode) {
-        setDecodeResult(prev => ({
+        setDecodeResult((prev) => ({
           ...prev,
           checkList: {
             ...prev.checkList,
-            format: "valid"
-          }
+            format: "valid",
+          },
         }));
       } else {
-        setDecodeResult(prev => ({
+        setDecodeResult((prev) => ({
           ...prev,
           checkList: {
             ...prev.checkList,
             format: "invalid",
-            existing: "suspended"
-          }
+            existing: "suspended",
+          },
         }));
         return;
       }
@@ -105,40 +104,42 @@ const DownloadCodeCheckCamera: React.FC = () => {
       /**
        * Check Linked Product.
        */
-      checkLinkedResources(downloadCode).then(data => {
+      checkLinkedResources(downloadCode).then((data) => {
         if (data) {
           const {
             productId,
             productName,
             downloadCodeCreatedAt,
-            downloadCodeExpireAt
+            downloadCodeExpireAt,
           } = data;
 
-          setDecodeResult(prev => ({
+          setDecodeResult((prev) => ({
             ...prev,
             checkList: {
               ...prev.checkList,
-              existing: "valid"
+              existing: "valid",
             },
             detail: {
               ...prev.detail,
               productId,
               productName,
               downloadCodeCreatedAt,
-              downloadCodeExpireAt
-            }
+              downloadCodeExpireAt,
+            },
           }));
         } else {
-          setDecodeResult(prev => ({
+          setDecodeResult((prev) => ({
             ...prev,
             checkList: {
               ...prev.checkList,
-              existing: "invalid"
-            }
+              existing: "invalid",
+            },
           }));
         }
       });
     }
+    // TODO
+    // eslint-disable-next-line
   }, [detectedQrcode]);
 
   const handleCloseDialog = () => {
@@ -147,15 +148,15 @@ const DownloadCodeCheckCamera: React.FC = () => {
       checkList: {
         decoding: "progressing",
         format: "progressing",
-        existing: "progressing"
+        existing: "progressing",
       },
       detail: {
         decodedText: null,
         productId: null,
         productName: null,
         downloadCodeCreatedAt: null,
-        downloadCodeExpireAt: null
-      }
+        downloadCodeExpireAt: null,
+      },
     });
     startLoopCapture();
   };

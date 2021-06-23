@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useMemo } = React;
+import React, { useMemo } from "react";
 
 import { Container, Grid, Typography } from "@material-ui/core";
 import Icon, { IconProps } from "@material-ui/core/Icon";
@@ -34,7 +33,7 @@ const Hero = () => {
       <Grid
         item={true}
         style={{
-          marginTop: 20
+          marginTop: 20,
         }}
       >
         <LinkButton href="/download/verify">
@@ -74,7 +73,7 @@ const AboutAppSection = () => {
         <Typography variant="h5">だれが使えるの？</Typography>
         <Typography variant="h6">ダウンロード</Typography>
         <Typography variant="body1">
-          <span>>> 誰でも！</span>
+          <span>{`>> 誰でも！`}</span>
         </Typography>
         <Typography variant="h6">ファイル配信</Typography>
         <Typography variant="body1">

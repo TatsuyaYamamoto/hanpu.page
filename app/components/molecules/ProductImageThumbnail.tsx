@@ -20,14 +20,12 @@ interface ProductImageThumbnailProps {
 
 const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
   src,
-  onChange
+  onChange,
 }) => {
-  const [
-    selectedFileErrorMessage,
-    setSelectedFileErrorMessage
-  ] = React.useState<string | null>(null);
+  const [selectedFileErrorMessage, setSelectedFileErrorMessage] =
+    React.useState<string | null>(null);
 
-  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[]) => {
     const acceptedFile = acceptedFiles[0];
 
     if (1 * MB < acceptedFile.size) {
@@ -36,11 +34,11 @@ const ProductImageThumbnail: React.FC<ProductImageThumbnailProps> = ({
     }
 
     onChange(acceptedFile);
-  }, []);
+  };
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-    accept: "image/*"
+    accept: "image/*",
   });
 
   const thumbnail = !!src ? (

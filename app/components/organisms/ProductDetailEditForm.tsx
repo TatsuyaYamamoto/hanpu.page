@@ -1,5 +1,4 @@
-import * as React from "react";
-const { useEffect, useMemo } = React;
+import React, { useEffect, useMemo } from "react";
 
 import { Paper } from "@material-ui/core";
 import { PaperProps } from "@material-ui/core/Paper";
@@ -17,7 +16,7 @@ import {
   Product,
   ProductDescription,
   ProductDocument,
-  ProductName
+  ProductName,
 } from "../../domains/Product";
 
 const StyledPaper = styled(Paper as React.FC<PaperProps>)`
@@ -41,13 +40,13 @@ interface ProductDetailEditFormProps {
 const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
   product,
   onUpdateFields,
-  onUpdateIcon
+  onUpdateIcon,
 }) => {
   const [iconUrl, setIconUrl] = React.useState<string | null>(null);
 
   useEffect(() => {
     // TODO: check whether url is updated
-    product.getIconUrl().then(url => {
+    product.getIconUrl().then((url) => {
       setIconUrl(url);
     });
   }, [product]);
@@ -59,13 +58,13 @@ const ProductDetailEditForm: React.FC<ProductDetailEditFormProps> = ({
 
   const onNameSubmitted = (value: string) => {
     return onUpdateFields({
-      name: value as ProductName
+      name: value as ProductName,
     });
   };
 
   const onDescriptionSubmitted = async (value: string) => {
     return onUpdateFields({
-      description: value as ProductDescription
+      description: value as ProductDescription,
     });
   };
 

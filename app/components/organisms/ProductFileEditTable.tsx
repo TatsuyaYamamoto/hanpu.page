@@ -1,25 +1,24 @@
-import * as React from "react";
-const { useMemo } = React;
+import React, { useMemo } from "react";
 
 import MaterialTable, {
   Column,
   Options as TableOptions,
   MTableBody,
-  MTableBodyRow
+  MTableBodyRow,
 } from "material-table";
 
 import ProductFileAddDialog from "./ProductFileAddDialog";
 import {
   SortableContainer,
   SortableElement,
-  SortEnd
+  SortEnd,
 } from "react-sortable-hoc";
 
 import {
   ProductFile,
   ProductFileDisplayName,
   ProductFileMap,
-  ProductFileOriginalName
+  ProductFileOriginalName,
 } from "../../domains/Product";
 
 import { formatFileSize } from "../../utils/format";
@@ -28,22 +27,22 @@ import { downloadFromFirebaseStorage } from "../../utils/network";
 const SortableMTableBodyRow = SortableElement(MTableBodyRow);
 const SortableMTableBody = SortableContainer(MTableBody);
 
-const TABLE_OPTIONS: TableOptions = {
+const TABLE_OPTIONS: TableOptions<RowData> = {
   addRowPosition: "first",
   paging: false,
   search: false,
-  actionsColumnIndex: -1
+  actionsColumnIndex: -1,
 };
 
 const TABLE_LOCALIZATION = {
   header: {
-    actions: ""
+    actions: "",
   },
   body: {
     editRow: {
-      deleteText: "けします"
-    }
-  }
+      deleteText: "けします",
+    },
+  },
 };
 
 const TABLE_COLUMNS: Column<RowData>[] = [
@@ -51,18 +50,18 @@ const TABLE_COLUMNS: Column<RowData>[] = [
   {
     title: "オリジナルファイル名",
     field: "originalName",
-    editable: "never"
+    editable: "never",
   },
   {
     title: "サイズ",
     field: "size",
-    editable: "never"
+    editable: "never",
   },
   {
     title: "タイプ",
     field: "contentType",
-    editable: "never"
-  }
+    editable: "never",
+  },
 ];
 
 interface RowData {
@@ -89,7 +88,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
   onAdd,
   onUpdate,
   onDelete,
-  onChangeIndex
+  onChangeIndex,
 }) => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
 
@@ -147,12 +146,12 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
 
         return aIndex - bIndex;
       })
-      .map(id => ({
+      .map((id) => ({
         id,
         displayName: productFiles[id].displayName,
         originalName: productFiles[id].originalName,
         size: formatFileSize(productFiles[id].size),
-        contentType: productFiles[id].contentType
+        contentType: productFiles[id].contentType,
       }));
   }, [productFiles]);
 
@@ -161,7 +160,7 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
       return;
     }
 
-    const id = Object.keys(productFiles).find(key => {
+    const id = Object.keys(productFiles).find((key) => {
       return oldIndex === productFiles[key].index;
     });
 
@@ -187,26 +186,26 @@ const ProductFileEditTable: React.FC<ProductFileEditTableProps> = ({
           {
             icon: "arrow_downward",
             tooltip: "Download",
-            onClick: onDownloadButtonClicked
+            onClick: onDownloadButtonClicked,
           },
           {
             icon: "add",
             tooltip: "追加",
             isFreeAction: true,
-            onClick: onAddButtonClicked
-          }
+            onClick: onAddButtonClicked,
+          },
         ]}
         editable={{
           onRowUpdate: onProductFileUpdate,
-          onRowDelete: onProductFileDelete
+          onRowDelete: onProductFileDelete,
         }}
         components={{
-          Body: props => {
+          Body: (props) => {
             return <SortableMTableBody onSortEnd={onSortEnd} {...props} />;
           },
-          Row: props => {
+          Row: (props) => {
             return <SortableMTableBodyRow {...props} />;
-          }
+          },
         }}
       />
 
