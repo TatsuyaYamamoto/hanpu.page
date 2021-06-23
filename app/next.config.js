@@ -46,10 +46,6 @@ module.exports = {
   env,
   exportPathMap: async defaultPathMap => {
     const pathMap = { ...defaultPathMap };
-
-    delete pathMap[`/d`];
-    delete pathMap[`/callback`];
-
     return pathMap;
   }
 };
